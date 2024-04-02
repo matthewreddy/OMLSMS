@@ -3,7 +3,7 @@ Helper functions for creating Form classes from Django models
 and database field objects.
 """
 
-from __future__ import absolute_import, unicode_literals
+
 
 import warnings
 
@@ -324,7 +324,7 @@ class BaseModelForm(BaseForm):
                                             error_class, label_suffix, empty_permitted)
 
     def _update_errors(self, errors):
-        for field, messages in errors.error_dict.items():
+        for field, messages in list(errors.error_dict.items()):
             if field not in self.fields:
                 continue
             field = self.fields[field]
@@ -334,7 +334,7 @@ class BaseModelForm(BaseForm):
                         message.message = field.error_messages[message.code]
 
         message_dict = errors.message_dict
-        for k, v in message_dict.items():
+        for k, v in list(message_dict.items()):
             if k != NON_FIELD_ERRORS:
                 self._errors.setdefault(k, self.error_class()).extend(v)
                 # Remove the data from the cleaned_data dict since it was invalid
@@ -370,7 +370,7 @@ class BaseModelForm(BaseForm):
 
             # Exclude fields that failed form validation. There's no need for
             # the model fields to validate them as well.
-            elif field in self._errors.keys():
+            elif field in list(self._errors.keys()):
                 exclude.append(f.name)
 
             # Exclude empty fields that are not required by the form, if the
@@ -404,7 +404,7 @@ class BaseModelForm(BaseForm):
         # object being referred to may not yet fully exist (#12749).
         # However, these fields *must* be included in uniqueness checks,
         # so this can't be part of _get_validation_exclusions().
-        for f_name, field in self.fields.items():
+        for f_name, field in list(self.fields.items()):
             if isinstance(field, InlineForeignKeyField):
                 exclude.append(f_name)
 

@@ -1,7 +1,7 @@
 """
 Extra HTML Widget classes
 """
-from __future__ import unicode_literals
+
 
 import datetime
 import re
@@ -59,7 +59,7 @@ class SelectDateWidget(Widget):
             self.years = years
         else:
             this_year = datetime.date.today().year
-            self.years = range(this_year, this_year+10)
+            self.years = list(range(this_year, this_year+10))
 
     def render(self, name, value, attrs=None):
         try:

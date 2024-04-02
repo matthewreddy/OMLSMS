@@ -99,7 +99,7 @@ class DataSource(GDALBase):
 
     def __iter__(self):
         "Allows for iteration over the layers in a data source."
-        for i in xrange(self.layer_count):
+        for i in range(self.layer_count):
             yield self[i]
 
     def __getitem__(self, index):

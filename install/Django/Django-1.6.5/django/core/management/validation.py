@@ -31,7 +31,7 @@ def get_validation_errors(outfile, app=None):
 
     e = ModelErrorCollection(outfile)
 
-    for (app_name, error) in get_app_errors().items():
+    for (app_name, error) in list(get_app_errors().items()):
         e.add(app_name, error)
 
     for cls in models.get_models(app, include_swapped=True):

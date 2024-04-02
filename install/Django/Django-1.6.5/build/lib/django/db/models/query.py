@@ -51,7 +51,7 @@ class QuerySet(object):
         Deep copy of a QuerySet doesn't populate the cache
         """
         obj = self.__class__()
-        for k, v in self.__dict__.items():
+        for k, v in list(self.__dict__.items()):
             if k == '_result_cache':
                 obj.__dict__[k] = None
             else:
@@ -96,7 +96,7 @@ class QuerySet(object):
         self._fetch_all()
         return iter(self._result_cache)
 
-    def __nonzero__(self):
+    def __bool__(self):
         self._fetch_all()
         return bool(self._result_cache)
 
@@ -225,7 +225,7 @@ class QuerySet(object):
                 # Omit aggregates in object creation.
                 row_data = row[index_start:aggregate_start]
                 if skip:
-                    obj = model_cls(**dict(zip(init_list, row_data)))
+                    obj = model_cls(**dict(list(zip(init_list, row_data))))
                 else:
                     obj = model(*row_data)
 
@@ -245,7 +245,7 @@ class QuerySet(object):
 
             # Add the known related objects to the model, if there are any
             if self._known_related_objects:
-                for field, rel_objs in self._known_related_objects.items():
+                for field, rel_objs in list(self._known_related_objects.items()):
                     # Avoid overwriting objects loaded e.g. by select_related
                     if hasattr(obj, field.get_cache_name()):
                         continue
@@ -274,7 +274,7 @@ class QuerySet(object):
 
         query = self.query.clone()
 
-        for (alias, aggregate_expr) in kwargs.items():
+        for (alias, aggregate_expr) in list(kwargs.items()):
             query.add_aggregate(aggregate_expr, self.model, alias,
                 is_summary=True)
 
@@ -376,7 +376,7 @@ class QuerySet(object):
             return self.get(**lookup), False
         except self.model.DoesNotExist:
             try:
-                params = dict((k, v) for k, v in kwargs.items() if LOOKUP_SEP not in k)
+                params = dict((k, v) for k, v in list(kwargs.items()) if LOOKUP_SEP not in k)
                 params.update(defaults)
                 obj = self.model(**params)
                 with transaction.atomic(using=self.db):
@@ -712,7 +712,7 @@ class QuerySet(object):
         obj._setup_aggregate_query(list(kwargs))
 
         # Add the aggregates to the query
-        for (alias, aggregate_expr) in kwargs.items():
+        for (alias, aggregate_expr) in list(kwargs.items()):
             obj.query.add_aggregate(aggregate_expr, self.model, alias,
                 is_summary=False)
 
@@ -884,7 +884,7 @@ class QuerySet(object):
         """
         Keep track of all known related objects from either QuerySet instance.
         """
-        for field, objects in other._known_related_objects.items():
+        for field, objects in list(other._known_related_objects.items()):
             self._known_related_objects.setdefault(field, {}).update(objects)
 
     def _setup_aggregate_query(self, aggregates):
@@ -944,7 +944,7 @@ class ValuesQuerySet(QuerySet):
         names = extra_names + field_names + aggregate_names
 
         for row in self.query.get_compiler(self.db).results_iter():
-            yield dict(zip(names, row))
+            yield dict(list(zip(names, row)))
 
     def delete(self):
         # values().delete() doesn't work currently - make sure it raises an
@@ -1088,7 +1088,7 @@ class ValuesListQuerySet(ValuesQuerySet):
                 fields = names
 
             for row in self.query.get_compiler(self.db).results_iter():
-                data = dict(zip(names, row))
+                data = dict(list(zip(names, row)))
                 yield tuple([data[f] for f in fields])
 
     def _clone(self, *args, **kwargs):
@@ -1301,7 +1301,7 @@ def get_cached_row(row, index_start, using,  klass_info, offset=0,
         for rel_field, value in parent_data:
             field_names.append(rel_field.attname)
             fields.append(value)
-        obj = klass(**dict(zip(field_names, fields)))
+        obj = klass(**dict(list(zip(field_names, fields))))
     else:
         obj = klass(*fields)
     # If an object was retrieved, set the database state.
@@ -1479,7 +1479,7 @@ class RawQuerySet(object):
             self._columns = self.query.get_columns()
 
             # Adjust any column names which don't match field names
-            for (query_name, model_name) in self.translations.items():
+            for (query_name, model_name) in list(self.translations.items()):
                 try:
                     index = self._columns.index(query_name)
                     self._columns[index] = model_name

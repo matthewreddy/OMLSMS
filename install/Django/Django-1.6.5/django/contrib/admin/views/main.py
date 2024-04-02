@@ -91,7 +91,7 @@ class ChangeList(six.with_metaclass(RenameChangeListMethods)):
         self.show_all = ALL_VAR in request.GET
         self.is_popup = _is_changelist_popup(request)
         self.to_field = request.GET.get(TO_FIELD_VAR)
-        self.params = dict(request.GET.items())
+        self.params = dict(list(request.GET.items()))
         if PAGE_VAR in self.params:
             del self.params[PAGE_VAR]
         if ERROR_FLAG in self.params:
@@ -144,7 +144,7 @@ class ChangeList(six.with_metaclass(RenameChangeListMethods)):
         use_distinct = False
 
         # Normalize the types of keys
-        for key, value in lookup_params.items():
+        for key, value in list(lookup_params.items()):
             if not isinstance(key, str):
                 # 'key' will be used as a keyword argument later, so Python
                 # requires it to be a string.
@@ -190,7 +190,7 @@ class ChangeList(six.with_metaclass(RenameChangeListMethods)):
         # fields and to determine if at least one of them needs distinct(). If
         # the lookup parameters aren't real fields, then bail out.
         try:
-            for key, value in lookup_params.items():
+            for key, value in list(lookup_params.items()):
                 lookup_params[key] = prepare_lookup_value(key, value)
                 use_distinct = (use_distinct or
                                 lookup_needs_distinct(self.lookup_opts, key))
@@ -206,7 +206,7 @@ class ChangeList(six.with_metaclass(RenameChangeListMethods)):
             for k in list(p):
                 if k.startswith(r):
                     del p[k]
-        for k, v in new_params.items():
+        for k, v in list(new_params.items()):
             if v is None:
                 if k in p:
                     del p[k]

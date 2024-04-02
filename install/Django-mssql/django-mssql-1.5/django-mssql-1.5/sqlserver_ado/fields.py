@@ -1,5 +1,5 @@
 """This module provides SQL Server specific fields for Django models."""
-from __future__ import unicode_literals
+
 import datetime
 from django.db import models
 from django.forms import ValidationError
@@ -29,7 +29,7 @@ class BigAutoField(models.AutoField):
         if value is None:
             return value
         try:
-            return long(value)
+            return int(value)
         except (TypeError, ValueError):
             raise ValidationError(
                 _("This value must be a long."))
@@ -37,7 +37,7 @@ class BigAutoField(models.AutoField):
     def get_db_prep_value(self, value, connection=None, prepared=False):
         if value is None:
             return None
-        return long(value)
+        return int(value)
 
 class BigForeignKey(models.ForeignKey):
     """A ForeignKey field that points to a BigAutoField or BigIntegerField"""

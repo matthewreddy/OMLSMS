@@ -52,7 +52,7 @@ def template_tag_index(request):
     app_libs = list(six.iteritems(template.libraries))
     builtin_libs = [(None, lib) for lib in template.builtins]
     for module_name, library in builtin_libs + app_libs:
-        for tag_name, tag_func in library.tags.items():
+        for tag_name, tag_func in list(library.tags.items()):
             title, body, metadata = utils.parse_docstring(tag_func.__doc__)
             if title:
                 title = utils.parse_rst(title, 'tag', _('tag:') + tag_name)
@@ -87,7 +87,7 @@ def template_filter_index(request):
     app_libs = list(six.iteritems(template.libraries))
     builtin_libs = [(None, lib) for lib in template.builtins]
     for module_name, library in builtin_libs + app_libs:
-        for filter_name, filter_func in library.filters.items():
+        for filter_name, filter_func in list(library.filters.items()):
             title, body, metadata = utils.parse_docstring(filter_func.__doc__)
             if title:
                 title = utils.parse_rst(title, 'filter', _('filter:') + filter_name)
@@ -232,7 +232,7 @@ def model_detail(request, app_label, model_name):
         })
 
     # Gather model methods.
-    for func_name, func in model.__dict__.items():
+    for func_name, func in list(model.__dict__.items()):
         if (inspect.isfunction(func) and len(inspect.getargspec(func)[0]) == 1):
             try:
                 for exclude in MODEL_METHODS_EXCLUDE:

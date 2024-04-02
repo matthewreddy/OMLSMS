@@ -59,9 +59,9 @@ class SortedDictTests(SimpleTestCase):
             This test doesn't make sense under Python 3 because keys is
             an iterator.
             """
-            k = self.d2.keys()
+            k = list(self.d2.keys())
             k.remove(9)
-            self.assertEqual(self.d2.keys(), [1, 9, 0, 7])
+            self.assertEqual(list(self.d2.keys()), [1, 9, 0, 7])
 
     def test_init_keys(self):
         """
@@ -290,7 +290,7 @@ class MultiValueDictTests(SimpleTestCase):
 class ImmutableListTests(SimpleTestCase):
 
     def test_sort(self):
-        d = ImmutableList(range(10))
+        d = ImmutableList(list(range(10)))
 
         # AttributeError: ImmutableList object is immutable.
         self.assertRaisesMessage(AttributeError,
@@ -299,7 +299,7 @@ class ImmutableListTests(SimpleTestCase):
         self.assertEqual(repr(d), '(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)')
 
     def test_custom_warning(self):
-        d = ImmutableList(range(10), warning="Object is immutable!")
+        d = ImmutableList(list(range(10)), warning="Object is immutable!")
 
         self.assertEqual(d[1], 1)
 

@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 import hashlib
 import os
 import posixpath
@@ -223,12 +223,12 @@ class CachedFilesMixin(object):
         hashed_paths = {}
 
         # build a list of adjustable files
-        matches = lambda path: matches_patterns(path, self._patterns.keys())
+        matches = lambda path: matches_patterns(path, list(self._patterns.keys()))
         adjustable_paths = [path for path in paths if matches(path)]
 
         # then sort the files by the directory level
         path_level = lambda name: len(name.split(os.sep))
-        for name in sorted(paths.keys(), key=path_level, reverse=True):
+        for name in sorted(list(paths.keys()), key=path_level, reverse=True):
 
             # use the original, local file, not the copied-but-unprocessed
             # file, which might be somewhere far away, like S3
@@ -249,7 +249,7 @@ class CachedFilesMixin(object):
                 # ..to apply each replacement pattern to the content
                 if name in adjustable_paths:
                     content = original_file.read().decode(settings.FILE_CHARSET)
-                    for patterns in self._patterns.values():
+                    for patterns in list(self._patterns.values()):
                         for pattern, template in patterns:
                             converter = self.url_converter(name, template)
                             try:

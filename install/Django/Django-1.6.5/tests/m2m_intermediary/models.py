@@ -9,7 +9,7 @@ each ``Article``-``Reporter`` combination (a ``Writer``) has a ``position``
 field, which specifies the ``Reporter``'s position for the given article
 (e.g. "Staff writer").
 """
-from __future__ import unicode_literals
+
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible

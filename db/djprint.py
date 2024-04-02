@@ -1,6 +1,6 @@
 import sys
 from datetime import date, timedelta
-import cStringIO as StringIO
+import io as StringIO
 from constants import *
 
 from xhtml2pdf.document import pisaDocument
@@ -49,7 +49,7 @@ def getBillForSterilizer(sterilizer_id, dentist=None, renewal=None):
     return(t.render(c))
 
 def chunker(seq, size):
-    return (seq[pos:pos + size] for pos in xrange(0, len(seq), size))
+    return (seq[pos:pos + size] for pos in range(0, len(seq), size))
 
 def encodeTo128Font(value):
     if value == 0:
@@ -90,7 +90,7 @@ def getRenewalLabelsForSterilizers(sterilizers, dentists, lot):
         renewal_ids.append(ids)
         barcodes.append(codes)
 
-    z = zip(sterilizers,renewal_ids,barcodes)
+    z = list(zip(sterilizers,renewal_ids,barcodes))
 
     c = Context({
     'today': date.today(),

@@ -4,7 +4,7 @@
 This demonstrates features of the database API.
 """
 
-from __future__ import unicode_literals
+
 
 from django.db import models
 from django.utils import six

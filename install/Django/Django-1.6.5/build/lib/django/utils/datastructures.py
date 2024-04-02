@@ -17,7 +17,7 @@ class MergeDict(object):
     def __bool__(self):
         return any(self.dicts)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return type(self).__bool__(self)
 
     def __getitem__(self, key):
@@ -72,13 +72,13 @@ class MergeDict(object):
         itervalues = _itervalues
 
         def items(self):
-            return list(self.iteritems())
+            return list(self.items())
 
         def keys(self):
-            return list(self.iterkeys())
+            return list(self.keys())
 
         def values(self):
-            return list(self.itervalues())
+            return list(self.values())
 
     def has_key(self, key):
         for dict_ in self.dicts:
@@ -102,7 +102,7 @@ class MergeDict(object):
 
         instead of the generic "<object meta-data>" inherited from object.
         '''
-        return str(dict(self.items()))
+        return str(dict(list(self.items())))
 
     def __repr__(self):
         '''
@@ -141,7 +141,7 @@ class SortedDict(dict):
 
     def __deepcopy__(self, memo):
         return self.__class__([(key, copy.deepcopy(value, memo))
-                               for key, value in self.items()])
+                               for key, value in list(self.items())])
 
     def __copy__(self):
         # The Python's default copy implementation will alter the state
@@ -330,7 +330,7 @@ class MultiValueDict(dict):
 
     def __setstate__(self, obj_dict):
         data = obj_dict.pop('_data', {})
-        for k, v in data.items():
+        for k, v in list(data.items()):
             self.setlist(k, v)
         self.__dict__.update(obj_dict)
 
@@ -409,13 +409,13 @@ class MultiValueDict(dict):
         itervalues = _itervalues
 
         def items(self):
-            return list(self.iteritems())
+            return list(self.items())
 
         def lists(self):
             return list(self.iterlists())
 
         def values(self):
-            return list(self.itervalues())
+            return list(self.values())
 
     def copy(self):
         """Returns a shallow copy of this object."""
@@ -435,7 +435,7 @@ class MultiValueDict(dict):
                     self.setlistdefault(key).extend(value_list)
             else:
                 try:
-                    for key, value in other_dict.items():
+                    for key, value in list(other_dict.items()):
                         self.setlistdefault(key).append(value)
                 except TypeError:
                     raise ValueError("MultiValueDict.update() takes either a MultiValueDict or dictionary")

@@ -66,7 +66,7 @@ class BaseContext(object):
         return False
 
     def __contains__(self, key):
-        return self.has_key(key)
+        return key in self
 
     def get(self, key, otherwise=None):
         for d in reversed(self.dicts):

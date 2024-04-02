@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 import datetime
 
@@ -56,24 +56,24 @@ def pagination(cl):
         # If there are 10 or fewer pages, display links to every page.
         # Otherwise, do some fancy
         if paginator.num_pages <= 10:
-            page_range = range(paginator.num_pages)
+            page_range = list(range(paginator.num_pages))
         else:
             # Insert "smart" pagination links, so that there are always ON_ENDS
             # links at either end of the list of pages, and there are always
             # ON_EACH_SIDE links at either end of the "current page" link.
             page_range = []
             if page_num > (ON_EACH_SIDE + ON_ENDS):
-                page_range.extend(range(0, ON_ENDS))
+                page_range.extend(list(range(0, ON_ENDS)))
                 page_range.append(DOT)
-                page_range.extend(range(page_num - ON_EACH_SIDE, page_num + 1))
+                page_range.extend(list(range(page_num - ON_EACH_SIDE, page_num + 1)))
             else:
-                page_range.extend(range(0, page_num + 1))
+                page_range.extend(list(range(0, page_num + 1)))
             if page_num < (paginator.num_pages - ON_EACH_SIDE - ON_ENDS - 1):
-                page_range.extend(range(page_num + 1, page_num + ON_EACH_SIDE + 1))
+                page_range.extend(list(range(page_num + 1, page_num + ON_EACH_SIDE + 1)))
                 page_range.append(DOT)
-                page_range.extend(range(paginator.num_pages - ON_ENDS, paginator.num_pages))
+                page_range.extend(list(range(paginator.num_pages - ON_ENDS, paginator.num_pages)))
             else:
-                page_range.extend(range(page_num + 1, paginator.num_pages))
+                page_range.extend(list(range(page_num + 1, paginator.num_pages)))
 
     need_show_all_link = cl.can_show_all and not cl.show_all and cl.multi_page
     return {
@@ -137,7 +137,7 @@ def result_headers(cl):
         o_list_toggle  = [] # URL for toggling order type for this field
         make_qs_param = lambda t, n: ('-' if t == 'desc' else '') + str(n)
 
-        for j, ot in ordering_field_columns.items():
+        for j, ot in list(ordering_field_columns.items()):
             if j == i: # Same column
                 param = make_qs_param(new_order_type, j)
                 # We want clicking on this header to bring the ordering to the

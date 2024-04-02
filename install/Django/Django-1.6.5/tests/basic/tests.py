@@ -1,4 +1,4 @@
-from __future__ import absolute_import, unicode_literals
+
 
 from datetime import datetime
 import threading
@@ -351,15 +351,15 @@ class ModelTest(TestCase):
 
         # Slicing works with longs (Python 2 only -- Python 3 doesn't have longs).
         if six.PY2:
-            self.assertEqual(Article.objects.all()[long(0)], a)
-            self.assertQuerysetEqual(Article.objects.all()[long(1):long(3)],
+            self.assertEqual(Article.objects.all()[int(0)], a)
+            self.assertQuerysetEqual(Article.objects.all()[int(1):int(3)],
                 ["<Article: Second article>", "<Article: Third article>"])
-            self.assertQuerysetEqual((s1 | s2 | s3)[::long(2)],
+            self.assertQuerysetEqual((s1 | s2 | s3)[::int(2)],
                 ["<Article: Area man programs in Python>",
                 "<Article: Third article>"])
 
             # And can be mixed with ints.
-            self.assertQuerysetEqual(Article.objects.all()[1:long(3)],
+            self.assertQuerysetEqual(Article.objects.all()[1:int(3)],
                 ["<Article: Second article>", "<Article: Third article>"])
 
         # Slices (without step) are lazy:

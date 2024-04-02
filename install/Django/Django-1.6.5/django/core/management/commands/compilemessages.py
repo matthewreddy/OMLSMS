@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 import codecs
 import os
@@ -26,7 +26,7 @@ def compile_messages(stdout, locale=None):
         basedirs.extend(settings.LOCALE_PATHS)
 
     # Gather existing directories.
-    basedirs = set(map(os.path.abspath, filter(os.path.isdir, basedirs)))
+    basedirs = set(map(os.path.abspath, list(filter(os.path.isdir, basedirs))))
 
     if not basedirs:
         raise CommandError("This script should be run from the Django Git checkout or your project or app tree, or with the settings module specified.")

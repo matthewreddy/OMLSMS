@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # This coding header is significant for tests, as the debug view is parsing
 # files to search for such a header to decode the source file content
-from __future__ import absolute_import, unicode_literals
+
 
 import inspect
 import os
@@ -349,7 +349,7 @@ class ExceptionReportTestMixin(object):
             self.assertContains(response, 'sauce', status_code=500)
             self.assertContains(response, 'worcestershire', status_code=500)
         if check_for_POST_params:
-            for k, v in self.breakfast_data.items():
+            for k, v in list(self.breakfast_data.items()):
                 # All POST parameters are shown.
                 self.assertContains(response, k, status_code=500)
                 self.assertContains(response, v, status_code=500)
@@ -369,7 +369,7 @@ class ExceptionReportTestMixin(object):
             self.assertContains(response, 'sauce', status_code=500)
             self.assertNotContains(response, 'worcestershire', status_code=500)
         if check_for_POST_params:
-            for k, v in self.breakfast_data.items():
+            for k, v in list(self.breakfast_data.items()):
                 # All POST parameters' names are shown.
                 self.assertContains(response, k, status_code=500)
             # Non-sensitive POST parameters' values are shown.
@@ -393,7 +393,7 @@ class ExceptionReportTestMixin(object):
             self.assertContains(response, 'sauce', status_code=500)
             self.assertNotContains(response, 'worcestershire', status_code=500)
         if check_for_POST_params:
-            for k, v in self.breakfast_data.items():
+            for k, v in list(self.breakfast_data.items()):
                 # All POST parameters' names are shown.
                 self.assertContains(response, k, status_code=500)
                 # No POST parameters' values are shown.
@@ -425,7 +425,7 @@ class ExceptionReportTestMixin(object):
             self.assertIn('worcestershire', body_html)
 
             if check_for_POST_params:
-                for k, v in self.breakfast_data.items():
+                for k, v in list(self.breakfast_data.items()):
                     # All POST parameters are shown.
                     self.assertIn(k, body_plain)
                     self.assertIn(v, body_plain)
@@ -458,7 +458,7 @@ class ExceptionReportTestMixin(object):
             self.assertNotIn('worcestershire', body_html)
 
             if check_for_POST_params:
-                for k, v in self.breakfast_data.items():
+                for k, v in list(self.breakfast_data.items()):
                     # All POST parameters' names are shown.
                     self.assertIn(k, body_plain)
                 # Non-sensitive POST parameters' values are shown.
@@ -488,7 +488,7 @@ class ExceptionReportTestMixin(object):
             self.assertNotIn('scrambled', body)
             self.assertNotIn('sauce', body)
             self.assertNotIn('worcestershire', body)
-            for k, v in self.breakfast_data.items():
+            for k, v in list(self.breakfast_data.items()):
                 # All POST parameters' names are shown.
                 self.assertIn(k, body)
                 # No POST parameters' values are shown.

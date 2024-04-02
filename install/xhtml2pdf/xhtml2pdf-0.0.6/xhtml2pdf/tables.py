@@ -172,9 +172,9 @@ class pisaTagTABLE(pisaTag):
         for i, row in enumerate(data):
             data[i] += [''] * (maxcols - len(row))
 
-        cols_with_no_width = len(filter(lambda col: col is None, tdata.colw))
+        cols_with_no_width = len([col for col in tdata.colw if col is None])
         if cols_with_no_width:  # any col width not defined
-            bad_cols = filter(lambda tup: tup[1] is None, enumerate(tdata.colw))
+            bad_cols = [tup for tup in enumerate(tdata.colw) if tup[1] is None]
             fair_division = str(100 / float(cols_with_no_width)) + '%' # get fair %
             for i, _ in bad_cols:
                 tdata.colw[i] = fair_division   # fix empty with fair %
@@ -262,8 +262,8 @@ class pisaTagTD(pisaTag):
         if begin != end:
             #~ print begin, end
             tdata.add_style(('SPAN', begin, end))
-            for x in xrange(begin[0], end[0] + 1):
-                for y in xrange(begin[1], end[1] + 1):
+            for x in range(begin[0], end[0] + 1):
+                for y in range(begin[1], end[1] + 1):
                     if x != begin[0] or y != begin[1]:
                         tdata.add_empty(x, y)
 

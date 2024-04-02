@@ -16,7 +16,7 @@ cache keys to prevent delivery of wrong content.
 An example: i18n middleware would need to distinguish caches by the
 "Accept-language" header.
 """
-from __future__ import unicode_literals
+
 
 import hashlib
 import re
@@ -74,9 +74,9 @@ def patch_cache_control(response, **kwargs):
     elif 'public' in cc and 'private' in kwargs:
         del cc['public']
 
-    for (k, v) in kwargs.items():
+    for (k, v) in list(kwargs.items()):
         cc[k.replace('_', '-')] = v
-    cc = ', '.join([dictvalue(el) for el in cc.items()])
+    cc = ', '.join([dictvalue(el) for el in list(cc.items())])
     response['Cache-Control'] = cc
 
 def get_max_age(response):

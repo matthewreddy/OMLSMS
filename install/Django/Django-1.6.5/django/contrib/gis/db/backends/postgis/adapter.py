@@ -1,7 +1,7 @@
 """
  This object provides quoting for GEOS geometries into PostgreSQL/PostGIS.
 """
-from __future__ import unicode_literals
+
 
 from psycopg2 import Binary
 from psycopg2.extensions import ISQLQuote

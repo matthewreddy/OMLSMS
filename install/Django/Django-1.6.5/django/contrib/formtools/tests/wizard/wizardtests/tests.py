@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 import os
 
@@ -37,7 +37,7 @@ class WizardTests(object):
         self.assertEqual(wizard['steps'].step1, 1)
         self.assertEqual(wizard['steps'].last, 'form4')
         self.assertEqual(wizard['steps'].prev, None)
-        self.assertEqual(wizard['steps'].next, 'form2')
+        self.assertEqual(wizard['steps'].__next__, 'form2')
         self.assertEqual(wizard['steps'].count, 4)
 
     def test_form_post_error(self):
@@ -55,7 +55,7 @@ class WizardTests(object):
         self.assertEqual(wizard['steps'].current, 'form2')
         self.assertEqual(wizard['steps'].step0, 1)
         self.assertEqual(wizard['steps'].prev, 'form1')
-        self.assertEqual(wizard['steps'].next, 'form3')
+        self.assertEqual(wizard['steps'].__next__, 'form3')
 
     def test_form_stepback(self):
         response = self.client.get(self.wizard_url)

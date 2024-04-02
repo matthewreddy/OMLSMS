@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 from django.core.management.color import no_style
 from django.core.management.sql import (sql_create, sql_delete, sql_indexes,

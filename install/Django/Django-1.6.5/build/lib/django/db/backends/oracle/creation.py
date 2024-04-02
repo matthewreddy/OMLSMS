@@ -69,11 +69,11 @@ class DatabaseCreation(BaseDatabaseCreation):
             except Exception as e:
                 sys.stderr.write("Got an error creating the test database: %s\n" % e)
                 if not autoclobber:
-                    confirm = input("It appears the test database, %s, already exists. Type 'yes' to delete it, or 'no' to cancel: " % TEST_NAME)
+                    confirm = eval(input("It appears the test database, %s, already exists. Type 'yes' to delete it, or 'no' to cancel: " % TEST_NAME))
                 if autoclobber or confirm == 'yes':
                     try:
                         if verbosity >= 1:
-                            print("Destroying old test database '%s'..." % self.connection.alias)
+                            print(("Destroying old test database '%s'..." % self.connection.alias))
                         self._execute_test_db_destruction(cursor, parameters, verbosity)
                         self._execute_test_db_creation(cursor, parameters, verbosity)
                     except Exception as e:
@@ -91,7 +91,7 @@ class DatabaseCreation(BaseDatabaseCreation):
             except Exception as e:
                 sys.stderr.write("Got an error creating the test user: %s\n" % e)
                 if not autoclobber:
-                    confirm = input("It appears the test user, %s, already exists. Type 'yes' to delete it, or 'no' to cancel: " % TEST_USER)
+                    confirm = eval(input("It appears the test user, %s, already exists. Type 'yes' to delete it, or 'no' to cancel: " % TEST_USER))
                 if autoclobber or confirm == 'yes':
                     try:
                         if verbosity >= 1:
@@ -151,7 +151,7 @@ class DatabaseCreation(BaseDatabaseCreation):
 
     def _execute_test_db_creation(self, cursor, parameters, verbosity):
         if verbosity >= 2:
-            print("_create_test_db(): dbname = %s" % parameters['dbname'])
+            print(("_create_test_db(): dbname = %s" % parameters['dbname']))
         statements = [
             """CREATE TABLESPACE %(tblspace)s
                DATAFILE '%(tblspace)s.dbf' SIZE 20M
@@ -166,7 +166,7 @@ class DatabaseCreation(BaseDatabaseCreation):
 
     def _create_test_user(self, cursor, parameters, verbosity):
         if verbosity >= 2:
-            print("_create_test_user(): username = %s" % parameters['user'])
+            print(("_create_test_user(): username = %s" % parameters['user']))
         statements = [
             """CREATE USER %(user)s
                IDENTIFIED BY %(password)s
@@ -180,7 +180,7 @@ class DatabaseCreation(BaseDatabaseCreation):
 
     def _execute_test_db_destruction(self, cursor, parameters, verbosity):
         if verbosity >= 2:
-            print("_execute_test_db_destruction(): dbname=%s" % parameters['dbname'])
+            print(("_execute_test_db_destruction(): dbname=%s" % parameters['dbname']))
         statements = [
             'DROP TABLESPACE %(tblspace)s INCLUDING CONTENTS AND DATAFILES CASCADE CONSTRAINTS',
             'DROP TABLESPACE %(tblspace_temp)s INCLUDING CONTENTS AND DATAFILES CASCADE CONSTRAINTS',
@@ -189,7 +189,7 @@ class DatabaseCreation(BaseDatabaseCreation):
 
     def _destroy_test_user(self, cursor, parameters, verbosity):
         if verbosity >= 2:
-            print("_destroy_test_user(): user=%s" % parameters['user'])
+            print(("_destroy_test_user(): user=%s" % parameters['user']))
             print("Be patient.  This can take some time...")
         statements = [
             'DROP USER %(user)s CASCADE',

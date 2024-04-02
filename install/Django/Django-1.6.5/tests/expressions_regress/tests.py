@@ -1,7 +1,7 @@
 """
 Spanning tests for all the operations that F() expressions can perform.
 """
-from __future__ import absolute_import
+
 
 import datetime
 

@@ -1,6 +1,6 @@
 "Implementation of tzinfo classes for use with datetime.datetime."
 
-from __future__ import unicode_literals
+
 
 import time
 from datetime import timedelta, tzinfo

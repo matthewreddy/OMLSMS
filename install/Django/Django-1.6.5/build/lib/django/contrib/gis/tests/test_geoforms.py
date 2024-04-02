@@ -174,7 +174,7 @@ class SpecializedFieldTest(SimpleTestCase):
         self.assertFalse(invalid.is_valid())
         self.assertTrue('Invalid geometry value' in str(invalid.errors))
 
-        for invalid in [geom for key, geom in self.geometries.items() if key!='point']:
+        for invalid in [geom for key, geom in list(self.geometries.items()) if key!='point']:
             self.assertFalse(PointForm(data={'p': invalid.wkt}).is_valid())
 
     def test_multipointfield(self):
@@ -187,7 +187,7 @@ class SpecializedFieldTest(SimpleTestCase):
         self.assertMapWidget(form)
         self.assertFalse(PointForm().is_valid())
 
-        for invalid in [geom for key, geom in self.geometries.items() if key!='multipoint']:
+        for invalid in [geom for key, geom in list(self.geometries.items()) if key!='multipoint']:
             self.assertFalse(PointForm(data={'p': invalid.wkt}).is_valid())
 
     def test_linestringfield(self):
@@ -200,7 +200,7 @@ class SpecializedFieldTest(SimpleTestCase):
         self.assertMapWidget(form)
         self.assertFalse(LineStringForm().is_valid())
 
-        for invalid in [geom for key, geom in self.geometries.items() if key!='linestring']:
+        for invalid in [geom for key, geom in list(self.geometries.items()) if key!='linestring']:
             self.assertFalse(LineStringForm(data={'p': invalid.wkt}).is_valid())
 
     def test_multilinestringfield(self):
@@ -213,7 +213,7 @@ class SpecializedFieldTest(SimpleTestCase):
         self.assertMapWidget(form)
         self.assertFalse(LineStringForm().is_valid())
 
-        for invalid in [geom for key, geom in self.geometries.items() if key!='multilinestring']:
+        for invalid in [geom for key, geom in list(self.geometries.items()) if key!='multilinestring']:
             self.assertFalse(LineStringForm(data={'p': invalid.wkt}).is_valid())
 
     def test_polygonfield(self):
@@ -226,7 +226,7 @@ class SpecializedFieldTest(SimpleTestCase):
         self.assertMapWidget(form)
         self.assertFalse(PolygonForm().is_valid())
 
-        for invalid in [geom for key, geom in self.geometries.items() if key!='polygon']:
+        for invalid in [geom for key, geom in list(self.geometries.items()) if key!='polygon']:
             self.assertFalse(PolygonForm(data={'p': invalid.wkt}).is_valid())
 
     def test_multipolygonfield(self):
@@ -239,7 +239,7 @@ class SpecializedFieldTest(SimpleTestCase):
         self.assertMapWidget(form)
         self.assertFalse(PolygonForm().is_valid())
 
-        for invalid in [geom for key, geom in self.geometries.items() if key!='multipolygon']:
+        for invalid in [geom for key, geom in list(self.geometries.items()) if key!='multipolygon']:
             self.assertFalse(PolygonForm(data={'p': invalid.wkt}).is_valid())
 
     def test_geometrycollectionfield(self):
@@ -252,7 +252,7 @@ class SpecializedFieldTest(SimpleTestCase):
         self.assertMapWidget(form)
         self.assertFalse(GeometryForm().is_valid())
 
-        for invalid in [geom for key, geom in self.geometries.items() if key!='geometrycollection']:
+        for invalid in [geom for key, geom in list(self.geometries.items()) if key!='geometrycollection']:
             self.assertFalse(GeometryForm(data={'g': invalid.wkt}).is_valid())
 
     def test_osm_widget(self):

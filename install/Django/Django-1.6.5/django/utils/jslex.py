@@ -35,7 +35,7 @@ class Lexer(object):
         self.regexes = {}
         self.toks = {}
 
-        for state, rules in states.items():
+        for state, rules in list(states.items()):
             parts = []
             for tok in rules:
                 groupid = "t%d" % tok.id
@@ -65,8 +65,8 @@ class Lexer(object):
                 start += len(toktext)
                 yield (tok.name, toktext)
 
-                if tok.next:
-                    state = tok.next
+                if tok.__next__:
+                    state = tok.__next__
                     break
 
         self.state = state

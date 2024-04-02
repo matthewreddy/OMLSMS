@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 import datetime
 
@@ -267,7 +267,7 @@ class ProxyDeleteTest(TestCase):
 
     def test_19187_values(self):
         with self.assertRaises(TypeError):
-            Image.objects.values().delete()
+            list(Image.objects.values()).delete()
         with self.assertRaises(TypeError):
             Image.objects.values_list().delete()
 

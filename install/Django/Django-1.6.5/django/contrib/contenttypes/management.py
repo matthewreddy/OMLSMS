@@ -53,7 +53,7 @@ def update_contenttypes(app, created_models, verbosity=2, db=DEFAULT_DB_ALIAS, *
     ContentType.objects.using(db).bulk_create(cts)
     if verbosity >= 2:
         for ct in cts:
-            print("Adding content type '%s | %s'" % (ct.app_label, ct.model))
+            print(("Adding content type '%s | %s'" % (ct.app_label, ct.model)))
 
     # Confirm that the content type is stale before deletion.
     if to_remove:
@@ -62,7 +62,7 @@ def update_contenttypes(app, created_models, verbosity=2, db=DEFAULT_DB_ALIAS, *
                 '    %s | %s' % (ct.app_label, ct.model)
                 for ct in to_remove
             ])
-            ok_to_delete = input("""The following content types are stale and need to be deleted:
+            ok_to_delete = eval(input("""The following content types are stale and need to be deleted:
 
 %s
 
@@ -70,14 +70,14 @@ Any objects related to these content types by a foreign key will also
 be deleted. Are you sure you want to delete these content types?
 If you're unsure, answer 'no'.
 
-    Type 'yes' to continue, or 'no' to cancel: """ % content_type_display)
+    Type 'yes' to continue, or 'no' to cancel: """ % content_type_display))
         else:
             ok_to_delete = False
 
         if ok_to_delete == 'yes':
             for ct in to_remove:
                 if verbosity >= 2:
-                    print("Deleting stale content type '%s | %s'" % (ct.app_label, ct.model))
+                    print(("Deleting stale content type '%s | %s'" % (ct.app_label, ct.model)))
                 ct.delete()
         else:
             if verbosity >= 2:

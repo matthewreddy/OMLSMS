@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 from django.db import connections, router
 from django.db.models import sql
 from django.db.models.query import RawQuerySet
@@ -71,7 +71,7 @@ class RawStoredProcedureQuerySet(RawQuerySet):
                 self._columns = [self.model._meta.pk.db_column] #[x.db_column for x in self.model._meta.fields]
 
             # Adjust any column names which don't match field names
-            for (query_name, model_name) in self.translations.items():
+            for (query_name, model_name) in list(self.translations.items()):
                 try:
                     index = self._columns.index(query_name)
                     self._columns[index] = model_name

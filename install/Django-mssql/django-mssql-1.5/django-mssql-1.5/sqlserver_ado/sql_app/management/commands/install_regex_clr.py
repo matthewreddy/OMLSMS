@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 from django.core.management.base import BaseCommand
 from django.db import connection
 
@@ -15,4 +15,4 @@ class Command(BaseCommand):
             return
 
         connection.creation.install_regex_clr(database_name)
-        print 'Installed regex_clr to database %s' % database_name
+        print('Installed regex_clr to database %s' % database_name)

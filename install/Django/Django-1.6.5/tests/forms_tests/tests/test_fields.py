@@ -24,7 +24,7 @@ Each Field's __init__() takes at least these parameters:
 Other than that, the Field subclasses have class-specific options for
 __init__(). For example, CharField has a max_length option.
 """
-from __future__ import unicode_literals
+
 
 import datetime
 import pickle

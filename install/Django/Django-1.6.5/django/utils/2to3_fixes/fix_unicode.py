@@ -3,7 +3,7 @@
 Uses the django.utils.encoding.python_2_unicode_compatible decorator.
 """
 
-from __future__ import unicode_literals
+
 
 from lib2to3 import fixer_base
 from lib2to3.fixer_util import find_indentation, Name, syms, touch_import

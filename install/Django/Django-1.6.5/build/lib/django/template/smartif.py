@@ -108,7 +108,7 @@ OPERATORS = {
 }
 
 # Assign 'id' to each:
-for key, op in OPERATORS.items():
+for key, op in list(OPERATORS.items()):
     op.id = key
 
 

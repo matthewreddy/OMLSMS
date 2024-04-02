@@ -173,7 +173,7 @@ class BaseTests(object):
             'messages': ['Test message %d' % x for x in range(5)],
         }
         show_url = reverse('django.contrib.messages.tests.urls.show_template_response')
-        for level in self.levels.keys():
+        for level in list(self.levels.keys()):
             add_url = reverse('django.contrib.messages.tests.urls.add_template_response',
                               args=(level,))
             response = self.client.post(add_url, data, follow=True)
@@ -211,13 +211,9 @@ class BaseTests(object):
             self.assertContains(response, msg)
 
     @override_settings(
-        INSTALLED_APPS=filter(
-            lambda app:app!='django.contrib.messages', settings.INSTALLED_APPS),
-        MIDDLEWARE_CLASSES=filter(
-            lambda m:'MessageMiddleware' not in m, settings.MIDDLEWARE_CLASSES),
-        TEMPLATE_CONTEXT_PROCESSORS=filter(
-            lambda p:'context_processors.messages' not in p,
-                 settings.TEMPLATE_CONTEXT_PROCESSORS),
+        INSTALLED_APPS=[app for app in settings.INSTALLED_APPS if app!='django.contrib.messages'],
+        MIDDLEWARE_CLASSES=[m for m in settings.MIDDLEWARE_CLASSES if 'MessageMiddleware' not in m],
+        TEMPLATE_CONTEXT_PROCESSORS=[p for p in settings.TEMPLATE_CONTEXT_PROCESSORS if 'context_processors.messages' not in p],
         MESSAGE_LEVEL=constants.DEBUG
     )
     def test_middleware_disabled(self):
@@ -236,13 +232,9 @@ class BaseTests(object):
                               data, follow=True)
 
     @override_settings(
-        INSTALLED_APPS=filter(
-            lambda app:app!='django.contrib.messages', settings.INSTALLED_APPS),
-        MIDDLEWARE_CLASSES=filter(
-            lambda m:'MessageMiddleware' not in m, settings.MIDDLEWARE_CLASSES),
-        TEMPLATE_CONTEXT_PROCESSORS=filter(
-            lambda p:'context_processors.messages' not in p,
-                 settings.TEMPLATE_CONTEXT_PROCESSORS),
+        INSTALLED_APPS=[app for app in settings.INSTALLED_APPS if app!='django.contrib.messages'],
+        MIDDLEWARE_CLASSES=[m for m in settings.MIDDLEWARE_CLASSES if 'MessageMiddleware' not in m],
+        TEMPLATE_CONTEXT_PROCESSORS=[p for p in settings.TEMPLATE_CONTEXT_PROCESSORS if 'context_processors.messages' not in p],
         MESSAGE_LEVEL=constants.DEBUG
     )
     def test_middleware_disabled_fail_silently(self):

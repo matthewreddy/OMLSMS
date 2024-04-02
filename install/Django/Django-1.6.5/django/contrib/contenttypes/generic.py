@@ -1,7 +1,7 @@
 """
 Classes allowing "generic" relations through ContentType and object-id fields.
 """
-from __future__ import unicode_literals
+
 
 from collections import defaultdict
 from functools import partial
@@ -90,7 +90,7 @@ class GenericForeignKey(six.with_metaclass(RenameGenericForeignKeyMethods)):
                     instance_dict[ct_id] = instance
 
         ret_val = []
-        for ct_id, fkeys in fk_dict.items():
+        for ct_id, fkeys in list(fk_dict.items()):
             instance = instance_dict[ct_id]
             ct = self.get_content_type(id=ct_id, using=instance._state.db)
             ret_val.extend(ct.get_all_objects_for_this_type(pk__in=fkeys))

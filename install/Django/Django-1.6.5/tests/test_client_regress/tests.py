@@ -2,7 +2,7 @@
 """
 Regression tests for the Test Client, especially the customized assertions.
 """
-from __future__ import unicode_literals
+
 
 import os
 
@@ -912,7 +912,7 @@ class ContextTests(TestCase):
         # in every Context without needing to be added.
         self.assertEqual(set(['None', 'True', 'False', 'hello', 'goodbye',
                               'python', 'dolly']),
-                         l.keys())
+                         list(l.keys()))
 
     def test_15368(self):
         # Need to insert a context processor that assumes certain things about

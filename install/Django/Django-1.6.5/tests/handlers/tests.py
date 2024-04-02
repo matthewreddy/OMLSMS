@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+
 
 from django.core.handlers.wsgi import WSGIHandler, WSGIRequest
 from django.core.signals import request_started, request_finished

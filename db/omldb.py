@@ -43,8 +43,8 @@ def main(isTestEnviron, *argv):
     configValues = []
     try:
         configValues = readConfigValues(cwd + "\config.txt")
-    except Exception, e:
-        QMessageBox.critical(None, "Error Reading Configuration File", unicode(e))
+    except Exception as e:
+        QMessageBox.critical(None, "Error Reading Configuration File", str(e))
     else:
         # Django settings
         settings.configure(
@@ -97,8 +97,8 @@ def main(isTestEnviron, *argv):
                 form=MainWindow(configValues, login.loginLineEdit.text(), configValues[USER_INITIALS])
                 form.move(configValues[MAIN_X_POS], configValues[MAIN_Y_POS])
                 form.show()
-            except Exception, e:
-                QMessageBox.critical(None, "Error Initializing Program", unicode(e))
+            except Exception as e:
+                QMessageBox.critical(None, "Error Initializing Program", str(e))
             finally:
                 app.exec_()
 

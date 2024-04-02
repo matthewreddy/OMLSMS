@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
+
 
 from django.conf import settings
 
@@ -423,12 +423,12 @@ class TemplateRegressionTests(TestCase):
             # Simulate that another thread is now rendering.
             # When the IfChangeNode stores state at 'self' it stays at '3' and skip the last yielded value below.
             iter2 = iter([1, 2, 3])
-            output2 = template.render(Context({'foo': range(3), 'get_value': lambda: next(iter2)}))
+            output2 = template.render(Context({'foo': list(range(3)), 'get_value': lambda: next(iter2)}))
             self.assertEqual(output2, '[0,1,2,3]', 'Expected [0,1,2,3] in second parallel template, got {0}'.format(output2))
             yield 3
 
         gen1 = gen()
-        output1 = template.render(Context({'foo': range(3), 'get_value': lambda: next(gen1)}))
+        output1 = template.render(Context({'foo': list(range(3)), 'get_value': lambda: next(gen1)}))
         self.assertEqual(output1, '[0,1,2,3]', 'Expected [0,1,2,3] in first template, got {0}'.format(output1))
 
     def test_cache_regression_20130(self):
@@ -807,13 +807,13 @@ class TemplateTests(TransRealMixin, TestCase):
             'cycle06': ('{% cycle a %}', {}, template.TemplateSyntaxError),
             'cycle07': ('{% cycle a,b,c as foo %}{% cycle bar %}', {}, template.TemplateSyntaxError),
             'cycle08': ('{% cycle a,b,c as foo %}{% cycle foo %}{{ foo }}{{ foo }}{% cycle foo %}{{ foo }}', {}, 'abbbcc'),
-            'cycle09': ("{% for i in test %}{% cycle a,b %}{{ i }},{% endfor %}", {'test': range(5)}, 'a0,b1,a2,b3,a4,'),
+            'cycle09': ("{% for i in test %}{% cycle a,b %}{{ i }},{% endfor %}", {'test': list(range(5))}, 'a0,b1,a2,b3,a4,'),
             'cycle10': ("{% cycle 'a' 'b' 'c' as abc %}{% cycle abc %}", {}, 'ab'),
             'cycle11': ("{% cycle 'a' 'b' 'c' as abc %}{% cycle abc %}{% cycle abc %}", {}, 'abc'),
             'cycle12': ("{% cycle 'a' 'b' 'c' as abc %}{% cycle abc %}{% cycle abc %}{% cycle abc %}", {}, 'abca'),
-            'cycle13': ("{% for i in test %}{% cycle 'a' 'b' %}{{ i }},{% endfor %}", {'test': range(5)}, 'a0,b1,a2,b3,a4,'),
+            'cycle13': ("{% for i in test %}{% cycle 'a' 'b' %}{{ i }},{% endfor %}", {'test': list(range(5))}, 'a0,b1,a2,b3,a4,'),
             'cycle14': ("{% cycle one two as foo %}{% cycle foo %}", {'one': '1','two': '2'}, '12'),
-            'cycle15': ("{% for i in test %}{% cycle aye bee %}{{ i }},{% endfor %}", {'test': range(5), 'aye': 'a', 'bee': 'b'}, 'a0,b1,a2,b3,a4,'),
+            'cycle15': ("{% for i in test %}{% cycle aye bee %}{{ i }},{% endfor %}", {'test': list(range(5)), 'aye': 'a', 'bee': 'b'}, 'a0,b1,a2,b3,a4,'),
             'cycle16': ("{% cycle one|lower two as foo %}{% cycle foo %}", {'one': 'A','two': '2'}, 'a2'),
             'cycle17': ("{% cycle 'a' 'b' 'c' as abc silent %}{% cycle abc %}{% cycle abc %}{% cycle abc %}{% cycle abc %}", {}, ""),
             'cycle18': ("{% cycle 'a' 'b' 'c' as foo invalid_flag %}", {}, template.TemplateSyntaxError),

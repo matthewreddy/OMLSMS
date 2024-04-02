@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 from django.contrib.syndication.views import Feed as BaseFeed
 from django.utils.feedgenerator import Atom1Feed, Rss201rev2Feed

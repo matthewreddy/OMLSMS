@@ -9,7 +9,7 @@ class Update(models.Model):
         db_table = 'update'
         
     def __unicode__(self):
-        return u'Date'
+        return 'Date'
 
 
 class State(models.Model):
@@ -20,7 +20,7 @@ class State(models.Model):
         db_table = 'ref_state'
         
     def __unicode__(self):
-        return u'%s' % (self.abbreviation)
+        return '%s' % (self.abbreviation)
 
 
 class Dentist(models.Model):
@@ -56,7 +56,7 @@ class Dentist(models.Model):
             return self.practice_name
         
     def __unicode__(self):
-        return u'%s %s %s' % (self.practice_name, self.fname, self.lname)
+        return '%s %s %s' % (self.practice_name, self.fname, self.lname)
 
 
 class SterilizerMethod(models.Model):
@@ -68,7 +68,7 @@ class SterilizerMethod(models.Model):
         db_table = 'ref_sterilizer_method'
         
     def __unicode__(self):
-        return u'%s' % (self.name)
+        return '%s' % (self.name)
 
 
 class Sterilizer(models.Model):
@@ -93,7 +93,7 @@ class Sterilizer(models.Model):
         db_table = 'sms_sterilizer'
         
     def __unicode__(self):
-        return u'%d' % (self.id)
+        return '%d' % (self.id)
 
 
 class Vapor(models.Model):
@@ -104,7 +104,7 @@ class Vapor(models.Model):
         db_table = 'ref_vapor'
 
     def __unicode__(self):
-        return u'%s' % (self.name)
+        return '%s' % (self.name)
 
     
 class Lot(models.Model):
@@ -121,7 +121,7 @@ class Lot(models.Model):
         db_table = 'sms_lot'
         
     def __unicode__(self):
-        return u'%d' % (self.id)
+        return '%d' % (self.id)
 
 
 class Renewal(models.Model):
@@ -145,7 +145,7 @@ class Renewal(models.Model):
         db_table = 'sms_renewal'
         
     def __unicode__(self):
-        return u'%d' % (self.id)
+        return '%d' % (self.id)
 
 
 class Test(models.Model):
@@ -165,7 +165,7 @@ class Test(models.Model):
         db_table = 'sms_test'
         
     def __unicode__(self):
-        return u'%d %d' % (self.renewal.id, self.test_num)
+        return '%d %d' % (self.renewal.id, self.test_num)
 
     
 class UserProfile(models.Model):
@@ -190,4 +190,4 @@ class ClientProfile(models.Model):
         db_table = 'client_user'
         
     def __unicode__(self):
-        return u'%s %s' % (self.first_name, self.last_name)
+        return '%s %s' % (self.first_name, self.last_name)

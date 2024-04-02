@@ -2,7 +2,7 @@
 Form classes
 """
 
-from __future__ import absolute_import, unicode_literals
+
 
 import copy
 import warnings
@@ -148,7 +148,7 @@ class BaseForm(object):
         top_errors = self.non_field_errors() # Errors that should be displayed above all fields.
         output, hidden_fields = [], []
 
-        for name, field in self.fields.items():
+        for name, field in list(self.fields.items()):
             html_class_attr = ''
             bf = self[name]
             # Escape and cache in local variable.
@@ -275,7 +275,7 @@ class BaseForm(object):
         self._post_clean()
 
     def _clean_fields(self):
-        for name, field in self.fields.items():
+        for name, field in list(self.fields.items()):
             # value_from_datadict() gets the data from the data dictionaries.
             # Each widget type knows how to retrieve its own data, because some
             # widgets split data over several HTML fields.
@@ -333,7 +333,7 @@ class BaseForm(object):
             # submitted data, but we'd need a way to easily get the string value
             # for a given field. Right now, that logic is embedded in the render
             # method of each widget.
-            for name, field in self.fields.items():
+            for name, field in list(self.fields.items()):
                 prefixed_name = self.add_prefix(name)
                 data_value = field.widget.value_from_datadict(self.data, self.files, prefixed_name)
                 if not field.show_hidden_initial:
@@ -366,7 +366,7 @@ class BaseForm(object):
         Provide a description of all media required to render the widgets on this form
         """
         media = Media()
-        for field in self.fields.values():
+        for field in list(self.fields.values()):
             media = media + field.widget.media
         return media
 
@@ -375,7 +375,7 @@ class BaseForm(object):
         Returns True if the form needs to be multipart-encoded, i.e. it has
         FileInput. Otherwise, False.
         """
-        for field in self.fields.values():
+        for field in list(self.fields.values()):
             if field.widget.needs_multipart_form:
                 return True
         return False

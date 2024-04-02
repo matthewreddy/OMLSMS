@@ -52,12 +52,12 @@ class Command(NoArgsCommand):
                              allow_cascade=allow_cascade)
 
         if interactive:
-            confirm = input("""You have requested a flush of the database.
+            confirm = eval(input("""You have requested a flush of the database.
 This will IRREVERSIBLY DESTROY all data currently in the %r database,
 and return each table to the state it was in after syncdb.
 Are you sure you want to do this?
 
-    Type 'yes' to continue, or 'no' to cancel: """ % connection.settings_dict['NAME'])
+    Type 'yes' to continue, or 'no' to cancel: """ % connection.settings_dict['NAME']))
         else:
             confirm = 'yes'
 

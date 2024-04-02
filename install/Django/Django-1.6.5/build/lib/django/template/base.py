@@ -1,4 +1,4 @@
-from __future__ import absolute_import, unicode_literals
+
 
 import re
 from functools import partial
@@ -1042,7 +1042,7 @@ class TagHelperNode(Node):
         if self.takes_context:
             resolved_args = [context] + resolved_args
         resolved_kwargs = dict((k, v.resolve(context))
-                                for k, v in self.kwargs.items())
+                                for k, v in list(self.kwargs.items()))
         return resolved_args, resolved_kwargs
 
 class Library(object):

@@ -145,7 +145,7 @@ def get_template_dirs():
     dirs = set()
     if ('django.template.loaders.filesystem.load_template_source' in settings.TEMPLATE_LOADERS
         or  'django.template.loaders.filesystem.Loader' in settings.TEMPLATE_LOADERS):
-        dirs.update(map(unicode, settings.TEMPLATE_DIRS))
+        dirs.update(list(map(str, settings.TEMPLATE_DIRS)))
 
     if ('django.template.loaders.app_directories.load_template_source' in settings.TEMPLATE_LOADERS
         or 'django.template.loaders.app_directories.Loader' in settings.TEMPLATE_LOADERS):
@@ -201,7 +201,7 @@ class Template(object):
                 # no token found by form closing tag
                 form_line = 0
 
-        return forms.items()
+        return list(forms.items())
 
     def includes_template(self, t):
         """
@@ -295,8 +295,8 @@ def search_python(python_code, template_name):
     retval = []
     for fn, content in python_code:
         for ln, line in enumerate(content):
-            if ((u'"%s"' % template_name) in line) or \
-               ((u"'%s'" % template_name) in line):
+            if (('"%s"' % template_name) in line) or \
+               (("'%s'" % template_name) in line):
                 retval.append((fn, ln + 1))
     return retval
 
@@ -315,26 +315,26 @@ def main(pythonpaths):
         found = search_python_list(python_code, to_search)
 
         # Display:
-        print(t.absolute_filename)
+        print((t.absolute_filename))
         for r in t.relative_filenames:
-            print("  AKA %s" % r)
-        print("  POST forms: %s" % num_post_forms)
-        print("  With token: %s" % (num_post_forms - len(form_lines_without_token)))
+            print(("  AKA %s" % r))
+        print(("  POST forms: %s" % num_post_forms))
+        print(("  With token: %s" % (num_post_forms - len(form_lines_without_token))))
         if form_lines_without_token:
             print("  Without token:")
             for ln in form_lines_without_token:
-                print("%s:%d:" % (t.absolute_filename, ln))
+                print(("%s:%d:" % (t.absolute_filename, ln)))
         print('')
         print("  Searching for:")
         for r in to_search:
-            print("    " + r)
+            print(("    " + r))
         print('')
         print("  Found:")
         if len(found) == 0:
             print("    Nothing")
         else:
             for fn, ln in found:
-                print("%s:%d:" % (fn, ln))
+                print(("%s:%d:" % (fn, ln)))
 
         print('')
         print("----")

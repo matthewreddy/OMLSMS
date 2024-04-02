@@ -284,7 +284,7 @@ class BaseModelAdmin(six.with_metaclass(RenameBaseModelAdminMethods)):
         # ForeignKeyRawIdWidget, on the basis of ForeignKey.limit_choices_to,
         # are allowed to work.
         for l in model._meta.related_fkey_lookups:
-            for k, v in widgets.url_params_from_lookup_dict(l).items():
+            for k, v in list(widgets.url_params_from_lookup_dict(l).items()):
                 if k == lookup and v == value:
                     return True
 
@@ -668,7 +668,7 @@ class ModelAdmin(BaseModelAdmin):
             actions.extend([self.get_action(action) for action in class_actions])
 
         # get_action might have returned None, so filter any of those out.
-        actions = filter(None, actions)
+        actions = [_f for _f in actions if _f]
 
         # Convert the actions into a SortedDict keyed by name.
         actions = SortedDict([
@@ -838,7 +838,7 @@ class ModelAdmin(BaseModelAdmin):
             try:
                 level = getattr(messages.constants, level.upper())
             except AttributeError:
-                levels = messages.constants.DEFAULT_TAGS.values()
+                levels = list(messages.constants.DEFAULT_TAGS.values())
                 levels_repr = ', '.join('`%s`' % l for l in levels)
                 raise ValueError('Bad message level string: `%s`. '
                         'Possible values are: %s' % (level, levels_repr))
@@ -1135,7 +1135,7 @@ class ModelAdmin(BaseModelAdmin):
         else:
             # Prepare the dict of initial data from the request.
             # We have to special-case M2Ms as a list of comma-separated PKs.
-            initial = dict(request.GET.items())
+            initial = dict(list(request.GET.items()))
             for k in initial:
                 try:
                     f = opts.get_field(k)
@@ -1311,7 +1311,7 @@ class ModelAdmin(BaseModelAdmin):
             # and the 'invalid=1' parameter was already in the query string,
             # something is screwed up with the database, so display an error
             # page.
-            if ERROR_FLAG in request.GET.keys():
+            if ERROR_FLAG in list(request.GET.keys()):
                 return SimpleTemplateResponse('admin/invalid_setup.html', {
                     'title': _('Database error'),
                 })

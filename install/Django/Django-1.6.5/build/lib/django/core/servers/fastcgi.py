@@ -136,7 +136,7 @@ def runfastcgi(argset=[], **kwargs):
         module = importlib.import_module('.%s' % flup_module, 'flup')
         WSGIServer = module.WSGIServer
     except Exception:
-        print("Can't import flup." + flup_module)
+        print(("Can't import flup." + flup_module))
         return False
 
     # Prep up and go

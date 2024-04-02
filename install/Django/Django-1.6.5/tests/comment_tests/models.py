@@ -3,7 +3,7 @@ Comments may be attached to any object. See the comment documentation for
 more information.
 """
 
-from __future__ import unicode_literals
+
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible

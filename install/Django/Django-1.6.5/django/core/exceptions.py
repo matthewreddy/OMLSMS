@@ -93,7 +93,7 @@ class ValidationError(Exception):
     @property
     def message_dict(self):
         message_dict = {}
-        for field, messages in self.error_dict.items():
+        for field, messages in list(self.error_dict.items()):
             message_dict[field] = []
             for message in messages:
                 if isinstance(message, ValidationError):
@@ -105,7 +105,7 @@ class ValidationError(Exception):
     @property
     def messages(self):
         if hasattr(self, 'error_dict'):
-            message_list = reduce(operator.add, self.error_dict.values())
+            message_list = reduce(operator.add, list(self.error_dict.values()))
         else:
             message_list = self.error_list
 
@@ -131,7 +131,7 @@ class ValidationError(Exception):
     def update_error_dict(self, error_dict):
         if hasattr(self, 'error_dict'):
             if error_dict:
-                for k, v in self.error_dict.items():
+                for k, v in list(self.error_dict.items()):
                     error_dict.setdefault(k, []).extend(v)
             else:
                 error_dict = self.error_dict

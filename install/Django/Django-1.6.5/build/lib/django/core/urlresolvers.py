@@ -6,7 +6,7 @@ a string) and returns a tuple in this format:
 
     (view_function, function_args, function_kwargs)
 """
-from __future__ import unicode_literals
+
 
 import functools
 import re
@@ -293,9 +293,9 @@ class RegexURLResolver(LocaleRegexProvider):
                             for piece, p_args in parent:
                                 new_matches.extend([(piece + suffix, p_args + args) for (suffix, args) in matches])
                             lookups.appendlist(name, (new_matches, p_pattern + pat, dict(defaults, **pattern.default_kwargs)))
-                    for namespace, (prefix, sub_pattern) in pattern.namespace_dict.items():
+                    for namespace, (prefix, sub_pattern) in list(pattern.namespace_dict.items()):
                         namespaces[namespace] = (p_pattern + prefix, sub_pattern)
-                    for app_name, namespace_list in pattern.app_dict.items():
+                    for app_name, namespace_list in list(pattern.app_dict.items()):
                         apps.setdefault(app_name, []).extend(namespace_list)
                     self._callback_strs.update(pattern._callback_strs)
             else:
@@ -397,7 +397,7 @@ class RegexURLResolver(LocaleRegexProvider):
         if args and kwargs:
             raise ValueError("Don't mix *args and **kwargs in call to reverse()!")
         text_args = [force_text(v) for v in args]
-        text_kwargs = dict((k, force_text(v)) for (k, v) in kwargs.items())
+        text_kwargs = dict((k, force_text(v)) for (k, v) in list(kwargs.items()))
 
         if not self._populated:
             self._populate()
@@ -415,12 +415,12 @@ class RegexURLResolver(LocaleRegexProvider):
                 if args:
                     if len(args) != len(params) + len(prefix_args):
                         continue
-                    candidate_subs = dict(zip(prefix_args + params, text_args))
+                    candidate_subs = dict(list(zip(prefix_args + params, text_args)))
                 else:
                     if set(kwargs.keys()) | set(defaults.keys()) != set(params) | set(defaults.keys()) | set(prefix_args):
                         continue
                     matches = True
-                    for k, v in defaults.items():
+                    for k, v in list(defaults.items()):
                         if kwargs.get(k, v) != v:
                             matches = False
                             break
@@ -434,7 +434,7 @@ class RegexURLResolver(LocaleRegexProvider):
                 # arguments in order to return a properly encoded URL.
                 candidate_pat = prefix_norm.replace('%', '%%') + result
                 if re.search('^%s%s' % (prefix_norm, pattern), candidate_pat % candidate_subs, re.UNICODE):
-                    candidate_subs = dict((k, urlquote(v)) for (k, v) in candidate_subs.items())
+                    candidate_subs = dict((k, urlquote(v)) for (k, v) in list(candidate_subs.items()))
                     return candidate_pat % candidate_subs
         # lookup_view can be URL label, or dotted path, or callable, Any of
         # these can be passed in at the top, but callables are not friendly in

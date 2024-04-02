@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.utils import unittest
 from django.utils.encoding import force_bytes, filepath_to_uri, python_2_unicode_compatible

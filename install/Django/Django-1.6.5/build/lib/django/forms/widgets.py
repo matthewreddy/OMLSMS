@@ -2,7 +2,7 @@
 HTML Widget classes
 """
 
-from __future__ import absolute_import, unicode_literals
+
 
 import copy
 from itertools import chain
@@ -91,7 +91,7 @@ class Media(object):
 
     def add_css(self, data):
         if data:
-            for medium, paths in data.items():
+            for medium, paths in list(data.items()):
                 for path in paths:
                     if not self._css.get(medium) or path not in self._css[medium]:
                         self._css.setdefault(medium, []).append(path)

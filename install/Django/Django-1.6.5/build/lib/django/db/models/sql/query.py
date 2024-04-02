@@ -197,7 +197,7 @@ class Query(object):
             connection = connections[using]
 
         # Check that the compiler will be able to execute the query
-        for alias, aggregate in self.aggregate_select.items():
+        for alias, aggregate in list(self.aggregate_select.items()):
             connection.ops.check_aggregate_support(aggregate)
 
         return connection.ops.compiler(self.compiler)(self, connection, using)
@@ -328,7 +328,7 @@ class Query(object):
 
             # Remove any aggregates marked for reduction from the subquery
             # and move them to the outer AggregateQuery.
-            for alias, aggregate in self.aggregate_select.items():
+            for alias, aggregate in list(self.aggregate_select.items()):
                 if aggregate.is_summary:
                     query.aggregate_select[alias] = aggregate
                     del obj.aggregate_select[alias]
@@ -355,12 +355,12 @@ class Query(object):
 
         result = query.get_compiler(using).execute_sql(SINGLE)
         if result is None:
-            result = [None for q in query.aggregate_select.items()]
+            result = [None for q in list(query.aggregate_select.items())]
 
         return dict([
             (alias, self.resolve_aggregate(val, aggregate, connection=connections[using]))
             for (alias, aggregate), val
-            in zip(query.aggregate_select.items(), result)
+            in zip(list(query.aggregate_select.items()), result)
         ])
 
     def get_count(self, using):
@@ -696,7 +696,7 @@ class Query(object):
                 # Join type of 'alias' changed, so re-examine all aliases that
                 # refer to this one.
                 aliases.extend(
-                    join for join in self.alias_map.keys()
+                    join for join in list(self.alias_map.keys())
                     if (self.alias_map[join].lhs_alias == alias
                         and join not in aliases))
 
@@ -705,7 +705,7 @@ class Query(object):
         This method will reset reference counts for aliases so that they match
         the value passed in :param to_counts:.
         """
-        for alias, cur_refcount in self.alias_refcount.copy().items():
+        for alias, cur_refcount in list(self.alias_refcount.copy().items()):
             unref_amount = cur_refcount - to_counts.get(alias, 0)
             self.unref_alias(alias, unref_amount)
 
@@ -718,7 +718,7 @@ class Query(object):
         alias_usage_counts), is not used by every child of the ORed filter,
         and isn't pre-existing needs to be promoted to LOUTER join.
         """
-        for alias, use_count in alias_usage_counts.items():
+        for alias, use_count in list(alias_usage_counts.items()):
             if use_count < num_childs and alias not in aliases_before:
                 self.promote_joins([alias])
 
@@ -745,10 +745,10 @@ class Query(object):
         self.select = [SelectInfo(relabel_column(s.col), s.field)
                        for s in self.select]
         self.aggregates = SortedDict(
-            (key, relabel_column(col)) for key, col in self.aggregates.items())
+            (key, relabel_column(col)) for key, col in list(self.aggregates.items()))
 
         # 2. Rename the alias in the internal table/alias datastructures.
-        for ident, aliases in self.join_map.items():
+        for ident, aliases in list(self.join_map.items()):
             del self.join_map[ident]
             aliases = tuple([change_map.get(a, a) for a in aliases])
             ident = (change_map.get(ident[0], ident[0]),) + ident[1:]
@@ -770,7 +770,7 @@ class Query(object):
                 if alias == old_alias:
                     self.tables[pos] = new_alias
                     break
-        for key, alias in self.included_inherited_models.items():
+        for key, alias in list(self.included_inherited_models.items()):
             if alias in change_map:
                 self.included_inherited_models[key] = change_map[alias]
 
@@ -828,7 +828,7 @@ class Query(object):
         count. Note that after execution, the reference counts are zeroed, so
         tables added in compiler will not be seen by this method.
         """
-        return len([1 for count in self.alias_refcount.values() if count])
+        return len([1 for count in list(self.alias_refcount.values()) if count])
 
     def join(self, connection, reuse=None, outer_if_first=False,
              nullable=False, join_field=None):
@@ -953,7 +953,7 @@ class Query(object):
         Undoes the effects of setup_inherited_models(). Should be called
         whenever select columns (self.select) are set explicitly.
         """
-        for key, alias in self.included_inherited_models.items():
+        for key, alias in list(self.included_inherited_models.items()):
             if key:
                 self.unref_alias(alias)
         self.included_inherited_models = {}
@@ -1088,7 +1088,7 @@ class Query(object):
             value = True
             lookup_type = 'isnull'
 
-        for alias, aggregate in self.aggregates.items():
+        for alias, aggregate in list(self.aggregates.items()):
             if alias in (parts[0], LOOKUP_SEP.join(parts)):
                 clause.add((aggregate, lookup_type, value), AND)
                 return clause
@@ -1668,7 +1668,7 @@ class Query(object):
                 param_iter = iter(select_params)
             else:
                 param_iter = iter([])
-            for name, entry in select.items():
+            for name, entry in list(select.items()):
                 entry = force_text(entry)
                 entry_params = []
                 pos = entry.find("%s")
@@ -1790,7 +1790,7 @@ class Query(object):
             return self._aggregate_select_cache
         elif self.aggregate_select_mask is not None:
             self._aggregate_select_cache = SortedDict([
-                (k,v) for k,v in self.aggregates.items()
+                (k,v) for k,v in list(self.aggregates.items())
                 if k in self.aggregate_select_mask
             ])
             return self._aggregate_select_cache
@@ -1803,7 +1803,7 @@ class Query(object):
             return self._extra_select_cache
         elif self.extra_select_mask is not None:
             self._extra_select_cache = SortedDict([
-                (k,v) for k,v in self.extra.items()
+                (k,v) for k,v in list(self.extra.items())
                 if k in self.extra_select_mask
             ])
             return self._extra_select_cache

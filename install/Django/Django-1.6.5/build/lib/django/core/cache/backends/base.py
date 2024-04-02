@@ -1,5 +1,5 @@
 "Base Cache class."
-from __future__ import unicode_literals
+
 
 import warnings
 
@@ -165,7 +165,7 @@ class BaseCache(object):
         # This is a separate method, rather than just a copy of has_key(),
         # so that it always has the same functionality as has_key(), even
         # if a subclass overrides it.
-        return self.has_key(key)
+        return key in self
 
     def set_many(self, data, timeout=DEFAULT_TIMEOUT, version=None):
         """
@@ -176,7 +176,7 @@ class BaseCache(object):
         If timeout is given, that timeout will be used for the key; otherwise
         the default cache timeout will be used.
         """
-        for key, value in data.items():
+        for key, value in list(data.items()):
             self.set(key, value, timeout=timeout, version=version)
 
     def delete_many(self, keys, version=None):

@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 from django.contrib.gis.geos import HAS_GEOS
 from django.contrib.gis.tests.utils import HAS_SPATIAL_DB

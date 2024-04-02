@@ -1,4 +1,4 @@
-from __future__ import absolute_import, unicode_literals
+
 
 import datetime
 
@@ -186,7 +186,7 @@ class ExtraRegressTests(TestCase):
 
         # Extra clauses after an empty values clause are still included
         self.assertEqual(
-            list(TestObject.objects.values().extra(select=SortedDict((('foo','first'), ('bar','second'), ('whiz','third'))))),
+            list(list(TestObject.objects.values()).extra(select=SortedDict((('foo','first'), ('bar','second'), ('whiz','third'))))),
             [{'bar': 'second', 'third': 'third', 'second': 'second', 'whiz': 'third', 'foo': 'first', 'id': obj.pk, 'first': 'first'}]
         )
 

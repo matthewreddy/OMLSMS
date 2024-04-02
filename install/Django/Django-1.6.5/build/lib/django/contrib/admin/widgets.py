@@ -1,7 +1,7 @@
 """
 Form Widget classes specific to the Django admin site.
 """
-from __future__ import unicode_literals
+
 
 import copy
 
@@ -115,7 +115,7 @@ def url_params_from_lookup_dict(lookups):
     params = {}
     if lookups and hasattr(lookups, 'items'):
         items = []
-        for k, v in lookups.items():
+        for k, v in list(lookups.items()):
             if callable(v):
                 v = v()
             if isinstance(v, (tuple, list)):
@@ -154,7 +154,7 @@ class ForeignKeyRawIdWidget(forms.TextInput):
 
             params = self.url_parameters()
             if params:
-                url = '?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in params.items()])
+                url = '?' + '&amp;'.join(['%s=%s' % (k, v) for k, v in list(params.items())])
             else:
                 url = ''
             if "class" not in attrs:

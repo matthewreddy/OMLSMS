@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 from operator import attrgetter
 
@@ -132,7 +132,7 @@ class BulkCreateTests(TestCase):
         self.assertEqual(TwoFields.objects.count(), 1000)
         # We can't assume much about the ID's created, except that the above
         # created IDs must exist.
-        id_range = range(100000, 101000, 2)
+        id_range = list(range(100000, 101000, 2))
         self.assertEqual(TwoFields.objects.filter(id__in=id_range).count(), 500)
         self.assertEqual(TwoFields.objects.exclude(id__in=id_range).count(), 500)
 

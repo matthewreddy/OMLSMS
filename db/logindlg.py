@@ -76,7 +76,7 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
             updateDatabase()
             self.statusLabel.setText("Performing database maintenance...")
             QCoreApplication.instance().processEvents()
-        except Exception, e:
+        except Exception as e:
             self.statusLabel.setText("Error connecting to database.")
             QCoreApplication.instance().processEvents()
         else:

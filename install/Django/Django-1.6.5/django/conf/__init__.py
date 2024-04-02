@@ -88,7 +88,7 @@ class LazySettings(LazyObject):
         if self._wrapped is not empty:
             raise RuntimeError('Settings already configured.')
         holder = UserSettingsHolder(default_settings)
-        for name, value in options.items():
+        for name, value in list(options.items()):
             setattr(holder, name, value)
         self._wrapped = holder
         self._configure_logging()

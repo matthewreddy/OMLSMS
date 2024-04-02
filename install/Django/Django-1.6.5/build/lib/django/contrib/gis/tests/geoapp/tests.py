@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 import re
 
@@ -669,9 +669,9 @@ class GeoQuerySetTest(TestCase):
     def test_snap_to_grid(self):
         "Testing GeoQuerySet.snap_to_grid()."
         # Let's try and break snap_to_grid() with bad combinations of arguments.
-        for bad_args in ((), range(3), range(5)):
+        for bad_args in ((), list(range(3)), list(range(5))):
             self.assertRaises(ValueError, Country.objects.snap_to_grid, *bad_args)
-        for bad_args in (('1.0',), (1.0, None), tuple(map(six.text_type, range(4)))):
+        for bad_args in (('1.0',), (1.0, None), tuple(map(six.text_type, list(range(4))))):
             self.assertRaises(TypeError, Country.objects.snap_to_grid, *bad_args)
 
         # Boundary for San Marino, courtesy of Bjorn Sandvik of thematicmapping.org

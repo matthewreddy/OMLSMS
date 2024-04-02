@@ -1,5 +1,5 @@
 """Default variable filters."""
-from __future__ import unicode_literals
+
 
 import re
 import random as random_module
@@ -506,7 +506,7 @@ def join(value, arg, autoescape=None):
     """
     Joins a list with a string, like Python's ``str.join(list)``.
     """
-    value = map(force_text, value)
+    value = list(map(force_text, value))
     if autoescape:
         value = [conditional_escape(v) for v in value]
     try:

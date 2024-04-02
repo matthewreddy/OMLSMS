@@ -307,7 +307,7 @@ class WizardView(TemplateView):
         """
         # get the form instance based on the data from the storage backend
         # (if available).
-        next_step = self.steps.next
+        next_step = self.steps.__next__
         new_form = self.get_form(next_step,
             data=self.storage.get_step_data(next_step),
             files=self.storage.get_step_files(next_step))

@@ -1,4 +1,4 @@
-from __future__ import absolute_import,unicode_literals
+
 
 import datetime
 from operator import attrgetter
@@ -113,7 +113,7 @@ class Queries1Tests(BaseQuerysetTest):
     def test_ticket2306(self):
         # Checking that no join types are "left outer" joins.
         query = Item.objects.filter(tags=self.t2).query
-        self.assertTrue(query.LOUTER not in [x[2] for x in query.alias_map.values()])
+        self.assertTrue(query.LOUTER not in [x[2] for x in list(query.alias_map.values())])
 
         self.assertQuerysetEqual(
             Item.objects.filter(Q(tags=self.t1)).order_by('name'),
@@ -321,7 +321,7 @@ class Queries1Tests(BaseQuerysetTest):
 
         # Excluding from a relation that cannot be NULL should not use outer joins.
         query = Item.objects.exclude(creator__in=[self.a1, self.a2]).query
-        self.assertTrue(query.LOUTER not in [x[2] for x in query.alias_map.values()])
+        self.assertTrue(query.LOUTER not in [x[2] for x in list(query.alias_map.values())])
 
         # Similarly, when one of the joins cannot possibly, ever, involve NULL
         # values (Author -> ExtraInfo, in the following), it should never be
@@ -329,7 +329,7 @@ class Queries1Tests(BaseQuerysetTest):
         # involve one "left outer" join (Author -> Item is 0-to-many).
         qs = Author.objects.filter(id=self.a1.id).filter(Q(extra__note=self.n1)|Q(item__note=self.n3))
         self.assertEqual(
-            len([x[2] for x in qs.query.alias_map.values() if x[2] == query.LOUTER and qs.query.alias_refcount[x[1]]]),
+            len([x[2] for x in list(qs.query.alias_map.values()) if x[2] == query.LOUTER and qs.query.alias_refcount[x[1]]]),
             1
         )
 
@@ -486,7 +486,7 @@ class Queries1Tests(BaseQuerysetTest):
         # actually allow both "foo" and "foo_id".
 
         # The *_id version is returned by default.
-        self.assertTrue('note_id' in ExtraInfo.objects.values()[0])
+        self.assertTrue('note_id' in list(ExtraInfo.objects.values())[0])
 
         # You can also pass it in explicitly.
         self.assertValueQuerysetEqual(
@@ -508,7 +508,7 @@ class Queries1Tests(BaseQuerysetTest):
         # normal. A normal dict would thus fail.)
         s = [('a', '%s'), ('b', '%s')]
         params = ['one', 'two']
-        if {'a': 1, 'b': 2}.keys() == ['a', 'b']:
+        if list({'a': 1, 'b': 2}.keys()) == ['a', 'b']:
             s.reverse()
             params.reverse()
 
@@ -838,7 +838,7 @@ class Queries1Tests(BaseQuerysetTest):
         )
         q = Note.objects.filter(Q(extrainfo__author=self.a1)|Q(extrainfo=xx)).query
         self.assertEqual(
-            len([x[2] for x in q.alias_map.values() if x[2] == q.LOUTER and q.alias_refcount[x[1]]]),
+            len([x[2] for x in list(q.alias_map.values()) if x[2] == q.LOUTER and q.alias_refcount[x[1]]]),
             1
         )
 
@@ -1547,7 +1547,7 @@ class Queries5Tests(TestCase):
         # An empty values() call includes all aliases, including those from an
         # extra()
         qs = Ranking.objects.extra(select={'good': 'case when rank > 2 then 1 else 0 end'})
-        dicts = qs.values().order_by('id')
+        dicts = list(qs.values()).order_by('id')
         for d in dicts: del d['id']; del d['author_id']
         self.assertEqual(
             [sorted(d.items()) for d in dicts],
@@ -2009,7 +2009,7 @@ class EmptyQuerySetTests(TestCase):
         # #19151 -- Calling .values() or .values_list() on an empty QuerySet
         # should return an empty QuerySet and not cause an error.
         q = Author.objects.none()
-        self.assertQuerysetEqual(q.values(), [])
+        self.assertQuerysetEqual(list(q.values()), [])
         self.assertQuerysetEqual(q.values_list(), [])
 
 
@@ -2239,7 +2239,7 @@ class ConditionalTests(BaseQuerysetTest):
         # Test that the "in" lookup works with lists of 1000 items or more.
         # The numbers amount is picked to force three different IN batches
         # for Oracle, yet to be less than 2100 parameter limit for MSSQL.
-        numbers = range(2050)
+        numbers = list(range(2050))
         Number.objects.all().delete()
         Number.objects.bulk_create(Number(num=num) for num in numbers)
         self.assertEqual(
@@ -2286,8 +2286,8 @@ class UnionTests(unittest.TestCase):
 
     def check_union(self, model, Q1, Q2):
         filter = model.objects.filter
-        self.assertEqual(set(filter(Q1) | filter(Q2)), set(filter(Q1 | Q2)))
-        self.assertEqual(set(filter(Q2) | filter(Q1)), set(filter(Q1 | Q2)))
+        self.assertEqual(set(list(filter(Q1)) | list(filter(Q2))), set(filter(Q1 | Q2)))
+        self.assertEqual(set(list(filter(Q2)) | list(filter(Q1))), set(filter(Q1 | Q2)))
 
     def test_A_AB(self):
         Q1 = Q(name='two')

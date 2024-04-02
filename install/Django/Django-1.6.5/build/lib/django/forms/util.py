@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 from django.conf import settings
 from django.utils.html import format_html, format_html_join
@@ -38,11 +38,11 @@ class ErrorDict(dict):
         return format_html('<ul class="errorlist">{0}</ul>',
                            format_html_join('', '<li>{0}{1}</li>',
                                             ((k, force_text(v))
-                                             for k, v in self.items())
+                                             for k, v in list(self.items()))
                            ))
 
     def as_text(self):
-        return '\n'.join(['* %s\n%s' % (k, '\n'.join(['  * %s' % force_text(i) for i in v])) for k, v in self.items()])
+        return '\n'.join(['* %s\n%s' % (k, '\n'.join(['  * %s' % force_text(i) for i in v])) for k, v in list(self.items())])
 
 @python_2_unicode_compatible
 class ErrorList(list):

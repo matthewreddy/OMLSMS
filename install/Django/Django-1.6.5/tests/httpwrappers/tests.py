@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 import copy
 import os
@@ -47,7 +47,7 @@ class QueryDictTests(unittest.TestCase):
         q = QueryDict(str(''))
         self.assertEqual(q.getlist('foo'), [])
         if six.PY2:
-            self.assertEqual(q.has_key('foo'), False)
+            self.assertEqual('foo' in q, False)
         self.assertEqual('foo' in q, False)
         self.assertEqual(list(six.iteritems(q)), [])
         self.assertEqual(list(six.iterlists(q)), [])
@@ -73,10 +73,10 @@ class QueryDictTests(unittest.TestCase):
         self.assertRaises(AttributeError, q.appendlist, 'foo', ['bar'])
 
         if six.PY2:
-            self.assertTrue(q.has_key('foo'))
+            self.assertTrue('foo' in q)
         self.assertTrue('foo' in q)
         if six.PY2:
-            self.assertFalse(q.has_key('bar'))
+            self.assertFalse('bar' in q)
         self.assertFalse('bar' in q)
 
         self.assertEqual(list(six.iteritems(q)), [('foo', 'bar')])
@@ -132,7 +132,7 @@ class QueryDictTests(unittest.TestCase):
         self.assertEqual(q.getlist('foo'), ['bar', 'baz', 'another'])
         self.assertEqual(q['foo'], 'another')
         if six.PY2:
-            self.assertTrue(q.has_key('foo'))
+            self.assertTrue('foo' in q)
         self.assertTrue('foo' in q)
 
         self.assertListEqual(sorted(list(six.iteritems(q))),
@@ -177,10 +177,10 @@ class QueryDictTests(unittest.TestCase):
         self.assertRaises(AttributeError, q.appendlist, 'foo', ['bar'])
 
         if six.PY2:
-            self.assertEqual(q.has_key('vote'), True)
+            self.assertEqual('vote' in q, True)
         self.assertEqual('vote' in q, True)
         if six.PY2:
-            self.assertEqual(q.has_key('foo'), False)
+            self.assertEqual('foo' in q, False)
         self.assertEqual('foo' in q, False)
         self.assertEqual(list(six.iteritems(q)), [('vote', 'no')])
         self.assertEqual(list(six.iterlists(q)), [('vote', ['yes', 'no'])])
@@ -606,13 +606,13 @@ class CookieTests(unittest.TestCase):
         """
         Test that a single non-standard cookie name doesn't affect all cookies. Ticket #13007.
         """
-        self.assertTrue('good_cookie' in parse_cookie('good_cookie=yes;bad:cookie=yes').keys())
+        self.assertTrue('good_cookie' in list(parse_cookie('good_cookie=yes;bad:cookie=yes').keys()))
 
     def test_repeated_nonstandard_keys(self):
         """
         Test that a repeated non-standard name doesn't affect all cookies. Ticket #15852
         """
-        self.assertTrue('good_cookie' in parse_cookie('a:=b; a:=c; good_cookie=yes').keys())
+        self.assertTrue('good_cookie' in list(parse_cookie('a:=b; a:=c; good_cookie=yes').keys()))
 
     def test_httponly_after_load(self):
         """

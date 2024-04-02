@@ -81,14 +81,14 @@ class Command(NoArgsCommand):
             for app_name, model_list in all_models
         )
 
-        create_models = set([x for x in itertools.chain(*manifest.values())])
+        create_models = set([x for x in itertools.chain(*list(manifest.values()))])
         emit_pre_sync_signal(create_models, verbosity, interactive, db)
 
         # Create the tables for each model
         if verbosity >= 1:
             self.stdout.write("Creating tables ...\n")
         with transaction.commit_on_success_unless_managed(using=db):
-            for app_name, model_list in manifest.items():
+            for app_name, model_list in list(manifest.items()):
                 for model in model_list:
                     # Create the model's database table, if it doesn't already exist.
                     if verbosity >= 3:
@@ -96,7 +96,7 @@ class Command(NoArgsCommand):
                     sql, references = connection.creation.sql_create_model(model, self.style, seen_models)
                     seen_models.add(model)
                     created_models.add(model)
-                    for refto, refs in references.items():
+                    for refto, refs in list(references.items()):
                         pending_references.setdefault(refto, []).extend(refs)
                         if refto in seen_models:
                             sql.extend(connection.creation.sql_for_pending_references(refto, self.style, pending_references))
@@ -118,7 +118,7 @@ class Command(NoArgsCommand):
         # is a model we've just created)
         if verbosity >= 1:
             self.stdout.write("Installing custom SQL ...\n")
-        for app_name, model_list in manifest.items():
+        for app_name, model_list in list(manifest.items()):
             for model in model_list:
                 if model in created_models:
                     custom_sql = custom_sql_for_model(model, self.style, connection)
@@ -141,7 +141,7 @@ class Command(NoArgsCommand):
         if verbosity >= 1:
             self.stdout.write("Installing indexes ...\n")
         # Install SQL indices for all newly created models
-        for app_name, model_list in manifest.items():
+        for app_name, model_list in list(manifest.items()):
             for model in model_list:
                 if model in created_models:
                     index_sql = connection.creation.sql_indexes_for_model(model, self.style)

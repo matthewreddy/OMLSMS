@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 from django.db import models
 from django.utils import six
@@ -20,6 +20,5 @@ class MyModel(six.with_metaclass(CustomBaseModel, models.Model)):
 # still does not fail to create the model.
 
 if six.PY2:
-    class MyModel(models.Model):
+    class MyModel(models.Model, metaclass=CustomBaseModel):
         """Model subclass with a custom base using __metaclass__."""
-        __metaclass__ = CustomBaseModel

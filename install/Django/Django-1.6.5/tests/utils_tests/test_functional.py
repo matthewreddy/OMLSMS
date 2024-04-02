@@ -5,7 +5,7 @@ from django.utils.functional import lazy, lazy_property, cached_property
 class FunctionalTestCase(unittest.TestCase):
     def test_lazy(self):
         t = lazy(lambda: tuple(range(3)), list, tuple)
-        for a, b in zip(t(), range(3)):
+        for a, b in zip(t(), list(range(3))):
             self.assertEqual(a, b)
 
     def test_lazy_base_class(self):

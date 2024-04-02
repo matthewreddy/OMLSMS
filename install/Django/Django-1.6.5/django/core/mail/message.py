@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 import mimetypes
 import os
@@ -252,7 +252,7 @@ class EmailMessage(object):
             msg['Date'] = formatdate()
         if 'message-id' not in header_names:
             msg['Message-ID'] = make_msgid()
-        for name, value in self.extra_headers.items():
+        for name, value in list(self.extra_headers.items()):
             if name.lower() in ('from', 'to'):  # From and To are already handled
                 continue
             msg[name] = value

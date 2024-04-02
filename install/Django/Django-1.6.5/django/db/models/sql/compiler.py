@@ -233,7 +233,7 @@ class SQLCompiler(object):
             aliases.update(new_aliases)
 
         max_name_length = self.connection.ops.max_name_length()
-        for alias, aggregate in self.query.aggregate_select.items():
+        for alias, aggregate in list(self.query.aggregate_select.items()):
             agg_sql, agg_params = aggregate.as_sql(qn, self.connection)
             if alias is None:
                 result.append(agg_sql)
@@ -497,7 +497,7 @@ class SQLCompiler(object):
         if alias:
             while 1:
                 join = self.query.alias_map[alias]
-                lhs_cols, rhs_cols = zip(*[(lhs_col, rhs_col) for lhs_col, rhs_col in join.join_cols])
+                lhs_cols, rhs_cols = list(zip(*[(lhs_col, rhs_col) for lhs_col, rhs_col in join.join_cols]))
                 if set(cols) != set(rhs_cols):
                     break
 
@@ -608,7 +608,7 @@ class SQLCompiler(object):
                         seen.add(order)
 
             # Unconditionally add the extra_select items.
-            for extra_select, extra_params in self.query.extra_select.values():
+            for extra_select, extra_params in list(self.query.extra_select.values()):
                 sql = '(%s)' % str(extra_select)
                 result.append(sql)
                 params.extend(extra_params)
@@ -754,7 +754,7 @@ class SQLCompiler(object):
                     row = tuple(row[:aggregate_start]) + tuple([
                         self.query.resolve_aggregate(value, aggregate, self.connection)
                         for (alias, aggregate), value
-                        in zip(self.query.aggregate_select.items(), row[aggregate_start:aggregate_end])
+                        in zip(list(self.query.aggregate_select.items()), row[aggregate_start:aggregate_end])
                     ]) + tuple(row[aggregate_end:])
 
                 yield row
@@ -1048,7 +1048,7 @@ class SQLAggregateCompiler(SQLCompiler):
             qn = self.quote_name_unless_alias
 
         sql, params = [], []
-        for aggregate in self.query.aggregate_select.values():
+        for aggregate in list(self.query.aggregate_select.values()):
             agg_sql, agg_params = aggregate.as_sql(qn, self.connection)
             sql.append(agg_sql)
             params.extend(agg_params)

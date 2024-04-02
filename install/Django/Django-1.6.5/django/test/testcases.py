@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 from copy import copy
 import difflib
@@ -605,11 +605,11 @@ class SimpleTestCase(ut2.TestCase):
         optional = fieldclass(*field_args,
                               **dict(field_kwargs, required=False))
         # test valid inputs
-        for input, output in valid.items():
+        for input, output in list(valid.items()):
             self.assertEqual(required.clean(input), output)
             self.assertEqual(optional.clean(input), output)
         # test invalid inputs
-        for input, errors in invalid.items():
+        for input, errors in list(invalid.items()):
             with self.assertRaises(ValidationError) as context_manager:
                 required.clean(input)
             self.assertEqual(context_manager.exception.messages, errors)
@@ -1077,7 +1077,7 @@ class LiveServerThread(threading.Thread):
         if self.connections_override:
             # Override this thread's database connections with the ones
             # provided by the main thread.
-            for alias, conn in self.connections_override.items():
+            for alias, conn in list(self.connections_override.items()):
                 connections[alias] = conn
         try:
             # Create the handler for serving static and media files

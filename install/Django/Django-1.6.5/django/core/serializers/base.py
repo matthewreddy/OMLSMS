@@ -163,7 +163,7 @@ class DeserializedObject(object):
         # raw=True is passed to any pre/post_save signals.
         models.Model.save_base(self.object, using=using, raw=True)
         if self.m2m_data and save_m2m:
-            for accessor_name, object_list in self.m2m_data.items():
+            for accessor_name, object_list in list(self.m2m_data.items()):
                 setattr(self.object, accessor_name, object_list)
 
         # prevent a second (possibly accidental) call to save() from saving

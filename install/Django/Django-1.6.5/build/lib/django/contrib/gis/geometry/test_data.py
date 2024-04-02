@@ -41,7 +41,7 @@ class TestObj(object):
     Base testing object, turns keyword args into attributes.
     """
     def __init__(self, **kwargs):
-        for key, value in kwargs.items():
+        for key, value in list(kwargs.items()):
             setattr(self, key, value)
 
 
@@ -86,7 +86,7 @@ class TestGeomSet(object):
     Each attribute of this object is a list of `TestGeom` instances.
     """
     def __init__(self, **kwargs):
-        for key, value in kwargs.items():
+        for key, value in list(kwargs.items()):
             setattr(self, key, [TestGeom(**strconvert(kw)) for kw in value])
 
 

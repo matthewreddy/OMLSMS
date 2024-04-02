@@ -1,7 +1,7 @@
 """
 Tests for geography support in PostGIS 1.5+
 """
-from __future__ import absolute_import
+
 
 import os
 

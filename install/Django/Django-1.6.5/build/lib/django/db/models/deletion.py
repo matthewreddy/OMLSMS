@@ -128,7 +128,7 @@ class Collector(object):
         # The use of from_field comes from the need to avoid cascade back to
         # parent when parent delete is cascading to child.
         opts = model._meta
-        if any(link != from_field for link in opts.concrete_model._meta.parents.values()):
+        if any(link != from_field for link in list(opts.concrete_model._meta.parents.values())):
             return False
         # Foreign keys pointing to this model, both from m2m and other
         # models.
@@ -239,7 +239,7 @@ class Collector(object):
 
     def delete(self):
         # sort instance collections
-        for model, instances in self.data.items():
+        for model, instances in list(self.data.items()):
             self.data[model] = sorted(instances, key=attrgetter("pk"))
 
         # if possible, bring the models in an order suitable for databases that

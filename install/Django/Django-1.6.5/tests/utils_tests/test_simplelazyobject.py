@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 import copy
 import pickle
@@ -182,7 +182,7 @@ class TestUtilsSimpleLazyObjectDjangoTestCase(DjangoTestCase):
         pickled = pickle.dumps(x, 2)
 
         if six.PY2:
-            import cPickle
+            import pickle
 
             # This would fail with "TypeError: expected string or Unicode object, NoneType found".
-            pickled = cPickle.dumps(x)
+            pickled = pickle.dumps(x)

@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 import sys
 
 if sys.version_info >= (2,7):

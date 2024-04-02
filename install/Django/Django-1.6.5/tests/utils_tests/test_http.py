@@ -72,12 +72,12 @@ class TestUtilsHttp(unittest.TestCase):
         for n in [0, 1, 1000, 1000000]:
             self.assertEqual(n, http.base36_to_int(http.int_to_base36(n)))
         if six.PY2:
-            self.assertEqual(sys.maxint, http.base36_to_int(http.int_to_base36(sys.maxint)))
+            self.assertEqual(sys.maxsize, http.base36_to_int(http.int_to_base36(sys.maxsize)))
 
         # bad input
         self.assertRaises(ValueError, http.int_to_base36, -1)
         if six.PY2:
-            self.assertRaises(ValueError, http.int_to_base36, sys.maxint + 1)
+            self.assertRaises(ValueError, http.int_to_base36, sys.maxsize + 1)
         for n in ['1', 'foo', {1: 2}, (1, 2, 3), 3.141]:
             self.assertRaises(TypeError, http.int_to_base36, n)
 

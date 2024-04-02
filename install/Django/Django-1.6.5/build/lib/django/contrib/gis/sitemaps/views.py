@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 from django.http import HttpResponse, Http404
 from django.template import loader
@@ -21,7 +21,7 @@ def index(request, sitemaps):
     current_site = get_current_site(request)
     sites = []
     protocol = 'https' if request.is_secure() else 'http'
-    for section, site in sitemaps.items():
+    for section, site in list(sitemaps.items()):
         if callable(site):
             pages = site().paginator.num_pages
         else:

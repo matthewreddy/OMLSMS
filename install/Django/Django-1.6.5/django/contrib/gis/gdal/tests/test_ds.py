@@ -16,12 +16,12 @@ if HAS_GDAL:
             extent=(-1.35011,0.166623,-0.524093,0.824508), # Got extent from QGIS
             srs_wkt='GEOGCS["GCS_WGS_1984",DATUM["WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]',
             field_values={'dbl' : [float(i) for i in range(1, 6)], 'int' : list(range(1, 6)), 'str' : [str(i) for i in range(1, 6)]},
-            fids=range(5)),
+            fids=list(range(5))),
         TestDS('test_vrt', ext='vrt', nfeat=3, nfld=3, geom='POINT', gtype='Point25D', driver='VRT',
             fields={'POINT_X' : OFTString, 'POINT_Y' : OFTString, 'NUM' : OFTString}, # VRT uses CSV, which all types are OFTString.
             extent=(1.0, 2.0, 100.0, 523.5), # Min/Max from CSV
             field_values={'POINT_X' : ['1.0', '5.0', '100.0'], 'POINT_Y' : ['2.0', '23.0', '523.5'], 'NUM' : ['5', '17', '23']},
-            fids=range(1,4)),
+            fids=list(range(1,4))),
         TestDS('test_poly', nfeat=3, nfld=3, geom='POLYGON', gtype=3,
             driver='ESRI Shapefile',
             fields={'float' : OFTReal, 'int' : OFTInteger, 'str' : OFTString,},
@@ -100,7 +100,7 @@ class DataSourceTest(unittest.TestCase):
                 self.assertRaises(OGRIndexError, layer.__getitem__, 50000)
 
                 if hasattr(source, 'field_values'):
-                    fld_names = source.field_values.keys()
+                    fld_names = list(source.field_values.keys())
 
                     # Testing `Layer.get_fields` (which uses Layer.__iter__)
                     for fld_name in fld_names:
@@ -167,14 +167,14 @@ class DataSourceTest(unittest.TestCase):
                     self.assertEqual(source.gtype, feat.geom_type)
 
                     # Making sure the fields match to an appropriate OFT type.
-                    for k, v in source.fields.items():
+                    for k, v in list(source.fields.items()):
                         # Making sure we get the proper OGR Field instance, using
                         # a string value index for the feature.
                         self.assertEqual(True, isinstance(feat[k], v))
 
                     # Testing Feature.__iter__
                     for fld in feat:
-                        self.assertEqual(True, fld.name in source.fields.keys())
+                        self.assertEqual(True, fld.name in list(source.fields.keys()))
 
     def test05_geometries(self):
         "Testing Geometries from Data Source Features."

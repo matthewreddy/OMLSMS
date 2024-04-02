@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 import os
 from io import BytesIO, StringIO, UnsupportedOperation
@@ -29,7 +29,7 @@ class File(FileProxyMixin):
     def __bool__(self):
         return bool(self.name)
 
-    def __nonzero__(self):      # Python 2 compatibility
+    def __bool__(self):      # Python 2 compatibility
         return type(self).__bool__(self)
 
     def __len__(self):
@@ -148,7 +148,7 @@ class ContentFile(File):
     def __bool__(self):
         return True
 
-    def __nonzero__(self):      # Python 2 compatibility
+    def __bool__(self):      # Python 2 compatibility
         return type(self).__bool__(self)
 
     def open(self, mode=None):

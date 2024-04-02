@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+
 
 from django.core.urlresolvers import set_script_prefix, clear_script_prefix
 from django.contrib.flatpages.models import FlatPage

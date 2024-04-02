@@ -2,7 +2,7 @@
 """
 Tests for django.core.servers.
 """
-from __future__ import unicode_literals
+
 
 import os
 import socket

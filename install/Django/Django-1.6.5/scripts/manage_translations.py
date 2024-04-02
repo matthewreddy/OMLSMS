@@ -61,7 +61,7 @@ def _check_diff(cat_name, base_path):
               stdout=PIPE, stderr=PIPE, shell=True)
     output, errors = p.communicate()
     num_changes = int(output.strip()) - 4
-    print("%d changed/added messages in '%s' catalog." % (num_changes, cat_name))
+    print(("%d changed/added messages in '%s' catalog." % (num_changes, cat_name)))
 
 
 def update_catalogs(resources=None, languages=None):
@@ -81,7 +81,7 @@ def update_catalogs(resources=None, languages=None):
         if resources and not name in resources:
             continue
         os.chdir(os.path.join(dir_, '..'))
-        print("Updating en catalog in %s" % dir_)
+        print(("Updating en catalog in %s" % dir_))
         if name.endswith('-js'):
             call_command('makemessages', locale='en', domain='djangojs')
         else:
@@ -101,7 +101,7 @@ def lang_stats(resources=None, languages=None):
     for name, dir_ in locale_dirs:
         if resources and not name in resources:
             continue
-        print("\nShowing translations stats for '%s':" % name) 
+        print(("\nShowing translations stats for '%s':" % name)) 
         langs = sorted([d for d in os.listdir(dir_) if not d.startswith('_')])
         for lang in langs:
             if languages and not lang in languages:
@@ -113,10 +113,10 @@ def lang_stats(resources=None, languages=None):
             output, errors = p.communicate()
             if p.returncode == 0:
                 # msgfmt output stats on stderr
-                print("%s: %s" % (lang, errors.strip()))
+                print(("%s: %s" % (lang, errors.strip())))
             else:
-                print("Errors happened when checking %s translation for %s:\n%s" % (
-                    lang, name, errors))
+                print(("Errors happened when checking %s translation for %s:\n%s" % (
+                    lang, name, errors)))
 
 
 def fetch(resources=None, languages=None):
@@ -150,7 +150,7 @@ def fetch(resources=None, languages=None):
     if errors:
         print("\nWARNING: Errors have occurred in following cases:")
         for resource, lang in errors:
-            print("\tResource %s for language %s" % (resource, lang))
+            print(("\tResource %s for language %s" % (resource, lang)))
         exit(1)
 
 
@@ -171,4 +171,4 @@ if __name__ == "__main__":
     if args[0] in RUNABLE_SCRIPTS:
         eval(args[0])(options.resources, options.languages)
     else:
-        print("Available commands are: %s" % ", ".join(RUNABLE_SCRIPTS))
+        print(("Available commands are: %s" % ", ".join(RUNABLE_SCRIPTS)))

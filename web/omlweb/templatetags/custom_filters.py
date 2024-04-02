@@ -73,15 +73,15 @@ def days_overdue_filter(d):
 
 @register.filter(name='zip')
 def zip_lists(a, b):
-    return zip(a, b)
+    return list(zip(a, b))
 
 @register.filter(name='zip2')
 def zip_lists2(a, b):
-    return zip(zip(*a)[0], zip(*a)[1], b)
+    return list(zip(list(zip(*a))[0], list(zip(*a))[1], b))
 
 @register.filter(name='times') 
 def times(number):
-    return range(number)
+    return list(range(number))
 
 @register.filter(name='my_add')
 def my_add(a,b):

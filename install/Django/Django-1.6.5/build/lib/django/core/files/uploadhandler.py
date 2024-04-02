@@ -2,7 +2,7 @@
 Base file upload handler classes, and the built-in concrete subclasses
 """
 
-from __future__ import unicode_literals
+
 
 from io import BytesIO
 

@@ -1,4 +1,4 @@
-from __future__ import absolute_import, unicode_literals
+
 
 import datetime
 from decimal import Decimal
@@ -507,7 +507,7 @@ class PrepValueTest(test.TestCase):
 
     @unittest.skipIf(six.PY3, "Python 3 has no `long` type.")
     def test_BigIntegerField(self):
-        self.assertIsInstance(BigIntegerField().get_prep_value(long(9999999999999999999)), long)
+        self.assertIsInstance(BigIntegerField().get_prep_value(int(9999999999999999999)), int)
 
     def test_BinaryField(self):
         self.assertIsInstance(BinaryField().get_prep_value(b''), bytes)

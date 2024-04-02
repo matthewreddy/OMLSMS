@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 from django.db.backends import BaseDatabaseIntrospection, FieldInfo
 from django.utils.encoding import force_text

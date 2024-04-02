@@ -2,7 +2,7 @@
 Utility functions for generating "lorem ipsum" Latin text.
 """
 
-from __future__ import unicode_literals
+
 
 import random
 

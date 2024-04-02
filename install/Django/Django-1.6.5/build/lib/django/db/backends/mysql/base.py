@@ -3,7 +3,7 @@ MySQL database backend for Django.
 
 Requires MySQLdb: http://sourceforge.net/projects/mysql-python
 """
-from __future__ import unicode_literals
+
 
 import datetime
 import re

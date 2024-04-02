@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 import datetime
 import os
@@ -40,7 +40,7 @@ def cleanse_setting(key, value):
             cleansed = CLEANSED_SUBSTITUTE
         else:
             if isinstance(value, dict):
-                cleansed = dict((k, cleanse_setting(k, v)) for k,v in value.items())
+                cleansed = dict((k, cleanse_setting(k, v)) for k,v in list(value.items()))
             else:
                 cleansed = value
     except TypeError:
@@ -146,7 +146,7 @@ class SafeExceptionReporterFilter(ExceptionReporterFilter):
                 cleansed = request.POST.copy()
                 if sensitive_post_parameters == '__ALL__':
                     # Cleanse all parameters.
-                    for k, v in cleansed.items():
+                    for k, v in list(cleansed.items()):
                         cleansed[k] = CLEANSED_SUBSTITUTE
                     return cleansed
                 else:
@@ -190,11 +190,11 @@ class SafeExceptionReporterFilter(ExceptionReporterFilter):
         if self.is_active(request) and sensitive_variables:
             if sensitive_variables == '__ALL__':
                 # Cleanse all variables
-                for name, value in tb_frame.f_locals.items():
+                for name, value in list(tb_frame.f_locals.items()):
                     cleansed[name] = CLEANSED_SUBSTITUTE
             else:
                 # Cleanse specified variables
-                for name, value in tb_frame.f_locals.items():
+                for name, value in list(tb_frame.f_locals.items()):
                     if name in sensitive_variables:
                         value = CLEANSED_SUBSTITUTE
                     else:
@@ -203,7 +203,7 @@ class SafeExceptionReporterFilter(ExceptionReporterFilter):
         else:
             # Potentially cleanse the request and any MultiValueDicts if they
             # are one of the frame variables.
-            for name, value in tb_frame.f_locals.items():
+            for name, value in list(tb_frame.f_locals.items()):
                 cleansed[name] = self.cleanse_special_types(request, value)
 
         if (tb_frame.f_code.co_name == 'sensitive_variables_wrapper'
@@ -215,7 +215,7 @@ class SafeExceptionReporterFilter(ExceptionReporterFilter):
             cleansed['func_args'] = CLEANSED_SUBSTITUTE
             cleansed['func_kwargs'] = CLEANSED_SUBSTITUTE
 
-        return cleansed.items()
+        return list(cleansed.items())
 
 class ExceptionReporter(object):
     """

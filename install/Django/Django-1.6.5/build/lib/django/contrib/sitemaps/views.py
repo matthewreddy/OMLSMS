@@ -31,7 +31,7 @@ def index(request, sitemaps,
     req_site = get_current_site(request)
 
     sites = []
-    for section, site in sitemaps.items():
+    for section, site in list(sitemaps.items()):
         if callable(site):
             site = site()
         protocol = req_protocol if site.protocol is None else site.protocol

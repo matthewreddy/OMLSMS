@@ -320,8 +320,8 @@ class BaseDatabaseCreation(object):
             test_db_repr = ''
             if verbosity >= 2:
                 test_db_repr = " ('%s')" % test_database_name
-            print("Creating test database for alias '%s'%s..." % (
-                self.connection.alias, test_db_repr))
+            print(("Creating test database for alias '%s'%s..." % (
+                self.connection.alias, test_db_repr)))
 
         self._create_test_db(verbosity, autoclobber)
 
@@ -392,14 +392,14 @@ class BaseDatabaseCreation(object):
             sys.stderr.write(
                 "Got an error creating the test database: %s\n" % e)
             if not autoclobber:
-                confirm = input(
+                confirm = eval(input(
                     "Type 'yes' if you would like to try deleting the test "
-                    "database '%s', or 'no' to cancel: " % test_database_name)
+                    "database '%s', or 'no' to cancel: " % test_database_name))
             if autoclobber or confirm == 'yes':
                 try:
                     if verbosity >= 1:
-                        print("Destroying old test database '%s'..."
-                              % self.connection.alias)
+                        print(("Destroying old test database '%s'..."
+                              % self.connection.alias))
                     cursor.execute(
                         "DROP DATABASE %s" % qn(test_database_name))
                     cursor.execute(
@@ -426,8 +426,8 @@ class BaseDatabaseCreation(object):
             test_db_repr = ''
             if verbosity >= 2:
                 test_db_repr = " ('%s')" % test_database_name
-            print("Destroying test database for alias '%s'%s..." % (
-                self.connection.alias, test_db_repr))
+            print(("Destroying test database for alias '%s'%s..." % (
+                self.connection.alias, test_db_repr)))
 
         # Temporarily use a new connection and a copy of the settings dict.
         # This prevents the production database from being exposed to potential

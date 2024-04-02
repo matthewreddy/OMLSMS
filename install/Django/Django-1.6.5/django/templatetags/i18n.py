@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 import re
 import sys
 
@@ -123,7 +123,7 @@ class BlockTranslateNode(Node):
         else:
             message_context = None
         tmp_context = {}
-        for var, val in self.extra_context.items():
+        for var, val in list(self.extra_context.items()):
             tmp_context[var] = val.resolve(context)
         # Update() works like a push(), so corresponding context.pop() is at
         # the end of function

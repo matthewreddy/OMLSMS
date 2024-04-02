@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 import keyword
 import re
@@ -123,7 +123,7 @@ class Command(NoArgsCommand):
                         field_desc += ', '
                     field_desc += ', '.join([
                         '%s=%s' % (k, strip_prefix(repr(v)))
-                        for k, v in extra_params.items()])
+                        for k, v in list(extra_params.items())])
                 field_desc += ')'
                 if comment_notes:
                     field_desc += ' # ' + ' '.join(comment_notes)

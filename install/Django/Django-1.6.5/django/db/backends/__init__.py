@@ -867,7 +867,7 @@ class BaseDatabaseOperations(object):
         elif params is None:
             u_params = ()
         else:
-            u_params = dict((to_unicode(k), to_unicode(v)) for k, v in params.items())
+            u_params = dict((to_unicode(k), to_unicode(v)) for k, v in list(params.items()))
 
         return six.text_type("QUERY = %r - PARAMS = %r") % (sql, u_params)
 

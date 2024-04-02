@@ -90,7 +90,7 @@ class TemplateCommand(BaseCommand):
             handle_extensions(options.get('extensions'), ignored=()))
         extra_files = []
         for file in options.get('files'):
-            extra_files.extend(map(lambda x: x.strip(), file.split(',')))
+            extra_files.extend([x.strip() for x in file.split(',')])
         if self.verbosity >= 2:
             self.stdout.write("Rendering %s template files with "
                               "extensions: %s\n" %

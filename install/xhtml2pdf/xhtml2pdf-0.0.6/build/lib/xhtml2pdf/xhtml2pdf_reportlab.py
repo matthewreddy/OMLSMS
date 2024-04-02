@@ -27,7 +27,7 @@ from reportlab.platypus.tables import Table, TableStyle
 from xhtml2pdf.reportlab_paragraph import Paragraph
 from xhtml2pdf.util import getUID, getBorderStyle
 from types import StringType, TupleType, ListType, IntType
-import StringIO
+import io
 import cgi
 import copy
 import logging
@@ -224,7 +224,7 @@ class PmlPageTemplate(PageTemplate):
                 if self.pisaBackground.mimetype.startswith("image/"):
 
                     try:
-                        img = PmlImageReader(StringIO.StringIO(self.pisaBackground.getData()))
+                        img = PmlImageReader(io.StringIO(self.pisaBackground.getData()))
                         iw, ih = img.getSize()
                         pw, ph = canvas._pagesize
 
@@ -316,7 +316,7 @@ class PmlImageReader(object):  # TODO We need a factory here, returning either a
         else:
             try:
                 self.fp = open_for_read(fileName, 'b')
-                if isinstance(self.fp, StringIO.StringIO().__class__):
+                if isinstance(self.fp, io.StringIO().__class__):
                     imageReaderFlags = 0  # avoid messing with already internal files
                 if imageReaderFlags > 0:  # interning
                     data = self.fp.read()
@@ -332,7 +332,7 @@ class PmlImageReader(object):  # TODO We need a factory here, returning either a
 
                         data = self._cache.setdefault(md5(data).digest(), data)
                     self.fp = getStringIO(data)
-                elif imageReaderFlags == - 1 and isinstance(fileName, (str, unicode)):
+                elif imageReaderFlags == - 1 and isinstance(fileName, str):
                     #try Ralf Schmitt's re-opening technique of avoiding too many open files
                     self.fp.close()
                     del self.fp  # will become a property in the next statement
@@ -359,7 +359,7 @@ class PmlImageReader(object):  # TODO We need a factory here, returning either a
                 if hasattr(ev, 'args'):
                     a = str(ev.args[- 1]) + (' fileName=%r' % fileName)
                     ev.args = ev.args[: - 1] + (a,)
-                    raise et, ev, tb
+                    raise et(ev).with_traceback(tb)
                 else:
                     raise
 
@@ -445,7 +445,7 @@ class PmlImageReader(object):  # TODO We need a factory here, returning either a
             # 8-bit PNGs could give an empty string as transparency value, so
             # we have to be careful here.
             try:
-                return map(ord, palette[transparency:transparency + 3])
+                return list(map(ord, palette[transparency:transparency + 3]))
             except:
                 return None
         else:
@@ -494,7 +494,7 @@ class PmlImage(Flowable, PmlMaxHeightMixIn):
         return self.dWidth, self.dHeight
 
     def getImage(self):
-        img = PmlImageReader(StringIO.StringIO(self._imgdata))
+        img = PmlImageReader(io.StringIO(self._imgdata))
         return img
 
     def draw(self):

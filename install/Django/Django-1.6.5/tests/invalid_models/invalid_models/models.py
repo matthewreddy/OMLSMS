@@ -5,7 +5,7 @@
 This example exists purely to point out errors in models.
 """
 
-from __future__ import unicode_literals
+
 
 from django.db import connection, models
 

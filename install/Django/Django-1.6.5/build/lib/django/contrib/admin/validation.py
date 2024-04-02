@@ -136,7 +136,7 @@ class BaseValidator(object):
         from django.contrib.admin.options import HORIZONTAL, VERTICAL
         if hasattr(cls, 'radio_fields'):
             check_isdict(cls, 'radio_fields', cls.radio_fields)
-            for field, val in cls.radio_fields.items():
+            for field, val in list(cls.radio_fields.items()):
                 f = get_field(cls, model, 'radio_fields', field)
                 if not (isinstance(f, models.ForeignKey) or f.choices):
                     raise ImproperlyConfigured("'%s.radio_fields['%s']' "
@@ -152,7 +152,7 @@ class BaseValidator(object):
         # prepopulated_fields
         if hasattr(cls, 'prepopulated_fields'):
             check_isdict(cls, 'prepopulated_fields', cls.prepopulated_fields)
-            for field, val in cls.prepopulated_fields.items():
+            for field, val in list(cls.prepopulated_fields.items()):
                 f = get_field(cls, model, 'prepopulated_fields', field)
                 if isinstance(f, (models.DateTimeField, models.ForeignKey,
                     models.ManyToManyField)):

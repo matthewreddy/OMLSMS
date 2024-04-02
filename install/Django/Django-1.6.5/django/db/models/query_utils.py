@@ -5,7 +5,7 @@ Factored out from django.db.models.query to avoid making the main module very
 large and/or so that they can be used by other modules without getting into
 circular import difficulties.
 """
-from __future__ import unicode_literals
+
 
 from django.db.backends import util
 from django.utils import six

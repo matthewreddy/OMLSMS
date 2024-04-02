@@ -287,7 +287,7 @@ FieldListFilter.register(lambda f: bool(f.choices), ChoicesFieldListFilter)
 class DateFieldListFilter(FieldListFilter):
     def __init__(self, field, request, params, model, model_admin, field_path):
         self.field_generic = '%s__' % field_path
-        self.date_params = dict([(k, v) for k, v in params.items()
+        self.date_params = dict([(k, v) for k, v in list(params.items())
                                  if k.startswith(self.field_generic)])
 
         now = timezone.now()

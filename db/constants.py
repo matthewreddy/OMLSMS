@@ -61,7 +61,7 @@ HTML_CONVERTER_PATH,
 #IMAGES_PATH,
 LABEL_PRINTER,
 DEFAULT_PRINTER,
-] = range(NUM_CONFIG_VALUES)
+] = list(range(NUM_CONFIG_VALUES))
 
 def readConfigValues(filename):
     configValues = []

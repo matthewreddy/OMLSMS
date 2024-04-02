@@ -93,7 +93,7 @@ def lazy(func, *resultclasses):
             for resultclass in resultclasses:
                 cls.__dispatch[resultclass] = {}
                 for type_ in reversed(resultclass.mro()):
-                    for (k, v) in type_.__dict__.items():
+                    for (k, v) in list(type_.__dict__.items()):
                         # All __promise__ return the same wrapper method, but
                         # they also do setup, inserting the method into the
                         # dispatch dict.
@@ -302,7 +302,7 @@ class SimpleLazyObject(LazyObject):
         __str__ = new_method_proxy(str)
     else:
         __str__ = new_method_proxy(str)
-        __unicode__ = new_method_proxy(unicode)
+        __unicode__ = new_method_proxy(str)
 
     def __deepcopy__(self, memo):
         if self._wrapped is empty:

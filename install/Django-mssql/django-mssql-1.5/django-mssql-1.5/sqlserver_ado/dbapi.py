@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 DB-API 2.0 specification: http://www.python.org/dev/peps/pep-0249/
 """
-from __future__ import unicode_literals
+
 
 import sys
 import time
@@ -46,7 +46,7 @@ from django.utils import timezone
 import pythoncom
 import win32com.client
 
-from ado_consts import *
+from .ado_consts import *
 
 # DB API default values
 apilevel = '2.0'
@@ -80,7 +80,7 @@ class MultiMap(object):
         self.storage = dict()
         self.default = default
 
-        for keys, value in mapping.iteritems():
+        for keys, value in mapping.items():
             for key in keys:
                 self.storage[key] = value
 
@@ -97,8 +97,8 @@ def standardErrorHandler(connection, cursor, errorclass, errorvalue):
     raise errorclass(errorvalue)
 
 
-class Error(StandardError): pass
-class Warning(StandardError): pass
+class Error(Exception): pass
+class Warning(Exception): pass
 
 class InterfaceError(Error): pass
 
@@ -145,7 +145,7 @@ def connect(connection_string, timeout=30, use_transactions=None):
         else:
             useTransactions = use_transactions
         return Connection(c, useTransactions)
-    except Exception, e:
+    except Exception as e:
         raise OperationalError(e, "Error opening connection: " + connection_string)
 
 def _use_transactions(c):
@@ -186,7 +186,7 @@ def _configure_parameter(p, value):
     if p.Direction not in [adParamInput, adParamInputOutput, adParamUnknown]:
         return
 
-    if isinstance(value, basestring):
+    if isinstance(value, str):
         p.Value = value
         p.Size = len(value)
 
@@ -273,7 +273,7 @@ class Connection(object):
         self.messages = []
         try:
             self._close_connection()
-        except Exception, e:
+        except Exception as e:
             self._raiseConnectionError(InternalError, e)
         self.adoConn = None
         pythoncom.CoUninitialize()
@@ -295,7 +295,7 @@ class Connection(object):
                 #calling CommitTrans automatically starts a new transaction. Not all providers support this.
                 #If not, we will have to start a new transaction by this command:
                 self.adoConn.BeginTrans()
-        except Exception, e:
+        except Exception as e:
             self._raiseConnectionError(Error, e)
 
     def rollback(self):
@@ -319,15 +319,15 @@ class Connection(object):
         return Cursor(self)
 
     def printADOerrors(self):
-        print 'ADO Errors (%i):' % self.adoConn.Errors.Count
+        print('ADO Errors (%i):' % self.adoConn.Errors.Count)
         for e in self.adoConn.Errors:
-            print 'Description: %s' % e.Description
-            print 'Error: %s %s ' % (e.Number, adoErrors.get(e.Number, "unknown"))
+            print('Description: %s' % e.Description)
+            print('Error: %s %s ' % (e.Number, adoErrors.get(e.Number, "unknown")))
             if e.Number == ado_error_TIMEOUT:
-                print 'Timeout Error: Try using adodbpi.connect(constr,timeout=Nseconds)'
-            print 'Source: %s' % e.Source
-            print 'NativeError: %s' % e.NativeError
-            print 'SQL State: %s' % e.SQLState
+                print('Timeout Error: Try using adodbpi.connect(constr,timeout=Nseconds)')
+            print('Source: %s' % e.Source)
+            print('NativeError: %s' % e.NativeError)
+            print('SQL State: %s' % e.SQLState)
             
     def _suggest_error_class(self):
         """Introspect the current ADO Errors and determine an appropriate error class.
@@ -457,7 +457,7 @@ class Cursor(object):
             recordset = self.cmd.Execute()
             self.rowcount = recordset[1]
             self._description_from_recordset(recordset[0])
-        except Exception, e:
+        except Exception as e:
             _message = ""
             if hasattr(e, 'args'): _message += str(e.args)+"\n"
             _message += "Command:\n%s\nParameters:\n%s" %  (self.cmd.CommandText, format_parameters(self.cmd.Parameters, True))
@@ -519,7 +519,7 @@ class Cursor(object):
                 parameter_replacements.append('NULL')
                 continue
                 
-            if isinstance(value, basestring) and value == "":
+            if isinstance(value, str) and value == "":
                 parameter_replacements.append("''")
                 continue
 
@@ -713,7 +713,7 @@ _variantConversions = MultiMap(
         adoExactNumericTypes: _cvtDecimal,
         adoApproximateNumericTypes: _cvtFloat,
         (adBoolean,): bool,
-        adoLongTypes+adoRowIdTypes : long,
+        adoLongTypes+adoRowIdTypes : int,
         adoIntegerTypes: int,
         adoBinaryTypes: buffer, 
     }, 
@@ -721,7 +721,7 @@ _variantConversions = MultiMap(
 
 # Mapping Python data types to ADO type codes
 def _ado_type(data):
-    if isinstance(data, basestring):
+    if isinstance(data, str):
         return adBSTR
     return _map_to_adotype[type(data)]
 
@@ -729,7 +729,7 @@ _map_to_adotype = {
     buffer: adBinary,
     float: adDouble,
     int: adInteger,
-    long: adBigInt,
+    int: adBigInt,
     bool: adBoolean,
     decimal.Decimal: adDecimal,
     datetime.date: adDate,

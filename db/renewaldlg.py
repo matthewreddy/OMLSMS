@@ -79,7 +79,7 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
         #we still need to use this information so dentist 2 doesn't become 20
         max_id = partial_id
         min_id = partial_id
-        for i in xrange(0,RENEWAL_ID_WIDTH - len(partial_id)):
+        for i in range(0,RENEWAL_ID_WIDTH - len(partial_id)):
             max_id += '9'
             min_id += '0'
         records = Renewal.objects.filter(id__range=(int(min_id), int(max_id)))
@@ -226,7 +226,7 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
         for row, renewal in enumerate(renewals):
             if renewal.id == int(self.idLineEdit.text()):
                 self.historyTableWidget.setCurrentCell(row, 0)
-            text = range(0, NUM_HISTORY_COLUMNS)
+            text = list(range(0, NUM_HISTORY_COLUMNS))
             text[0] = str(renewal.id).zfill( RENEWAL_ID_WIDTH) 
             text[1] = RecordDateToText(renewal.renewal_date, shorten=True)
             text[2] = renewal.lot

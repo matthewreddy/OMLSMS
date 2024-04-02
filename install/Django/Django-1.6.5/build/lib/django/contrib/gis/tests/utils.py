@@ -39,7 +39,7 @@ else:
 
 def has_spatial_db():
     # All databases must have spatial backends to run GeoDjango tests.
-    spatial_dbs = [name for name, db_dict in settings.DATABASES.items()
+    spatial_dbs = [name for name, db_dict in list(settings.DATABASES.items())
         if db_dict['ENGINE'].startswith('django.contrib.gis')]
     return len(spatial_dbs) == len(settings.DATABASES)
 

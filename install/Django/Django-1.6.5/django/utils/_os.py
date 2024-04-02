@@ -31,7 +31,7 @@ else:
         in join when the cwd has non-ASCII characters.
         """
         if not isabs(path):
-            path = join(os.getcwdu(), path)
+            path = join(os.getcwd(), path)
         return normpath(path)
 
 def upath(path):

@@ -3,7 +3,7 @@
 
 Make sure to set ``related_name`` if you use relationships to the same table.
 """
-from __future__ import unicode_literals
+
 
 from django.db import models
 from django.utils import six

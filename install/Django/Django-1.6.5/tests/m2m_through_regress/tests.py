@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 from django.core import management
 from django.contrib.auth.models import User

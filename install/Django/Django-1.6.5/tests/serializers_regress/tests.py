@@ -6,7 +6,7 @@ test case that is capable of testing the capabilities of
 the serializers. This includes all valid data values, plus
 forward, backwards and self references.
 """
-from __future__ import absolute_import, unicode_literals
+
 
 import datetime
 import decimal
@@ -109,7 +109,7 @@ def inherited_create(pk, klass, data):
     #     automatically is easier than manually creating both.
     models.Model.save(instance)
     created = [instance]
-    for klass,field in instance._meta.parents.items():
+    for klass,field in list(instance._meta.parents.items()):
         created.append(klass.objects.get(id=pk))
     return created
 
@@ -165,7 +165,7 @@ def pk_compare(testcase, pk, klass, data):
 
 def inherited_compare(testcase, pk, klass, data):
     instance = klass.objects.get(id=pk)
-    for key,value in data.items():
+    for key,value in list(data.items()):
         testcase.assertEqual(value, getattr(instance,key))
 
 # Define some data types. Each data type is
@@ -456,7 +456,7 @@ def serializerTest(format, self):
 
     # Assert that the number of objects deserialized is the
     # same as the number that was serialized.
-    for klass, count in instance_count.items():
+    for klass, count in list(instance_count.items()):
         self.assertEqual(count, klass.objects.count())
 
 if connection.vendor == 'mysql' and six.PY3:
@@ -490,7 +490,7 @@ def naturalKeySerializerTest(format, self):
 
     # Assert that the number of objects deserialized is the
     # same as the number that was serialized.
-    for klass, count in instance_count.items():
+    for klass, count in list(instance_count.items()):
         self.assertEqual(count, klass.objects.count())
 
 def fieldsTest(format, self):

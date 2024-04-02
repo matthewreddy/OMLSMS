@@ -422,7 +422,7 @@ class OGRGeometry(GDALBase):
                 # With geometry collections have to set dimension on
                 # each internal geometry reference, as the collection
                 # dimension isn't affected.
-                for i in xrange(len(self)):
+                for i in range(len(self)):
                     internal_ptr = capi.get_geom_ref(self.ptr, i)
                     if orig_dim != capi.get_coord_dim(internal_ptr):
                         capi.set_coord_dim(internal_ptr, orig_dim)
@@ -573,7 +573,7 @@ class LineString(OGRGeometry):
 
     def __iter__(self):
         "Iterates over each point in the LineString."
-        for i in xrange(self.point_count):
+        for i in range(self.point_count):
             yield self[i]
 
     def __len__(self):
@@ -583,7 +583,7 @@ class LineString(OGRGeometry):
     @property
     def tuple(self):
         "Returns the tuple representation of this LineString."
-        return tuple([self[i] for i in xrange(len(self))])
+        return tuple([self[i] for i in range(len(self))])
     coords = tuple
 
     def _listarr(self, func):
@@ -591,7 +591,7 @@ class LineString(OGRGeometry):
         Internal routine that returns a sequence (list) corresponding with
         the given function.
         """
-        return [func(self.ptr, i) for i in xrange(len(self))]
+        return [func(self.ptr, i) for i in range(len(self))]
 
     @property
     def x(self):
@@ -620,7 +620,7 @@ class Polygon(OGRGeometry):
 
     def __iter__(self):
         "Iterates through each ring in the Polygon."
-        for i in xrange(self.geom_count):
+        for i in range(self.geom_count):
             yield self[i]
 
     def __getitem__(self, index):
@@ -640,14 +640,14 @@ class Polygon(OGRGeometry):
     @property
     def tuple(self):
         "Returns a tuple of LinearRing coordinate tuples."
-        return tuple([self[i].tuple for i in xrange(self.geom_count)])
+        return tuple([self[i].tuple for i in range(self.geom_count)])
     coords = tuple
 
     @property
     def point_count(self):
         "The number of Points in this Polygon."
         # Summing up the number of points in each ring of the Polygon.
-        return sum([self[i].point_count for i in xrange(self.geom_count)])
+        return sum([self[i].point_count for i in range(self.geom_count)])
 
     @property
     def centroid(self):
@@ -670,7 +670,7 @@ class GeometryCollection(OGRGeometry):
 
     def __iter__(self):
         "Iterates over each Geometry."
-        for i in xrange(self.geom_count):
+        for i in range(self.geom_count):
             yield self[i]
 
     def __len__(self):
@@ -694,12 +694,12 @@ class GeometryCollection(OGRGeometry):
     def point_count(self):
         "The number of Points in this Geometry Collection."
         # Summing up the number of points in each geometry in this collection
-        return sum([self[i].point_count for i in xrange(self.geom_count)])
+        return sum([self[i].point_count for i in range(self.geom_count)])
 
     @property
     def tuple(self):
         "Returns a tuple representation of this Geometry Collection."
-        return tuple([self[i].tuple for i in xrange(self.geom_count)])
+        return tuple([self[i].tuple for i in range(self.geom_count)])
     coords = tuple
 
 # Multiple Geometry types.

@@ -154,7 +154,7 @@ def setup(verbosity, test_labels):
 
         if module_found_in_labels:
             if verbosity >= 2:
-                print("Importing application %s" % module_name)
+                print(("Importing application %s" % module_name))
             mod = load_app(module_label)
             if mod:
                 if module_label not in settings.INSTALLED_APPS:
@@ -173,10 +173,10 @@ def teardown(state):
         # name itself does not contain non-ASCII characters.)
         shutil.rmtree(six.text_type(TEMP_DIR))
     except OSError:
-        print('Failed to remove temp directory: %s' % TEMP_DIR)
+        print(('Failed to remove temp directory: %s' % TEMP_DIR))
 
     # Restore the old settings.
-    for key, value in state.items():
+    for key, value in list(state.items()):
         setattr(settings, key, value)
 
 
@@ -208,7 +208,7 @@ def bisect_tests(bisection_label, options, test_labels):
 
     test_labels = test_labels or get_installed()
 
-    print('***** Bisecting test suite: %s' % ' '.join(test_labels))
+    print(('***** Bisecting test suite: %s' % ' '.join(test_labels)))
 
     # Make sure the bisection point isn't in the test list
     # Also remove tests that need to be run in specific combinations
@@ -232,12 +232,12 @@ def bisect_tests(bisection_label, options, test_labels):
         midpoint = len(test_labels)/2
         test_labels_a = test_labels[:midpoint] + [bisection_label]
         test_labels_b = test_labels[midpoint:] + [bisection_label]
-        print('***** Pass %da: Running the first half of the test suite' % iteration)
-        print('***** Test labels: %s' % ' '.join(test_labels_a))
+        print(('***** Pass %da: Running the first half of the test suite' % iteration))
+        print(('***** Test labels: %s' % ' '.join(test_labels_a)))
         failures_a = subprocess.call(subprocess_args + test_labels_a)
 
-        print('***** Pass %db: Running the second half of the test suite' % iteration)
-        print('***** Test labels: %s' % ' '.join(test_labels_b))
+        print(('***** Pass %db: Running the second half of the test suite' % iteration))
+        print(('***** Test labels: %s' % ' '.join(test_labels_b)))
         print('')
         failures_b = subprocess.call(subprocess_args + test_labels_b)
 
@@ -257,7 +257,7 @@ def bisect_tests(bisection_label, options, test_labels):
             break
 
     if len(test_labels) == 1:
-        print("***** Source of error: %s" % test_labels[0])
+        print(("***** Source of error: %s" % test_labels[0]))
     teardown(state)
 
 
@@ -286,11 +286,11 @@ def paired_tests(paired_test, options, test_labels):
         subprocess_args.append('--noinput')
 
     for i, label in enumerate(test_labels):
-        print('***** %d of %d: Check test pairing with %s' % (
-              i + 1, len(test_labels), label))
+        print(('***** %d of %d: Check test pairing with %s' % (
+              i + 1, len(test_labels), label)))
         failures = subprocess.call(subprocess_args + [label, paired_test])
         if failures:
-            print('***** Found problem pair with %s' % label)
+            print(('***** Found problem pair with %s' % label))
             return
 
     print('***** No problem pair found')

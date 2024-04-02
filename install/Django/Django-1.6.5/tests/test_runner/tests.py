@@ -1,7 +1,7 @@
 """
 Tests for django test runner
 """
-from __future__ import absolute_import, unicode_literals
+
 
 import sys
 from optparse import make_option
@@ -171,7 +171,7 @@ class CustomOptionsTestRunner(runner.DiscoverRunner):
         self.option_c = option_c
 
     def run_tests(self, test_labels, extra_tests=None, **kwargs):
-        print("%s:%s:%s" % (self.option_a, self.option_b, self.option_c))
+        print(("%s:%s:%s" % (self.option_a, self.option_b, self.option_c)))
 
 
 class CustomTestRunnerOptionsTests(AdminScriptTestCase):

@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 from django.contrib.gis.geos import HAS_GEOS
 from django.contrib.gis.tests.utils import HAS_SPATIAL_DB, mysql, oracle, no_mysql, no_oracle, no_spatialite
@@ -172,7 +172,7 @@ class RelatedGeoModelTest(TestCase):
         "Testing values() and values_list() and GeoQuerySets."
         # GeoQuerySet and GeoValuesQuerySet, and GeoValuesListQuerySet respectively.
         gqs = Location.objects.all()
-        gvqs = Location.objects.values()
+        gvqs = list(Location.objects.values())
         gvlqs = Location.objects.values_list()
 
         # Incrementing through each of the models, dictionaries, and tuples

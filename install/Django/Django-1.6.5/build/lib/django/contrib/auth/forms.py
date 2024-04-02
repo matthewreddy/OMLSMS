@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 import warnings
 
@@ -42,7 +42,7 @@ class ReadOnlyPasswordHashWidget(forms.Widget):
                 summary = format_html_join('',
                                            "<strong>{0}</strong>: {1} ",
                                            ((ugettext(key), value)
-                                            for key, value in hasher.safe_summary(encoded).items())
+                                            for key, value in list(hasher.safe_summary(encoded).items()))
                                            )
 
         return format_html("<div{0}>{1}</div>", flatatt(final_attrs), summary)
@@ -360,7 +360,7 @@ class AdminPasswordChangeForm(forms.Form):
 
     def _get_changed_data(self):
         data = super(AdminPasswordChangeForm, self).changed_data
-        for name in self.fields.keys():
+        for name in list(self.fields.keys()):
             if name not in data:
                 return []
         return ['password']

@@ -9,8 +9,8 @@ import logging
 import os
 import sys
 import tempfile
-import urllib2
-import urlparse
+import urllib.request, urllib.error, urllib.parse
+import urllib.parse
 
 # Copyright 2010 Dirk Holtwick, holtwick.it
 #
@@ -87,7 +87,7 @@ LOG_FORMAT_DEBUG = "%(levelname)s [%(name)s] %(pathname)s line %(lineno)d: %(mes
 
 
 def usage():
-    print USAGE
+    print(USAGE)
 
 
 class pisaLinkLoader:
@@ -108,15 +108,15 @@ class pisaLinkLoader:
             os.remove(path)
 
     def getFileName(self, name, relative=None):
-        url = urlparse.urljoin(relative or self.src, name)
-        path = urlparse.urlsplit(url)[2]
+        url = urllib.parse.urljoin(relative or self.src, name)
+        path = urllib.parse.urlsplit(url)[2]
         suffix = ""
         if "." in path:
             new_suffix = "." + path.split(".")[-1].lower()
             if new_suffix in (".css", ".gif", ".jpg", ".png"):
                 suffix = new_suffix
         path = tempfile.mktemp(prefix="pisa-", suffix=suffix)
-        ufile = urllib2.urlopen(url)
+        ufile = urllib.request.urlopen(url)
         tfile = file(path, "wb")
         while True:
             data = ufile.read(1024)
@@ -128,14 +128,14 @@ class pisaLinkLoader:
         self.tfileList.append(path)
 
         if not self.quiet:
-            print "  Loading", url, "to", path
+            print("  Loading", url, "to", path)
 
         return path
 
 
 def command():
     if "--profile" in sys.argv:
-        print "*** PROFILING ENABLED"
+        print("*** PROFILING ENABLED")
         import cProfile as profile
         import pstats
 
@@ -218,20 +218,20 @@ def execute():
                 log_level = int(a)
 
         if o in ("--copyright", "--version"):
-            print COPYRIGHT
+            print(COPYRIGHT)
             sys.exit(0)
 
         if o in ("--system",):
-            print COPYRIGHT
-            print
-            print "SYSTEM INFORMATIONS"
-            print "--------------------------------------------"
-            print "OS:                ", sys.platform
-            print "Python:            ", sys.version
-            print "html5lib:          ", "?"
+            print(COPYRIGHT)
+            print()
+            print("SYSTEM INFORMATIONS")
+            print("--------------------------------------------")
+            print("OS:                ", sys.platform)
+            print("Python:            ", sys.version)
+            print("html5lib:          ", "?")
             import reportlab
 
-            print "Reportlab:         ", reportlab.Version
+            print("Reportlab:         ", reportlab.Version)
             sys.exit(0)
 
         if o in ("-t", "--format"):
@@ -251,7 +251,7 @@ def execute():
 
         if o in ("--css-dump",):
             # CSS dump
-            print DEFAULT_CSS
+            print(DEFAULT_CSS)
             return
 
         if o in ("--xml-dump",):
@@ -306,7 +306,7 @@ def execute():
             if src.startswith("http:") or src.startswith("https:"):
                 wpath = src
                 fsrc = getFile(src).getFile()
-                src = "".join(urlparse.urlsplit(src)[1:3]).replace("/", "-")
+                src = "".join(urllib.parse.urlsplit(src)[1:3]).replace("/", "-")
             else:
                 fsrc = wpath = os.path.abspath(src)
                 fsrc = open(fsrc, "rb")
@@ -316,7 +316,7 @@ def execute():
             if dest_part.lower().endswith(".html") or dest_part.lower().endswith(".htm"):
                 dest_part = ".".join(src.split(".")[:-1])
             dest = dest_part + "." + format.lower()
-            for i in xrange(10):
+            for i in range(10):
                 try:
                     open(dest, "wb").close()
                     break
@@ -340,13 +340,13 @@ def execute():
             try:
                 open(dest, "wb").close()
             except:
-                print "File '%s' seems to be in use of another application." % dest
+                print("File '%s' seems to be in use of another application." % dest)
                 sys.exit(2)
             fdest = open(dest, "wb")
             fdestclose = 1
 
         if not quiet:
-            print "Converting %s to %s..." % (src, dest)
+            print("Converting %s to %s..." % (src, dest))
 
         pdf = pisaDocument(
             fsrc,
@@ -371,7 +371,7 @@ def execute():
 
         if (not errors) and startviewer:
             if not quiet:
-                print "Open viewer for file %s" % dest
+                print("Open viewer for file %s" % dest)
             startViewer(dest)
 
 

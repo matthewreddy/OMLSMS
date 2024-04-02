@@ -84,7 +84,7 @@ class Command(BaseCommand):
                     if model is None:
                         raise CommandError("Unknown model: %s.%s" % (app_label, model_label))
 
-                    if app in app_list.keys():
+                    if app in list(app_list.keys()):
                         if app_list[app] and model not in app_list[app]:
                             app_list[app].append(model)
                     else:
@@ -114,7 +114,7 @@ class Command(BaseCommand):
 
         def get_objects():
             # Collate the objects to be serialized.
-            for model in sort_dependencies(app_list.items()):
+            for model in sort_dependencies(list(app_list.items())):
                 if model in excluded_models:
                     continue
                 if not model._meta.proxy and router.allow_syncdb(using, model):

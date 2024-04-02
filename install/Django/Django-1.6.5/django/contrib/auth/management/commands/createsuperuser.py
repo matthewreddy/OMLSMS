@@ -1,7 +1,7 @@
 """
 Management utility to create superusers.
 """
-from __future__ import unicode_literals
+
 
 import getpass
 import sys
@@ -88,7 +88,7 @@ class Command(BaseCommand):
                         if default_username:
                             input_msg = "%s (leave blank to use '%s')" % (
                                 input_msg, default_username)
-                        raw_value = input(force_str('%s: ' % input_msg))
+                        raw_value = eval(input(force_str('%s: ' % input_msg)))
 
                     if default_username and raw_value == '':
                         raw_value = default_username
@@ -111,7 +111,7 @@ class Command(BaseCommand):
                     field = self.UserModel._meta.get_field(field_name)
                     user_data[field_name] = options.get(field_name)
                     while user_data[field_name] is None:
-                        raw_value = input(force_str('%s: ' % capfirst(field.verbose_name)))
+                        raw_value = eval(input(force_str('%s: ' % capfirst(field.verbose_name))))
                         try:
                             user_data[field_name] = field.clean(raw_value, None)
                         except exceptions.ValidationError as e:

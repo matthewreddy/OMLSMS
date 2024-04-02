@@ -266,7 +266,7 @@ class Command(NoArgsCommand):
         if locale is not None:
             locales = locale
         elif process_all:
-            locale_dirs = filter(os.path.isdir, glob.glob('%s/*' % localedir))
+            locale_dirs = list(filter(os.path.isdir, glob.glob('%s/*' % localedir)))
             locales = [os.path.basename(l) for l in locale_dirs]
 
         if locales:

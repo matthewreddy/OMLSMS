@@ -4,7 +4,7 @@ A series of tests to establish that the command-line managment tools work as
 advertised - especially with regards to the handling of the DJANGO_SETTINGS_MODULE
 and default settings.py files.
 """
-from __future__ import unicode_literals
+
 
 import os
 import re
@@ -65,7 +65,7 @@ class AdminScriptTestCase(unittest.TestCase):
             settings_file.write("INSTALLED_APPS = %s\n" % apps)
 
             if sdict:
-                for k, v in sdict.items():
+                for k, v in list(sdict.items()):
                     settings_file.write("%s = %s\n" % (k, v))
 
     def remove_settings(self, filename, is_dir=False):
@@ -97,7 +97,7 @@ class AdminScriptTestCase(unittest.TestCase):
         """
         paths = []
         first_package_re = re.compile(r'(^[^\.]+)\.')
-        for backend in settings.DATABASES.values():
+        for backend in list(settings.DATABASES.values()):
             result = first_package_re.findall(backend['ENGINE'])
             if result and result != ['django']:
                 backend_pkg = __import__(result[0])

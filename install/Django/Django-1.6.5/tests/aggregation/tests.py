@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 import datetime
 from decimal import Decimal
@@ -204,7 +204,7 @@ class BaseAggregateTestCase(TestCase):
             ]
         )
 
-        books = Book.objects.filter(pk=1).values().annotate(mean_age=Avg('authors__age'))
+        books = list(Book.objects.filter(pk=1).values()).annotate(mean_age=Avg('authors__age'))
         self.assertEqual(
             list(books), [
                 {
@@ -491,7 +491,7 @@ class BaseAggregateTestCase(TestCase):
         self.assertEqual(vals, {"rating__avg": 4.25})
 
     def test_even_more_aggregate(self):
-        publishers = Publisher.objects.annotate(earliest_book=Min("book__pubdate")).exclude(earliest_book=None).order_by("earliest_book").values()
+        publishers = list(Publisher.objects.annotate(earliest_book=Min("book__pubdate")).exclude(earliest_book=None).order_by("earliest_book").values())
         self.assertEqual(
             list(publishers), [
                 {

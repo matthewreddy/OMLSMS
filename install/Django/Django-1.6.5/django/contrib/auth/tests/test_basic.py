@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 import locale
 
@@ -50,7 +50,7 @@ def mock_inputs(inputs):
                 prompt = str(prompt)
                 assert str('__proxy__') not in prompt
                 response = ''
-                for key, val in inputs.items():
+                for key, val in list(inputs.items()):
                     if force_str(key) in prompt.lower():
                         response = val
                         break

@@ -6,7 +6,7 @@ tests to use ``ModelForm``. As such, the text may not make sense in all cases,
 and the examples are probably a poor fit for the ``ModelForm`` syntax. In other
 words, most of these tests should be rewritten.
 """
-from __future__ import unicode_literals
+
 
 import os
 import tempfile
@@ -274,7 +274,7 @@ class Colour(models.Model):
     name = models.CharField(max_length=50)
 
     def __iter__(self):
-        for number in xrange(5):
+        for number in range(5):
             yield number
 
     def __str__(self):

@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 import warnings
 
 from django.core.checks.compatibility.base import check_compatibility

@@ -1,5 +1,5 @@
 # coding: utf-8
-from __future__ import absolute_import, unicode_literals
+
 
 import os
 import re
@@ -435,7 +435,7 @@ class AdminViewBasicTest(AdminViewBasicTestCase):
                 test=lambda obj, value:
                     obj.chap.book.promo_set.filter(name=value).exists()),
             }
-        for filter_path, params in filters.items():
+        for filter_path, params in list(filters.items()):
             for value in params['values']:
                 query_string = urlencode({filter_path: value})
                 # ensure filter link exists
@@ -3918,9 +3918,7 @@ class ValidXHTMLTests(TestCase):
         self.client.logout()
 
     @override_settings(
-        TEMPLATE_CONTEXT_PROCESSORS=filter(
-            lambda t: t != 'django.core.context_processors.i18n',
-            global_settings.TEMPLATE_CONTEXT_PROCESSORS),
+        TEMPLATE_CONTEXT_PROCESSORS=[t for t in global_settings.TEMPLATE_CONTEXT_PROCESSORS if t != 'django.core.context_processors.i18n'],
         USE_I18N=False,
     )
     def testLangNamePresent(self):

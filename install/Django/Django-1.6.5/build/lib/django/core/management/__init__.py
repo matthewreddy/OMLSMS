@@ -310,7 +310,7 @@ class ManagementUtility(object):
 
         # subcommand
         if cword == 1:
-            print(' '.join(sorted(filter(lambda x: x.startswith(curr), subcommands))))
+            print((' '.join(sorted([x for x in subcommands if x.startswith(curr)]))))
         # subcommand options
         # special case: the 'help' subcommand has no options
         elif cwords[0] in subcommands and cwords[0] != 'help':

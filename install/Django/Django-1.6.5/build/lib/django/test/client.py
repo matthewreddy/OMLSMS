@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 import sys
 import os
@@ -146,7 +146,7 @@ def encode_multipart(boundary, data):
     # Each bit of the multipart form data could be either a form value or a
     # file, or a *list* of form values and/or files. Remember that HTTP field
     # names can be duplicated!
-    for (key, value) in data.items():
+    for (key, value) in list(data.items()):
         if is_file(value):
             lines.extend(encode_file(boundary, key, value))
         elif not isinstance(value, six.string_types) and is_iterable(value):

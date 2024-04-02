@@ -1,4 +1,4 @@
-from __future__ import absolute_import, unicode_literals
+
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import connection
@@ -540,7 +540,7 @@ class NullableTest(TestCase):
         with self.assertNumQueries(2):
             # Check that prefetch is done and it does not cause any errors.
             bulk = Employee.objects.prefetch_related('serfs').in_bulk([boss1.pk, boss2.pk])
-            for b in bulk.values():
+            for b in list(bulk.values()):
                 list(b.serfs.all())
 
 

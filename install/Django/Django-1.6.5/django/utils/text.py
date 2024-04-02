@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 import re
 import unicodedata
@@ -365,12 +365,12 @@ def _replace_entity(match):
                 c = int(text[1:], 16)
             else:
                 c = int(text)
-            return six.unichr(c)
+            return six.chr(c)
         except ValueError:
             return match.group(0)
     else:
         try:
-            return six.unichr(html_entities.name2codepoint[text])
+            return six.chr(html_entities.name2codepoint[text])
         except (ValueError, KeyError):
             return match.group(0)
 

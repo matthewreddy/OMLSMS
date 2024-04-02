@@ -3,7 +3,7 @@ from django.template.loader import get_template
 from django.template import Context
 from omlweb.models import Dentist, Sterilizer, Renewal, Test
 from xhtml2pdf.document import pisaDocument
-import cStringIO as StringIO
+import io as StringIO
 from django.contrib.auth.models import User
 from datetime import date, datetime, timedelta
 from django.db.models import F, Max, Sum

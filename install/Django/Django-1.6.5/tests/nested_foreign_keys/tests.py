@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 from django.test import TestCase
 
 from .models import Person, Movie, Event, Screening, ScreeningNullFK, Package, PackageNullFK
@@ -40,7 +40,7 @@ class NestedForeignKeysTests(TestCase):
         # This failed.
         self.assertEqual(len(Event.objects.select_related('screening__movie')), 2)
 
-        self.assertEqual(len(Event.objects.values()), 2)
+        self.assertEqual(len(list(Event.objects.values())), 2)
         self.assertEqual(len(Event.objects.values('screening__pk')), 2)
         self.assertEqual(len(Event.objects.values('screening__movie__pk')), 2)
         self.assertEqual(len(Event.objects.values('screening__movie__title')), 2)
@@ -62,7 +62,7 @@ class NestedForeignKeysTests(TestCase):
         self.assertEqual(len(Event.objects.select_related('screeningnullfk')), 3)
         self.assertEqual(len(Event.objects.select_related('screeningnullfk__movie')), 3)
 
-        self.assertEqual(len(Event.objects.values()), 3)
+        self.assertEqual(len(list(Event.objects.values())), 3)
         self.assertEqual(len(Event.objects.values('screeningnullfk__pk')), 3)
         self.assertEqual(len(Event.objects.values('screeningnullfk__movie__pk')), 3)
         self.assertEqual(len(Event.objects.values('screeningnullfk__movie__title')), 3)
@@ -89,7 +89,7 @@ class NestedForeignKeysTests(TestCase):
         self.assertEqual(len(Package.objects.select_related('screening')), 2)
         self.assertEqual(len(Package.objects.select_related('screening__movie')), 2)
 
-        self.assertEqual(len(Package.objects.values()), 2)
+        self.assertEqual(len(list(Package.objects.values())), 2)
         self.assertEqual(len(Package.objects.values('screening__pk')), 2)
         self.assertEqual(len(Package.objects.values('screening__movie__pk')), 2)
         self.assertEqual(len(Package.objects.values('screening__movie__title')), 2)
@@ -112,7 +112,7 @@ class NestedForeignKeysTests(TestCase):
         self.assertEqual(len(PackageNullFK.objects.select_related('screening')), 3)
         self.assertEqual(len(PackageNullFK.objects.select_related('screening__movie')), 3)
 
-        self.assertEqual(len(PackageNullFK.objects.values()), 3)
+        self.assertEqual(len(list(PackageNullFK.objects.values())), 3)
         self.assertEqual(len(PackageNullFK.objects.values('screening__pk')), 3)
         self.assertEqual(len(PackageNullFK.objects.values('screening__movie__pk')), 3)
         self.assertEqual(len(PackageNullFK.objects.values('screening__movie__title')), 3)
@@ -138,7 +138,7 @@ class DeeplyNestedForeignKeysTests(TestCase):
         self.assertEqual(len(Event.objects.all()), 2)
         self.assertEqual(len(Event.objects.select_related('screening__movie__director')), 2)
 
-        self.assertEqual(len(Event.objects.values()), 2)
+        self.assertEqual(len(list(Event.objects.values())), 2)
         self.assertEqual(len(Event.objects.values('screening__movie__director__pk')), 2)
         self.assertEqual(len(Event.objects.values('screening__movie__director__name')), 2)
         self.assertEqual(len(Event.objects.values('screening__movie__director__pk', 'screening__movie__director__name')), 2)
@@ -159,7 +159,7 @@ class DeeplyNestedForeignKeysTests(TestCase):
         self.assertEqual(len(Package.objects.all()), 2)
         self.assertEqual(len(Package.objects.select_related('screening__movie__director')), 2)
 
-        self.assertEqual(len(Package.objects.values()), 2)
+        self.assertEqual(len(list(Package.objects.values())), 2)
         self.assertEqual(len(Package.objects.values('screening__movie__director__pk')), 2)
         self.assertEqual(len(Package.objects.values('screening__movie__director__name')), 2)
         self.assertEqual(len(Package.objects.values('screening__movie__director__pk', 'screening__movie__director__name')), 2)

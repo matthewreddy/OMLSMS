@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 import os
 import sys
@@ -167,7 +167,7 @@ class Command(NoArgsCommand):
             "Type 'yes' to continue, or 'no' to cancel: "
         )
 
-        if self.interactive and input(''.join(message)) != 'yes':
+        if self.interactive and eval(input(''.join(message))) != 'yes':
             raise CommandError("Collecting static files cancelled.")
 
         collected = self.collect()

@@ -1,4 +1,4 @@
-from __future__ import absolute_import, unicode_literals
+
 
 from django.utils.encoding import force_str
 from django.utils import six
@@ -81,6 +81,6 @@ def parse_cookie(cookie):
     else:
         c = cookie
     cookiedict = {}
-    for key in c.keys():
+    for key in list(c.keys()):
         cookiedict[key] = c.get(key).value
     return cookiedict

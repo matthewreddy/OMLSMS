@@ -269,7 +269,7 @@ def setup_databases(verbosity, interactive, **kwargs):
     mirrors = []
 
     for signature, (db_name, aliases) in dependency_ordered(
-        test_databases.items(), dependencies):
+        list(test_databases.items()), dependencies):
         test_db_name = None
         # Actually create the database for the first connection
         for alias in aliases:
@@ -283,7 +283,7 @@ def setup_databases(verbosity, interactive, **kwargs):
                 destroy = False
             old_names.append((connection, db_name, destroy))
 
-    for alias, mirror_alias in mirrored_aliases.items():
+    for alias, mirror_alias in list(mirrored_aliases.items()):
         mirrors.append((alias, connections[alias].settings_dict['NAME']))
         connections[alias].settings_dict['NAME'] = (
             connections[mirror_alias].settings_dict['NAME'])

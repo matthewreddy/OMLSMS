@@ -41,7 +41,7 @@ class UserListB(UserListA):
 
 def nextRange(length):
     nextRange.start += 100
-    return range(nextRange.start, nextRange.start + length)
+    return list(range(nextRange.start, nextRange.start + length))
 
 nextRange.start = 0
 
@@ -59,7 +59,7 @@ class ListMixinTest(unittest.TestCase):
         return pl, self.listType(pl)
 
     def limits_plus(self, b):
-        return range(-self.limit - b, self.limit + b)
+        return list(range(-self.limit - b, self.limit + b))
 
     def step_range(self):
         return list(range(-1 - self.limit, 0)) + list(range(1, 1 + self.limit))
@@ -85,7 +85,7 @@ class ListMixinTest(unittest.TestCase):
 
     def test02_setslice(self):
         'Slice assignment'
-        def setfcn(x,i,j,k,L): x[i:j:k] = range(L)
+        def setfcn(x,i,j,k,L): x[i:j:k] = list(range(L))
         pl, ul = self.lists_of_len()
         for slen in range(self.limit + 1):
             ssl = nextRange(slen)
@@ -219,8 +219,8 @@ class ListMixinTest(unittest.TestCase):
         ul.append(40)
         self.assertEqual(pl[:], ul[:], 'append')
 
-        pl.extend(range(50,55))
-        ul.extend(range(50,55))
+        pl.extend(list(range(50,55)))
+        ul.extend(list(range(50,55)))
         self.assertEqual(pl[:], ul[:], 'extend')
 
         pl.reverse()

@@ -5,7 +5,7 @@
 # at this location, with the same lookup sequence.
 
 # Avoid shadowing the simplejson module
-from __future__ import absolute_import
+
 
 import warnings
 warnings.warn("django.utils.simplejson is deprecated; use json instead.",

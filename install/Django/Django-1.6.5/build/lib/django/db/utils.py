@@ -16,7 +16,7 @@ from django.utils import six
 DEFAULT_DB_ALIAS = 'default'
 
 
-class Error(Exception if six.PY3 else StandardError):
+class Error(Exception if six.PY3 else Exception):
     pass
 
 
@@ -123,7 +123,7 @@ def load_backend(backend_name):
             builtin_backends = []
         if backend_name not in ['django.db.backends.%s' % b for b in
                                 builtin_backends]:
-            backend_reprs = map(repr, sorted(builtin_backends))
+            backend_reprs = list(map(repr, sorted(builtin_backends)))
             error_msg = ("%r isn't an available database backend.\n"
                          "Try using 'django.db.backends.XXX', where XXX "
                          "is one of:\n    %s\nError was: %s" %

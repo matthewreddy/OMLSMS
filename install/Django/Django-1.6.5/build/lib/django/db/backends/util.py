@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 import datetime
 import decimal
@@ -104,7 +104,7 @@ class CursorDebugWrapper(CursorWrapper):
 ###############################################
 
 def typecast_date(s):
-    return datetime.date(*map(int, s.split('-'))) if s else None # returns None if s is null
+    return datetime.date(*list(map(int, s.split('-')))) if s else None # returns None if s is null
 
 def typecast_time(s): # does NOT store time zone information
     if not s: return None

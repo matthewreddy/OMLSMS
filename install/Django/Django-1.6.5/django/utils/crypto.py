@@ -1,7 +1,7 @@
 """
 Django's standard crypto functions and utilities.
 """
-from __future__ import unicode_literals
+
 
 import hmac
 import struct
@@ -154,7 +154,7 @@ def pbkdf2(password, salt, iterations, dklen=0, digest=None):
     def F(i):
         def U():
             u = salt + struct.pack(b'>I', i)
-            for j in xrange(int(iterations)):
+            for j in range(int(iterations)):
                 dig1, dig2 = inner.copy(), outer.copy()
                 dig1.update(u)
                 dig2.update(dig1.digest())

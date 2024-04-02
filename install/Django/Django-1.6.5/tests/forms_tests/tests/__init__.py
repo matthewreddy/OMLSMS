@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 from .test_error_messages import (FormsErrorMessagesTestCase,
     ModelChoiceFieldErrorMessagesTestCase)

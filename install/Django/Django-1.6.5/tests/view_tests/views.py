@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 import sys
 
@@ -234,7 +234,7 @@ class UnsafeExceptionReporterFilter(SafeExceptionReporterFilter):
         return request.POST
 
     def get_traceback_frame_variables(self, request, tb_frame):
-        return tb_frame.f_locals.items()
+        return list(tb_frame.f_locals.items())
 
 
 @sensitive_variables()

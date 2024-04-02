@@ -1,7 +1,7 @@
 """
 Creates permissions for all installed apps that need permissions.
 """
-from __future__ import unicode_literals
+
 
 import getpass
 import unicodedata
@@ -101,7 +101,7 @@ def create_permissions(app, created_models, verbosity, db=DEFAULT_DB_ALIAS, **kw
     auth_app.Permission.objects.using(db).bulk_create(perms)
     if verbosity >= 2:
         for perm in perms:
-            print("Adding permission '%s'" % perm)
+            print(("Adding permission '%s'" % perm))
 
 
 def create_superuser(app, created_models, verbosity, db, **kwargs):
@@ -117,10 +117,10 @@ def create_superuser(app, created_models, verbosity, db, **kwargs):
         msg = ("\nYou just installed Django's auth system, which means you "
             "don't have any superusers defined.\nWould you like to create one "
             "now? (yes/no): ")
-        confirm = input(msg)
+        confirm = eval(input(msg))
         while 1:
             if confirm not in ('yes', 'no'):
-                confirm = input('Please enter either "yes" or "no": ')
+                confirm = eval(input('Please enter either "yes" or "no": '))
                 continue
             if confirm == 'yes':
                 call_command("createsuperuser", interactive=True, database=db)

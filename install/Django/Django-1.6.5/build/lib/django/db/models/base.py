@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 import copy
 import sys
@@ -140,7 +140,7 @@ class ModelBase(type):
             return m
 
         # Add all attributes to the class.
-        for obj_name, obj in attrs.items():
+        for obj_name, obj in list(attrs.items()):
             new_class.add_to_class(obj_name, obj)
 
         # All the fields of any type declared on this model
@@ -588,7 +588,7 @@ class Model(six.with_metaclass(ModelBase)):
         Saves all the parents of cls using values from self.
         """
         meta = cls._meta
-        for parent, field in meta.parents.items():
+        for parent, field in list(meta.parents.items()):
             # Make sure the link fields are synced between parent and self.
             if (field and getattr(self, parent._meta.pk.attname) is None
                     and getattr(self, field.attname) is not None):
@@ -754,7 +754,7 @@ class Model(six.with_metaclass(ModelBase)):
         errors = self._perform_unique_checks(unique_checks)
         date_errors = self._perform_date_checks(date_checks)
 
-        for k, v in date_errors.items():
+        for k, v in list(date_errors.items()):
             errors.setdefault(k, []).extend(v)
 
         if errors:
@@ -774,7 +774,7 @@ class Model(six.with_metaclass(ModelBase)):
         unique_checks = []
 
         unique_togethers = [(self.__class__, self._meta.unique_together)]
-        for parent_class in self._meta.parents.keys():
+        for parent_class in list(self._meta.parents.keys()):
             if parent_class._meta.unique_together:
                 unique_togethers.append((parent_class, parent_class._meta.unique_together))
 
@@ -794,7 +794,7 @@ class Model(six.with_metaclass(ModelBase)):
         # the list of checks.
 
         fields_with_class = [(self.__class__, self._meta.local_fields)]
-        for parent_class in self._meta.parents.keys():
+        for parent_class in list(self._meta.parents.keys()):
             fields_with_class.append((parent_class, parent_class._meta.local_fields))
 
         for model_class, fields in fields_with_class:
@@ -938,7 +938,7 @@ class Model(six.with_metaclass(ModelBase)):
 
         # Run unique checks, but only for fields that passed validation.
         if validate_unique:
-            for name in errors.keys():
+            for name in list(errors.keys()):
                 if name != NON_FIELD_ERRORS and name not in exclude:
                     exclude.append(name)
             try:

@@ -1,4 +1,4 @@
-from __future__ import absolute_import, unicode_literals
+
 
 from django.db.backends import BaseDatabaseIntrospection
 from . import ado_consts
@@ -326,7 +326,7 @@ where
             where fkc.constraint_object_id = %s
             """
             cursor.execute(sql, [id])
-            columns, fkcolumns = zip(*cursor.fetchall())
+            columns, fkcolumns = list(zip(*cursor.fetchall()))
             constraint = {"columns": list(columns),
                           "primary_key": False,
                           "unique": False,

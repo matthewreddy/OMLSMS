@@ -9,7 +9,7 @@ if HAS_GDAL:
 class TestSRS:
     def __init__(self, wkt, **kwargs):
         self.wkt = wkt
-        for key, value in kwargs.items():
+        for key, value in list(kwargs.items()):
             setattr(self, key, value)
 
 # Some Spatial Reference examples
@@ -117,7 +117,7 @@ class SpatialRefTest(unittest.TestCase):
         for s in srlist:
             if hasattr(s, 'auth'):
                 srs = SpatialReference(s.wkt)
-                for target, tup in s.auth.items():
+                for target, tup in list(s.auth.items()):
                     self.assertEqual(tup[0], srs.auth_name(target))
                     self.assertEqual(tup[1], srs.auth_code(target))
 

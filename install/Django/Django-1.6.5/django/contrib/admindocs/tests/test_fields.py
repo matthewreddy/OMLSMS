@@ -1,4 +1,4 @@
-from __future__ import absolute_import, unicode_literals
+
 
 from django.contrib.admindocs import views
 from django.db import models

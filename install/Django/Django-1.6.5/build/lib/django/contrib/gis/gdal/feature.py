@@ -52,7 +52,7 @@ class Feature(GDALBase):
 
     def __iter__(self):
         "Iterates over each field in the Feature."
-        for i in xrange(self.num_fields):
+        for i in range(self.num_fields):
             yield self[i]
 
     def __len__(self):
@@ -92,7 +92,7 @@ class Feature(GDALBase):
     def fields(self):
         "Returns a list of fields in the Feature."
         return [capi.get_field_name(capi.get_field_defn(self._layer._ldefn, i))
-                for i in xrange(self.num_fields)]
+                for i in range(self.num_fields)]
 
     @property
     def geom(self):

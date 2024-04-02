@@ -1,4 +1,4 @@
-from __future__ import absolute_import, unicode_literals
+
 
 from django.core.exceptions import ValidationError
 from django.forms import Form
@@ -75,7 +75,7 @@ class BaseFormSet(object):
         """All formsets have a management form which is not included in the length"""
         return True
 
-    def __nonzero__(self):      # Python 2 compatibility
+    def __bool__(self):      # Python 2 compatibility
         return type(self).__bool__(self)
 
     @property
@@ -130,7 +130,7 @@ class BaseFormSet(object):
         Instantiate forms at first property access.
         """
         # DoS protection is included in total_form_count()
-        forms = [self._construct_form(i) for i in xrange(self.total_form_count())]
+        forms = [self._construct_form(i) for i in range(self.total_form_count())]
         return forms
 
     def _construct_form(self, i, **kwargs):

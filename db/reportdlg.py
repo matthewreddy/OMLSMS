@@ -343,7 +343,7 @@ class AnomalyReportDlg(QDialog, ui.Ui_anomalyReportDlg):
             sterilizer_id = RenewalToSterilizerID(renewal.id)
             if not (sterilizer_id in latest_renewal) or latest_renewal[sterilizer_id].id < renewal.id:
                 latest_renewal[sterilizer_id] = renewal
-        latest_renewals = [renewal for key, renewal in latest_renewal.iteritems()]
+        latest_renewals = [renewal for key, renewal in latest_renewal.items()]
         tests = Test.objects.filter(renewal_id__in=latest_renewals)
         latest_test = {}
         for renewal in latest_renewals:
@@ -422,7 +422,7 @@ class OverdueReportDlg(QDialog, ui.Ui_overdueReportDlg):
             sterilizer_id = RenewalToSterilizerID(renewal.id)
             if not (sterilizer_id in latest_renewal) or latest_renewal[sterilizer_id].id < renewal.id:
                 latest_renewal[sterilizer_id] = renewal
-        latest_renewals = [renewal for key, renewal in latest_renewal.iteritems()]
+        latest_renewals = [renewal for key, renewal in latest_renewal.items()]
         return latest_renewals
 
     def mergeMatches(self, overdue, renewals):
@@ -443,7 +443,7 @@ class OverdueReportDlg(QDialog, ui.Ui_overdueReportDlg):
                 f[dentist_id] = d[dentist_id]
                 if renewal not in f[dentist_id]:
                     f[dentist_id].append(renewal)
-        for key, list in sorted(f.iteritems()):
+        for key, list in sorted(f.items()):
             mergeList.append(None) # indicates a blank line
             for renewal in list:
                 mergeList.append(renewal)
@@ -821,7 +821,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
     def showRenewals(self, title, filter):
         start = self.beginDateEdit.date().toPyDate()
         stop = self.endDateEdit.date().toPyDate()
-        renewals = filter(start, stop)
+        renewals = list(filter(start, stop))
         names = getDentistNames(renewals)
         self.parent().viewText(djprint.viewRenewals(renewals, names, title, start, stop))
 

@@ -1,4 +1,4 @@
-from __future__ import absolute_import, unicode_literals
+
 
 import datetime
 import pickle
@@ -108,7 +108,7 @@ class AggregationTests(TestCase):
 
         # Empty values query doesn't affect grouping or results
         self.assertEqual(
-            Book.objects.values().aggregate(Sum('pages'), Avg('pages')),
+            list(Book.objects.values()).aggregate(Sum('pages'), Avg('pages')),
             {'pages__sum': 3703, 'pages__avg': Approximate(617.166, places=2)}
         )
 
@@ -154,7 +154,7 @@ class AggregationTests(TestCase):
         self.assertTrue(obj.manufacture_cost == 11.545 or obj.manufacture_cost == Decimal('11.545'))
 
         # Values queries can be combined with annotate and extra
-        obj = Book.objects.annotate(mean_auth_age=Avg('authors__age')).extra(select={'manufacture_cost' : 'price * .5'}).values().get(pk=2)
+        obj = list(Book.objects.annotate(mean_auth_age=Avg('authors__age')).extra(select={'manufacture_cost' : 'price * .5'}).values()).get(pk=2)
         manufacture_cost = obj['manufacture_cost']
         self.assertTrue(manufacture_cost == 11.545 or manufacture_cost == Decimal('11.545'))
         del obj['manufacture_cost']
@@ -173,7 +173,7 @@ class AggregationTests(TestCase):
 
         # The order of the (empty) values, annotate and extra clauses doesn't
         # matter
-        obj = Book.objects.values().annotate(mean_auth_age=Avg('authors__age')).extra(select={'manufacture_cost' : 'price * .5'}).get(pk=2)
+        obj = list(Book.objects.values()).annotate(mean_auth_age=Avg('authors__age')).extra(select={'manufacture_cost' : 'price * .5'}).get(pk=2)
         manufacture_cost = obj['manufacture_cost']
         self.assertTrue(manufacture_cost == 11.545 or manufacture_cost == Decimal('11.545'))
         del obj['manufacture_cost']
@@ -224,7 +224,7 @@ class AggregationTests(TestCase):
         # Check that all of the objects are getting counted (allow_nulls) and
         # that values respects the amount of objects
         self.assertEqual(
-            len(Author.objects.annotate(Avg('friends__age')).values()),
+            len(list(Author.objects.annotate(Avg('friends__age')).values())),
             9
         )
 
@@ -299,7 +299,7 @@ class AggregationTests(TestCase):
         )
 
         # Regression for #10064: select_related() plays nice with aggregates
-        obj = Book.objects.select_related('publisher').annotate(num_authors=Count('authors')).values()[0]
+        obj = list(Book.objects.select_related('publisher').annotate(num_authors=Count('authors')).values())[0]
         self.assertEqual(obj, {
             'contact_id': 8,
             'id': 5,
@@ -412,7 +412,7 @@ class AggregationTests(TestCase):
             {'max_authors': None, 'max_rating': None, 'num_authors': 0, 'avg_authors': None, 'max_price': None}
         )
 
-        qs = Publisher.objects.filter(pk=5).annotate(num_authors=Count('book__authors'), avg_authors=Avg('book__authors'), max_authors=Max('book__authors'), max_price=Max('book__price'), max_rating=Max('book__rating')).values()
+        qs = list(Publisher.objects.filter(pk=5).annotate(num_authors=Count('book__authors'), avg_authors=Avg('book__authors'), max_authors=Max('book__authors'), max_price=Max('book__price'), max_rating=Max('book__rating')).values())
         self.assertQuerysetEqual(
             qs, [
                 {'max_authors': None, 'name': "Jonno's House of Books", 'num_awards': 0, 'max_price': None, 'num_authors': 0, 'max_rating': None, 'id': 5, 'avg_authors': None}

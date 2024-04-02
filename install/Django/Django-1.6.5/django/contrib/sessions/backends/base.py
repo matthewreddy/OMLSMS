@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 import base64
 from datetime import datetime, timedelta
@@ -115,22 +115,22 @@ class SessionBase(object):
         return key in self._session
 
     def keys(self):
-        return self._session.keys()
+        return list(self._session.keys())
 
     def values(self):
-        return self._session.values()
+        return list(self._session.values())
 
     def items(self):
-        return self._session.items()
+        return list(self._session.items())
 
     def iterkeys(self):
-        return self._session.iterkeys()
+        return iter(self._session.keys())
 
     def itervalues(self):
-        return self._session.itervalues()
+        return iter(self._session.values())
 
     def iteritems(self):
-        return self._session.iteritems()
+        return iter(self._session.items())
 
     def clear(self):
         # To avoid unnecessary persistent storage accesses, we set up the

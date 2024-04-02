@@ -69,7 +69,7 @@ class Point(GEOSGeometry):
 
     def __iter__(self):
         "Allows iteration over coordinates of this Point."
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             yield self[i]
 
     def __len__(self):

@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 from django.db.models import Manager
 from sqlserver_ado.models.query import RawStoredProcedureQuerySet
 

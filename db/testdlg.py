@@ -127,7 +127,7 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         #we still need to use this information so dentist 2 doesn't become 20
         max_id = partial_id
         min_id = partial_id
-        for i in xrange(0,RENEWAL_ID_WIDTH - len(partial_id)):
+        for i in range(0,RENEWAL_ID_WIDTH - len(partial_id)):
             max_id += '9'
             min_id += '0'
         records = Test.objects.filter(renewal__id__range=(int(min_id), int(max_id)))
@@ -315,7 +315,7 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
             if test.renewal_id == int(self.renewalIdLineEdit.text()) and \
             test.test_num == int(self.testNumLineEdit.text()):
                 self.historyTableWidget.setCurrentCell(row, 0)
-            text = range(0, NUM_HISTORY_COLUMNS)
+            text = list(range(0, NUM_HISTORY_COLUMNS))
             text[0] = str(test.renewal_id).zfill(RENEWAL_ID_WIDTH) 
             text[1] = str(test.test_num)
             text[2] = RecordDateToText(test.sample_date, shorten=True)

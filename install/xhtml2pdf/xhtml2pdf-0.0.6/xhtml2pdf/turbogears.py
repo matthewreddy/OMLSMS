@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from turbogears.decorator import weak_signature_decorator
+from .turbogears.decorator import weak_signature_decorator
 import xhtml2pdf.pisa as pisa
-import StringIO
+import io
 import cherrypy
 
 
@@ -24,9 +24,9 @@ def to_pdf(filename=None, content_type="application/pdf"):
     def entangle(func):
         def decorated(func, *args, **kw):
             output = func(*args, **kw)
-            dst = StringIO.StringIO()
+            dst = io.StringIO()
             result = pisa.CreatePDF(
-                StringIO.StringIO(output),
+                io.StringIO(output),
                 dst
             )
             if not result.err:

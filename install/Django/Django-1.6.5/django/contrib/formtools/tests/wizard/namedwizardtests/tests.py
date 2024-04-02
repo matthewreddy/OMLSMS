@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 from django.core.urlresolvers import reverse
 from django.http import QueryDict
@@ -30,7 +30,7 @@ class NamedWizardTests(object):
         self.assertEqual(wizard['steps'].step1, 1)
         self.assertEqual(wizard['steps'].last, 'form4')
         self.assertEqual(wizard['steps'].prev, None)
-        self.assertEqual(wizard['steps'].next, 'form2')
+        self.assertEqual(wizard['steps'].__next__, 'form2')
         self.assertEqual(wizard['steps'].count, 4)
         self.assertEqual(wizard['url_name'], self.wizard_urlname)
 
@@ -44,7 +44,7 @@ class NamedWizardTests(object):
         location = response.url
         self.assertNotEqual(location.find('?'), -1)
         querydict = QueryDict(location[location.find('?') + 1:])
-        self.assertEqual(dict(querydict.items()), get_params)
+        self.assertEqual(dict(list(querydict.items())), get_params)
 
     def test_form_post_error(self):
         response = self.client.post(
@@ -68,7 +68,7 @@ class NamedWizardTests(object):
         self.assertEqual(wizard['steps'].current, 'form2')
         self.assertEqual(wizard['steps'].step0, 1)
         self.assertEqual(wizard['steps'].prev, 'form1')
-        self.assertEqual(wizard['steps'].next, 'form3')
+        self.assertEqual(wizard['steps'].__next__, 'form3')
 
     def test_form_stepback(self):
         response = self.client.get(

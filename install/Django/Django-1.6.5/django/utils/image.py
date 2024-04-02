@@ -70,7 +70,7 @@ Approach
             * ``ImportError`` - Bad install, toss an exception
 
 """
-from __future__ import unicode_literals
+
 
 import warnings
 
@@ -101,7 +101,7 @@ def _detect_image_library():
     except ImportError as err:
         try:
             # If that failed, try the alternate import syntax for PIL.
-            import Image as PILImage
+            from . import Image as PILImage
         except ImportError as err:
             # Neither worked, so it's likely not installed.
             raise ImproperlyConfigured(

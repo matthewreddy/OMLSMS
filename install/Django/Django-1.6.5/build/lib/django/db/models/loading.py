@@ -138,7 +138,7 @@ class AppCache(object):
         """
         self._populate()
 
-        apps = self.app_store.items()
+        apps = list(self.app_store.items())
         if self.available_apps is not None:
             apps = [elt for elt in apps
                     if self._label_for(elt[0]) in self.available_apps]
@@ -245,7 +245,7 @@ class AppCache(object):
         model_list = []
         for app in app_list:
             model_list.extend(
-                model for model in app.values()
+                model for model in list(app.values())
                 if ((not model._deferred or include_deferred) and
                     (not model._meta.auto_created or include_auto_created) and
                     (not model._meta.swapped or include_swapped))

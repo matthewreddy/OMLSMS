@@ -1,4 +1,4 @@
-from __future__ import absolute_import, unicode_literals
+
 
 import datetime
 import time
@@ -130,7 +130,7 @@ class HttpResponseBase(six.Iterator):
 
         headers = [
             (b': '.join([to_bytes(key, 'ascii'), to_bytes(value, 'latin-1')]))
-            for key, value in self._headers.values()
+            for key, value in list(self._headers.values())
         ]
         return b'\r\n'.join(headers)
 
@@ -206,7 +206,7 @@ class HttpResponseBase(six.Iterator):
     __contains__ = has_header
 
     def items(self):
-        return self._headers.values()
+        return list(self._headers.values())
 
     def get(self, header, alternate=None):
         return self._headers.get(header.lower(), (None, alternate))[1]
@@ -411,7 +411,7 @@ class StreamingHttpResponse(HttpResponseBase):
 
     @property
     def streaming_content(self):
-        return map(self.make_bytes, self._iterator)
+        return list(map(self.make_bytes, self._iterator))
 
     @streaming_content.setter
     def streaming_content(self, value):

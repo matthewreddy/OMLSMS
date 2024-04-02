@@ -1,4 +1,4 @@
-from __future__ import absolute_import, unicode_literals
+
 
 from xml.dom import minidom
 
@@ -21,7 +21,7 @@ class FeedTestCase(TestCase):
         self.assertEqual(actual, expected)
 
     def assertChildNodeContent(self, elem, expected):
-        for k, v in expected.items():
+        for k, v in list(expected.items()):
             self.assertEqual(
                 elem.getElementsByTagName(k)[0].firstChild.wholeText, v)
 

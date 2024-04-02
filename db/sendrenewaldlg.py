@@ -62,7 +62,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
                     latest_lot[sterilizer_id] = RenewalToLotID(renewal.id)
                     if not renewal.inactive_date:
                         latest_renewal[sterilizer_id] = renewal
-            latest_renewals = [renewal for key, renewal in latest_renewal.iteritems()]
+            latest_renewals = [renewal for key, renewal in latest_renewal.items()]
             tests = Test.objects.filter(renewal_id__in=latest_renewals)
             latest_test = {}
             for test in tests:
@@ -185,7 +185,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
         index = self.lotComboBox.currentIndex()
         for row in range(0, len(self.sterilizerList)):
             if self.lotList[index].id > self.sterilizerList[row][2]:
-                print row, i, int(self.sterilizerList[row][0].num_tests/DEFAULT_NUM_TESTS), num
+                print(row, i, int(self.sterilizerList[row][0].num_tests/DEFAULT_NUM_TESTS), num)
                 if i + int(self.sterilizerList[row][0].num_tests/DEFAULT_NUM_TESTS) <= num:
                     i += int(self.sterilizerList[row][0].num_tests/DEFAULT_NUM_TESTS)
                     for col in range(0, NUM_TABLE_COLUMNS):
@@ -275,7 +275,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
             assert num > 0
             self.tableWidget.clearSelection()
         except:
-            print "error"
+            print("error")
             pass
         else:
             self.selectNumStrips(num)

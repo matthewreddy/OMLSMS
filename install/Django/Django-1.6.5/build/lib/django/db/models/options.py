@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 import re
 from bisect import bisect
@@ -113,7 +113,7 @@ class Options(object):
 
             # Any leftover attributes must be invalid.
             if meta_attrs != {}:
-                raise TypeError("'class Meta' got invalid attribute(s): %s" % ','.join(meta_attrs.keys()))
+                raise TypeError("'class Meta' got invalid attribute(s): %s" % ','.join(list(meta_attrs.keys())))
         else:
             self.verbose_name_plural = string_concat(self.verbose_name, 's')
         del self.meta
@@ -471,7 +471,7 @@ class Options(object):
             predicates.append(lambda k, v: not k.field.rel.is_hidden())
         cache = (self._related_objects_proxy_cache if include_proxy_eq
                  else self._related_objects_cache)
-        return [t for t in cache.items() if all(p(*t) for p in predicates)]
+        return [t for t in list(cache.items()) if all(p(*t) for p in predicates)]
 
     def _fill_related_objects_cache(self):
         cache = SortedDict()
@@ -504,7 +504,7 @@ class Options(object):
         except AttributeError:
             cache = self._fill_related_many_to_many_cache()
         if local_only:
-            return [k for k, v in cache.items() if not v]
+            return [k for k, v in list(cache.items()) if not v]
         return list(cache)
 
     def get_all_related_m2m_objects_with_model(self):

@@ -2,7 +2,7 @@
 Code to manage the creation and SQL rendering of 'where' constraints.
 """
 
-from __future__ import absolute_import
+
 
 import datetime
 from itertools import repeat
@@ -225,7 +225,7 @@ class WhereNode(tree.Node):
             if max_in_list_size and len(params) > max_in_list_size:
                 # Break up the params list into an OR of manageable chunks.
                 in_clause_elements = ['(']
-                for offset in xrange(0, len(params), max_in_list_size):
+                for offset in range(0, len(params), max_in_list_size):
                     if offset > 0:
                         in_clause_elements.append(' OR ')
                     in_clause_elements.append('%s IN (' % field_sql)

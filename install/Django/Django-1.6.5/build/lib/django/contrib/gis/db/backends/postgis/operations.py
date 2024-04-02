@@ -275,8 +275,8 @@ class PostGISOperations(DatabaseOperations, BaseSpatialOperations):
         example: "BOX(-90.0 30.0, -85.0 40.0)".
         """
         ll, ur = box[4:-1].split(',')
-        xmin, ymin = map(float, ll.split())
-        xmax, ymax = map(float, ur.split())
+        xmin, ymin = list(map(float, ll.split()))
+        xmax, ymax = list(map(float, ur.split()))
         return (xmin, ymin, xmax, ymax)
 
     def convert_extent3d(self, box3d):
@@ -286,8 +286,8 @@ class PostGISOperations(DatabaseOperations, BaseSpatialOperations):
         example: "BOX3D(-90.0 30.0 1, -85.0 40.0 2)".
         """
         ll, ur = box3d[6:-1].split(',')
-        xmin, ymin, zmin = map(float, ll.split())
-        xmax, ymax, zmax = map(float, ur.split())
+        xmin, ymin, zmin = list(map(float, ll.split()))
+        xmax, ymax, zmax = list(map(float, ur.split()))
         return (xmin, ymin, zmin, xmax, ymax, zmax)
 
     def convert_geom(self, hex, geo_field):

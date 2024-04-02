@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Unit and doctests for specific database backends.
-from __future__ import absolute_import, unicode_literals
+
 
 import copy
 import datetime
@@ -79,7 +79,7 @@ class OracleChecks(unittest.TestCase):
         # than 4000 chars and read it properly
         c = connection.cursor()
         c.execute('CREATE TABLE ltext ("TEXT" NCLOB)')
-        long_str = ''.join([six.text_type(x) for x in xrange(4000)])
+        long_str = ''.join([six.text_type(x) for x in range(4000)])
         c.execute('INSERT INTO ltext VALUES (%s)', [long_str])
         c.execute('SELECT text FROM ltext')
         row = c.fetchone()
@@ -779,12 +779,12 @@ class ThreadTests(TestCase):
             t.join()
         # Check that each created connection got different inner connection.
         self.assertEqual(
-            len(set(conn.connection for conn in connections_dict.values())),
+            len(set(conn.connection for conn in list(connections_dict.values()))),
             3)
         # Finish by closing the connections opened by the other threads (the
         # connection opened in the main thread will automatically be closed on
         # teardown).
-        for conn in connections_dict.values():
+        for conn in list(connections_dict.values()):
             if conn is not connection:
                 conn.close()
 
@@ -814,7 +814,7 @@ class ThreadTests(TestCase):
         # Finish by closing the connections opened by the other threads (the
         # connection opened in the main thread will automatically be closed on
         # teardown).
-        for conn in connections_dict.values():
+        for conn in list(connections_dict.values()):
             if conn is not connection:
                 conn.close()
 

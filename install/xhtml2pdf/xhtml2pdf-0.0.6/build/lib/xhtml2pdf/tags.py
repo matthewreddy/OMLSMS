@@ -180,13 +180,13 @@ class pisaTagH6(pisaTagP):
 
 def listDecimal(c):
     c.listCounter += 1
-    return unicode("%d." % c.listCounter)
+    return str("%d." % c.listCounter)
 
 
-roman_numeral_map = zip(
+roman_numeral_map = list(zip(
     (1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1),
     ('M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I')
-)
+))
 
 
 def int_to_roman(i):
@@ -201,7 +201,7 @@ def int_to_roman(i):
 def listUpperRoman(c):
     c.listCounter += 1
     roman = int_to_roman(c.listCounter)
-    return unicode("%s." % roman)
+    return str("%s." % roman)
 
 
 def listLowerRoman(c):
@@ -218,16 +218,16 @@ def listUpperAlpha(c):
         # this will probably fail for anything past the 2nd time
         alpha = string.ascii_uppercase[index - 26]
         alpha *= 2
-    return unicode("%s." % alpha)
+    return str("%s." % alpha)
 
 
 def listLowerAlpha(c):
     return listUpperAlpha(c).lower()
 
 
-_bullet = u"\u2022"
+_bullet = "\u2022"
 _list_style_type = {
-    "none": u"",
+    "none": "",
     "disc": _bullet,
     "circle": _bullet,  # XXX PDF has no equivalent
     "square": _bullet,  # XXX PDF has no equivalent
@@ -273,7 +273,7 @@ class pisaTagLI(pisaTag):
 
         self.offset = 0
         if frag.listStyleImage is not None:
-            frag.text = u""
+            frag.text = ""
             f = frag.listStyleImage
             if f and (not f.notFound()):
                 img = PmlImage(
@@ -288,7 +288,7 @@ class pisaTagLI(pisaTag):
                 frag.image = img
                 self.offset = max(0, img.drawHeight - c.frag.fontSize)
         else:
-            if type(lst) == type(u""):
+            if type(lst) == type(""):
                 frag.text = lst
             else:
                 # XXX This should be the recent font, but it throws errors in Reportlab!

@@ -5,7 +5,7 @@ Used internally by Django and not intended for external use.
 This is not, and is not intended to be, a complete reg-exp decompiler. It
 should be good enough for a large class of URLS, however.
 """
-from __future__ import unicode_literals
+
 
 from django.utils import six
 from django.utils.six.moves import zip

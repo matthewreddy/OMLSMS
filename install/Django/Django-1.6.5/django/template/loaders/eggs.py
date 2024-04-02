@@ -1,5 +1,5 @@
 # Wrapper for loading templates from eggs via pkg_resources.resource_string.
-from __future__ import unicode_literals
+
 
 try:
     from pkg_resources import resource_string

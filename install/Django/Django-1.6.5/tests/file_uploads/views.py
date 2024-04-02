@@ -1,4 +1,4 @@
-from __future__ import absolute_import, unicode_literals
+
 
 import hashlib
 import json
@@ -37,7 +37,7 @@ def file_upload_view_verify(request):
     form_data = request.POST.copy()
     form_data.update(request.FILES)
 
-    for key, value in form_data.items():
+    for key, value in list(form_data.items()):
         if key.endswith('_hash'):
             continue
         if key + '_hash' not in form_data:
@@ -89,14 +89,14 @@ def file_upload_echo(request):
     """
     Simple view to echo back info about uploaded files for tests.
     """
-    r = dict([(k, f.name) for k, f in request.FILES.items()])
+    r = dict([(k, f.name) for k, f in list(request.FILES.items())])
     return HttpResponse(json.dumps(r))
 
 def file_upload_echo_content(request):
     """
     Simple view to echo back the content of uploaded files for tests.
     """
-    r = dict([(k, f.read().decode('utf-8')) for k, f in request.FILES.items()])
+    r = dict([(k, f.read().decode('utf-8')) for k, f in list(request.FILES.items())])
     return HttpResponse(json.dumps(r))
 
 def file_upload_quota(request):
@@ -120,7 +120,7 @@ def file_upload_getlist_count(request):
     """
     file_counts = {}
 
-    for key in request.FILES.keys():
+    for key in list(request.FILES.keys()):
         file_counts[key] = len(request.FILES.getlist(key))
     return HttpResponse(json.dumps(file_counts))
 

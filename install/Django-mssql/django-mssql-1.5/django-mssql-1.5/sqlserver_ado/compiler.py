@@ -1,9 +1,9 @@
-from __future__ import absolute_import, unicode_literals
+
 
 try:
     from itertools import zip_longest
 except ImportError:
-    from itertools import izip_longest as zip_longest
+    from itertools import zip_longest as zip_longest
 
 import django
 from django.db.models.sql import compiler
@@ -90,7 +90,7 @@ class SQLCompiler(compiler.SQLCompiler):
         match behavior of other django backends, it needs to not drop remainders.
         E.g. AVG([1, 2]) needs to yield 1.5, not 1
         """
-        for alias, aggregate in self.query.aggregate_select.items():
+        for alias, aggregate in list(self.query.aggregate_select.items()):
             sql_function = getattr(aggregate, 'sql_function', None)
             if not sql_function:
                 continue

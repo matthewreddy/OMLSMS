@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 from django.db import (connection, connections, transaction, DEFAULT_DB_ALIAS, DatabaseError,
                        IntegrityError)

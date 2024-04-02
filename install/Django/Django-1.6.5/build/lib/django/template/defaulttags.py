@@ -1,5 +1,5 @@
 """Default tags used by the template system, available to all templates."""
-from __future__ import unicode_literals
+
 
 import os
 import sys
@@ -180,7 +180,7 @@ class ForNode(Node):
                 # If there are multiple loop variables, unpack the item into
                 # them.
                 try:
-                    unpacked_vars = dict(zip(self.loopvars, item))
+                    unpacked_vars = dict(list(zip(self.loopvars, item)))
                 except TypeError:
                     pass
                 else:
@@ -416,7 +416,7 @@ class URLNode(Node):
         from django.core.urlresolvers import reverse, NoReverseMatch
         args = [arg.resolve(context) for arg in self.args]
         kwargs = dict([(smart_text(k, 'ascii'), v.resolve(context))
-                       for k, v in self.kwargs.items()])
+                       for k, v in list(self.kwargs.items())])
 
         view_name = self.view_name.resolve(context)
 

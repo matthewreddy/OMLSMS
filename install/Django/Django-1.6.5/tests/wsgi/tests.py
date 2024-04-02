@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.servers.basehttp import get_internal_wsgi_application

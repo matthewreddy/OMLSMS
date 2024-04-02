@@ -1,4 +1,4 @@
-import thread
+import _thread
 from constants import *
 
 from PyQt4.QtCore import *
@@ -21,32 +21,32 @@ class MainDlg(QDialog):
         if html:
             try:
                 if spawn:
-                    thread.start_new_thread(printpdf.printHTML, (html, useLabelPrinter))
+                    _thread.start_new_thread(printpdf.printHTML, (html, useLabelPrinter))
                 else:
                     printpdf.printHTML(html, useLabelPrinter)
             except Exception as e:
-                QMessageBox.warning(None, "Print Error.", unicode(e))
+                QMessageBox.warning(None, "Print Error.", str(e))
 
     def printPDF(self, pdf):
         if pdf:
             try:
-                thread.start_new_thread(printpdf.printPDF, (pdf,))
+                _thread.start_new_thread(printpdf.printPDF, (pdf,))
             except Exception as e:
-                QMessageBox.warning(None, "Print Error.", unicode(e))
+                QMessageBox.warning(None, "Print Error.", str(e))
 
     def viewText(self, text):
         if text:
             try:
-                thread.start_new_thread(printpdf.viewText, (text,))
+                _thread.start_new_thread(printpdf.viewText, (text,))
             except Exception as e:
-                QMessageBox.warning(None, "View Error.", unicode(e))
+                QMessageBox.warning(None, "View Error.", str(e))
 
     def printText(self, text):
         if text:
             try:
-                thread.start_new_thread(printpdf.printText, (text,))
+                _thread.start_new_thread(printpdf.printText, (text,))
             except Exception as e:
-                QMessageBox.warning(None, "Print Error.", unicode(e))
+                QMessageBox.warning(None, "Print Error.", str(e))
 
     def _configValues(self):
         return(self.parent().configValues)

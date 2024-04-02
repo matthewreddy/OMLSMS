@@ -236,7 +236,7 @@ def _explode_shorthand_ip_string(ip_str):
         sep = len(hextet[0].split(':')) + len(hextet[1].split(':'))
         new_ip = hextet[0].split(':')
 
-        for _ in xrange(fill_to - sep):
+        for _ in range(fill_to - sep):
             new_ip.append('0000')
         new_ip += hextet[1].split(':')
 

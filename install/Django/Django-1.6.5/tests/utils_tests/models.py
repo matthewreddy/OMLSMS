@@ -4,7 +4,7 @@ from django.db import models
 class Category(models.Model):
     name = models.CharField(max_length=100)
 
-    def next(self):
+    def __next__(self):
         return self
 
 

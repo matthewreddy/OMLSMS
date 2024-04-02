@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
+
 
 import gzip
 from io import BytesIO
@@ -586,7 +586,7 @@ class GZipMiddlewareTest(TestCase):
     """
     short_string = b"This string is too short to be worth compressing."
     compressible_string = b'a' * 500
-    uncompressible_string = b''.join(six.int2byte(random.randint(0, 255)) for _ in xrange(500))
+    uncompressible_string = b''.join(six.int2byte(random.randint(0, 255)) for _ in range(500))
     sequence = [b'a' * 500, b'b' * 200, b'a' * 300]
 
     def setUp(self):

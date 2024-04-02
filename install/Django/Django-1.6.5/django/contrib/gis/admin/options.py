@@ -81,7 +81,7 @@ class GeoModelAdmin(ModelAdmin):
 
             wms_options = ''
             if self.wms_options:
-                wms_options = ["%s: '%s'" % pair for pair in self.wms_options.items()]
+                wms_options = ["%s: '%s'" % pair for pair in list(self.wms_options.items())]
                 wms_options = ', %s' % ', '.join(wms_options)
 
             params = {'default_lon' : self.default_lon,

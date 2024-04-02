@@ -251,11 +251,11 @@ class override_settings(object):
 
     def enable(self):
         override = UserSettingsHolder(settings._wrapped)
-        for key, new_value in self.options.items():
+        for key, new_value in list(self.options.items()):
             setattr(override, key, new_value)
         self.wrapped = settings._wrapped
         settings._wrapped = override
-        for key, new_value in self.options.items():
+        for key, new_value in list(self.options.items()):
             setting_changed.send(sender=settings._wrapped.__class__,
                                  setting=key, value=new_value)
 
@@ -292,7 +292,7 @@ def compare_xml(want, got):
         return norm_whitespace(child_text(element))
 
     def attrs_dict(element):
-        return dict(element.attributes.items())
+        return dict(list(element.attributes.items()))
 
     def check_element(want_element, got_element):
         if want_element.tagName != got_element.tagName:

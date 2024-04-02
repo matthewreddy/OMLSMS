@@ -1,4 +1,4 @@
-from __future__ import absolute_import, unicode_literals
+
 
 from datetime import datetime
 from operator import attrgetter
@@ -189,7 +189,7 @@ class LookupTests(TestCase):
             'id_plus_eight': 'id+8',
         }
         self.assertQuerysetEqual(
-            Article.objects.filter(id=self.a1.id).extra(select=data).values(*data.keys()),
+            Article.objects.filter(id=self.a1.id).extra(select=data).values(*list(data.keys())),
             [{
                 'id_plus_one': self.a1.id + 1,
                 'id_plus_two': self.a1.id + 2,
@@ -243,7 +243,7 @@ class LookupTests(TestCase):
             Article.objects.extra(select={'id_plus_one': 'id + 1'}).values,
             'id', 'id_plus_two')
         # If you don't specify field names to values(), all are returned.
-        self.assertQuerysetEqual(Article.objects.filter(id=self.a5.id).values(),
+        self.assertQuerysetEqual(list(Article.objects.filter(id=self.a5.id).values()),
             [{
                 'id': self.a5.id,
                 'author_id': self.au2.id,

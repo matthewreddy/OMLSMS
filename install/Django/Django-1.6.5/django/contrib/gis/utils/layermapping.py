@@ -170,7 +170,7 @@ class LayerMapping(object):
 
         # No need to increment through each feature in the model, simply check
         # the Layer metadata against what was given in the mapping dictionary.
-        for field_name, ogr_name in self.mapping.items():
+        for field_name, ogr_name in list(self.mapping.items()):
             # Ensuring that a corresponding field exists in the model
             # for the given field name in the mapping.
             try:
@@ -213,7 +213,7 @@ class LayerMapping(object):
                 if isinstance(ogr_name, dict):
                     # Is every given related model mapping field in the Layer?
                     rel_model = model_field.rel.to
-                    for rel_name, ogr_field in ogr_name.items():
+                    for rel_name, ogr_field in list(ogr_name.items()):
                         idx = check_ogr_fld(ogr_field)
                         try:
                             rel_field = rel_model._meta.get_field(rel_name)
@@ -281,7 +281,7 @@ class LayerMapping(object):
 
         # Incrementing through each model field and OGR field in the
         # dictionary mapping.
-        for field_name, ogr_name in self.mapping.items():
+        for field_name, ogr_name in list(self.mapping.items()):
             model_field = self.fields[field_name]
 
             if isinstance(model_field, GeometryField):
@@ -383,7 +383,7 @@ class LayerMapping(object):
 
         # Constructing and verifying the related model keyword arguments.
         fk_kwargs = {}
-        for field_name, ogr_name in rel_mapping.items():
+        for field_name, ogr_name in list(rel_mapping.items()):
             fk_kwargs[field_name] = self.verify_ogr_field(feat[ogr_name], rel_model._meta.get_field(field_name))
 
         # Attempting to retrieve and return the related model.
@@ -576,7 +576,7 @@ class LayerMapping(object):
             if default_range:
                 raise LayerMapError('The `step` keyword may not be used in conjunction with the `fid_range` keyword.')
             beg, num_feat, num_saved = (0, 0, 0)
-            indices = range(step, nfeat, step)
+            indices = list(range(step, nfeat, step))
             n_i = len(indices)
 
             for i, end in enumerate(indices):
