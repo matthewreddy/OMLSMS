@@ -56,8 +56,17 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
             self.attemptLogin()
 
     def updateUi(self):
-        enable = not self.loginLineEdit.text().isEmpty() and \
-                 not self.passwordLineEdit.text().isEmpty()
+        # Check if login and password fields are not empty
+        login_text = self.loginLineEdit.text()
+        password_text = self.passwordLineEdit.text()
+
+        if login_text and password_text:
+        # Both login and password fields are not empty
+            enable = True
+        else:
+         # Either login or password field is empty
+            enable = False
+
         self.loginPushButton.setEnabled(enable)
 
     
@@ -67,17 +76,19 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
     def attemptLogin(self):
         self.statusLabel.setText("Connecting to database...")
         QCoreApplication.instance().processEvents()
+        print("before try")
         try:
             assert settings.configured
-            settings.DATABASES['default']['USER'] = self.loginLineEdit.text()
+            settings.DATABASES['default']['USER'] = self.loginLineEdit.text()  #'DESKTOP-AC4D5C6\gray1'self.loginLineEdit.text()
             settings.DATABASES['default']['PASSWORD'] = "sinJ4juMper#123" #self.passwordLineEdit.text()
-
+            print("after db")
             # this import must be done here to avoid django error
-            from db_rewrite.updatedatabase import updateDatabase
+            from updatedatabase import updateDatabase
             updateDatabase()
             self.statusLabel.setText("Performing database maintenance...")
             QCoreApplication.instance().processEvents()
         except Exception as e:
+            print(e.args)
             self.statusLabel.setText("Error connecting to database.")
             QCoreApplication.instance().processEvents()
         else:

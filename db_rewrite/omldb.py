@@ -13,7 +13,7 @@ sys.path.append(OMLWEB_PATH)
 from django.conf import settings
 import omlweb
 
-import db_rewrite.printpdf as printpdf
+import printpdf
 import ctypes
 
 def main(isTestEnviron, *argv):

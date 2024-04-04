@@ -7,7 +7,7 @@ from PyQt5.QtSql import *
 from PyQt5.QtWidgets import *
 
 from finddlg import FindDlg
-import db_rewrite.printpdf as printpdf
+import printpdf
 
 
 class MainDlg(QDialog):
