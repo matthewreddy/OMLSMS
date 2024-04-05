@@ -5,7 +5,8 @@ import constants
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtSql import *
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PyQt5.QtWidgets import *
+
 import ui, logindlg
 
 sys.path.append(OMLWEB_PATH)
@@ -168,32 +169,32 @@ class MainWindow(QMainWindow, ui.Ui_mainWindow):
             show.show(self.bookmark)
             self.currentChild = show
     
-    @pyqtSignature("")
-    def on_dentistsPushButton_clicked(self):
+    
+    def on_dentistsPushButton_clicked(self) -> None:
         self.showMainDialog(self.dentistDlg)
         
-    @pyqtSignature("")
-    def on_sterilizersPushButton_clicked(self):
+    
+    def on_sterilizersPushButton_clicked(self) -> None:
         self.showMainDialog(self.sterilizerDlg)
 
-    @pyqtSignature("")
-    def on_lotsPushButton_clicked(self):
+    
+    def on_lotsPushButton_clicked(self) -> None:
         self.showMainDialog(self.lotDlg)
 
-    @pyqtSignature("")
-    def on_renewalsPushButton_clicked(self):
+    
+    def on_renewalsPushButton_clicked(self) -> None:
         self.showMainDialog(self.renewalDlg)
 
-    @pyqtSignature("")
-    def on_testsPushButton_clicked(self):
+    
+    def on_testsPushButton_clicked(self) -> None:
         self.showMainDialog(self.testDlg)
 
-    @pyqtSignature("")
-    def on_reportsPushButton_clicked(self):
+   
+    def on_reportsPushButton_clicked(self) -> None:
         self.showMainDialog(self.reportDlg)
     
-    @pyqtSignature("int")
-    def on_userComboBox_activated(self, int):
+   
+    def on_userComboBox_activated(self, int: int) -> None:
         self.user = self.userList[int]
         if self.currentChild:
             # activate editing window again

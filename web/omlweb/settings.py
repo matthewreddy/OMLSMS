@@ -17,15 +17,11 @@ MANAGERS = ADMINS
 # SQL Server database configuration
 DATABASES = {
     'default': {
-        'ENGINE': 'sqlserver_ado',
+        'ENGINE': 'mssql',
         'NAME': 'omlsms',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': 'DAVID-HP\SQLEXPRESS',
-        'PORT': '',
+        'HOST': 'DESKTOP-AC4D5C6\DEMO',
         'OPTIONS' : {
-                    'provider': 'SQLOLEDB',
-                    'use_mars': True,
+                     'driver': 'ODBC Driver 18 for SQL Server',  # Adjust the driver version based on your installation  # Use Windows Authentication
                     },                     
     }
 }
