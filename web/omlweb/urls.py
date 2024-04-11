@@ -8,7 +8,7 @@ admin.autodiscover()
 
 from django.contrib.auth.views import login, logout
 
-urlpatterns = ['',
+urlpatterns = [
     re_path(r'^$', home),
     
     re_path(r'^login/$', login, {'template_name': 'login.html'}),
