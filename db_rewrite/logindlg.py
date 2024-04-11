@@ -60,14 +60,14 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
         login_text = self.loginLineEdit.text()
         password_text = self.passwordLineEdit.text()
 
-        if login_text and password_text:
-        # Both login and password fields are not empty
-            enable = True
-        else:
-         # Either login or password field is empty
-            enable = False
+        # if login_text and password_text:
+        # # Both login and password fields are not empty
+        #     enable = True
+        # else:
+        #  # Either login or password field is empty
+        #     enable = False
 
-        self.loginPushButton.setEnabled(enable)
+        self.loginPushButton.setEnabled(True)
 
     
     def on_loginPushButton_clicked(self) -> None:
@@ -88,6 +88,7 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
             self.statusLabel.setText("Performing database maintenance...")
             QCoreApplication.instance().processEvents()
         except Exception as e:
+            print(e)
             print(e.args)
             self.statusLabel.setText("Error connecting to database.")
             QCoreApplication.instance().processEvents()

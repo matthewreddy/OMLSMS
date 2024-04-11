@@ -1,12 +1,14 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import get_template
-from django.template import Context
+from django.template import Context,loader
 from omlweb.models import Dentist, Sterilizer, Renewal, Test
 from xhtml2pdf.document import pisaDocument
-import cStringIO as StringIO
 from django.contrib.auth.models import User
 from datetime import date, datetime, timedelta
 from django.db.models import F, Max, Sum
+from django.shortcuts import render
+from io import StringIO
+import cgi
 
 def today():
     return date(2010,7,1)
@@ -14,10 +16,10 @@ def today():
 
 def home(request):
 
-    t = get_template("home.html")
+    #t = loader.get_template("omlweb\\account\home.html")
     c = Context({
     })
-    return HttpResponse(t.render(c))
+    return render(request, "home.html", {})
 
 
 def summary(request):
