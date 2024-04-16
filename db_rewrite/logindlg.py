@@ -2,6 +2,7 @@ import re
 from datetime import date
 from constants import *
 
+
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtSql import *
@@ -15,6 +16,11 @@ sys.path.append(OMLWEB_PATH)
 # sys.path is for the following import,  which can't be done here without
 # violating django initialization: from omlweb.models import Dentist
 from django.conf import settings
+import os
+
+
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', "omlweb")
+# //
 
 class LoginDlg(MainDlg, ui.Ui_loginDlg):
 
@@ -56,18 +62,15 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
             self.attemptLogin()
 
     def updateUi(self):
-        # Check if login and password fields are not empty
         login_text = self.loginLineEdit.text()
         password_text = self.passwordLineEdit.text()
 
-        # if login_text and password_text:
-        # # Both login and password fields are not empty
-        #     enable = True
-        # else:
-        #  # Either login or password field is empty
-        #     enable = False
+        if login_text and password_text:
+            enable = True
+        else:
+            enable = False
 
-        self.loginPushButton.setEnabled(True)
+        self.loginPushButton.setEnabled(enable)
 
     
     def on_loginPushButton_clicked(self) -> None:
@@ -77,23 +80,25 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
         self.statusLabel.setText("Connecting to database...")
         QCoreApplication.instance().processEvents()
         print("before try")
-        try:
-            assert settings.configured
-            settings.DATABASES['default']['USER'] = self.loginLineEdit.text()  #'DESKTOP-AC4D5C6\gray1'self.loginLineEdit.text()
-            settings.DATABASES['default']['PASSWORD'] = "sinJ4juMper#123" #self.passwordLineEdit.text()
-            print("after db")
+        # try:
+        assert settings.configured
+        settings.DATABASES['default']['USER'] = self.loginLineEdit.text()
+        print(settings.DATABASES['default']['USER'])  #'DESKTOP-AC4D5C6\gray1'self.loginLineEdit.text()
+        settings.DATABASES['default']['PASSWORD'] = "1234" #self.passwordLineEdit.text()
+        print("after db")
             # this import must be done here to avoid django error
-            from updatedatabase import updateDatabase
-            updateDatabase()
-            self.statusLabel.setText("Performing database maintenance...")
-            QCoreApplication.instance().processEvents()
-        except Exception as e:
-            print(e)
-            print(e.args)
-            self.statusLabel.setText("Error connecting to database.")
-            QCoreApplication.instance().processEvents()
-        else:
-            self.done(True)
+        from updatedatabase import updateDatabase
+        updateDatabase()
+        print("updated db returned")
+        self.statusLabel.setText("Performing database maintenance...")
+        QCoreApplication.instance().processEvents()
+        # except Exception as e:
+            # print(e)
+            # print(e.args)
+            # self.statusLabel.setText("Error connecting to database.")
+        QCoreApplication.instance().processEvents()
+        print("at the end")
+        self.done(True)
 
     
     def on_exitPushButton_clicked(self) -> None:

@@ -12,7 +12,6 @@ from printlabeldlg import PrintLabelDlg
 sys.path.append(OMLWEB_PATH)
 from omlweb.models import Dentist, Sterilizer, SterilizerMethod
 from django.db.models import Max
-from printlabeldlg import PrintLabelDlg
 import djprint
 from result import ResultDlg
 

@@ -7,13 +7,13 @@ from PyQt5.QtSql import *
 from PyQt5.QtWidgets import *
 import ui
 from formviewdlg import FormViewPartialLoadDlg
-from db_rewrite.sendrenewaldlg import StartRenewalDlg, SendRenewalDlg
+from sendrenewaldlg import StartRenewalDlg, SendRenewalDlg
 
 sys.path.append(OMLWEB_PATH)
 from omlweb.models import Dentist, Renewal, Test, Lot
 from django.db.models import Max
 import djprint
-from db_rewrite.result import ResultDlg
+from result import ResultDlg
 
 
 NUM_HISTORY_COLUMNS = 10

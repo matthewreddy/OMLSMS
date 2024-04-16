@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import *
 
 import ui
 from formviewdlg import FormViewPartialLoadDlg
-from db_rewrite.testnotifydlg import TestNotifyDlg
+from testnotifydlg import TestNotifyDlg
 
 sys.path.append(OMLWEB_PATH)
 from omlweb.models import Renewal, Test, Dentist, Lot

@@ -13,8 +13,8 @@ from printlabeldlg import PrintLabelDlg
 sys.path.append(OMLWEB_PATH)
 from omlweb.models import Dentist, State
 from django.db.models import Max
-import db_rewrite.djprint as djprint
-from db_rewrite.result import ResultDlg
+import djprint as djprint
+from result import ResultDlg
 
 
 class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):

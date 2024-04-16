@@ -25,8 +25,6 @@ DATABASES = {
         'ENGINE': 'mssql',
         'NAME': 'omlsms',
         'HOST': 'DESKTOP-AC4D5C6\DEMO',
-        'USER' : 'gray',
-        'PASSWORD': '',
         'OPTIONS' : {
                      'driver': 'ODBC Driver 17 for SQL Server',  # Adjust the driver version based on your installation  # Use Windows Authentication
                     },                     
@@ -80,7 +78,7 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    'C:/omlsms/web/omlweb/images',
+    BASE_DIR / "images",
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -207,3 +205,5 @@ LOGGING = {
         },
     }
 }
+# settings.py
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

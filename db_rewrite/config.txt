@@ -12,7 +12,7 @@ EVS                     # Default user initials
 
 omltech                 # Default SQL Server user name
 
-SODOMLSQL\SQLEXPRESS    # Server address
+DESKTOP-AC4D5C6/DEMO        # Server address
 
 default                 # Port number
 

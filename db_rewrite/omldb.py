@@ -1,6 +1,7 @@
 import sys, os
 from constants import *
 import constants
+import django
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -52,15 +53,13 @@ def main(isTestEnviron, *argv):
         settings.configure(
             DATABASES = {
                 'default': {
-                    'ENGINE': 'sqlserver_ado',
-                    'NAME': configValues[DATABASE_NAME],
+                    'ENGINE': 'mssql',
+                    'NAME': 'omlsms',
                     'USER': '', # value is altered in logindlg
                     'PASSWORD': '', # value is altered in logindlg
-                    'HOST': configValues[SERVER_ADDRESS],
-                    'PORT': configValues[SERVER_PORT],
+                    'HOST': 'DESKTOP-AC4D5C6\DEMO',
                     'OPTIONS' : {
-                                'provider': 'SQLOLEDB',
-                                'use_mars': True,
+                                'driver' : 'ODBC Driver 17 for SQL Server',
                                 },                     
                 }
             },
@@ -78,8 +77,15 @@ def main(isTestEnviron, *argv):
             ),
             INSTALLED_APPS = (
                 'omlweb',
+                'django.contrib.auth',
+                'django.contrib.contenttypes',
+                'django.contrib.sessions',
+                'django.contrib.sites',
+                'django.contrib.messages',
+                'django.contrib.staticfiles',
             )
         )
+        django.setup()
 
         printpdf.pdfview_filename = configValues[PDF_VIEWER_PATH]
         printpdf.gsprint_filename = configValues[PDF_PRINTER_PATH]
@@ -93,26 +99,34 @@ def main(isTestEnviron, *argv):
         if len(argv):
             configValues[USER_INITIALS] = argv[0]
 
+        print("before login")
         login = logindlg.LoginDlg(configValues[DEFAULT_USER])
         if login.exec_():
-            try:
-                form=MainWindow(configValues, login.loginLineEdit.text(), configValues[USER_INITIALS])
-                form.move(configValues[MAIN_X_POS], configValues[MAIN_Y_POS])
-                form.show()
-            except Exception as e:
-                QMessageBox.critical(None, "Error Initializing Program", str(e))
-            finally:
-                app.exec_()
+            print("after login")
+            # try:
+            print("before first statement")
+            form=MainWindow(configValues, login.loginLineEdit.text(), configValues[USER_INITIALS])
+            print("after first form")
+            form.move(configValues[MAIN_X_POS], configValues[MAIN_Y_POS])
+            print("after second form")
+            form.show()
+            print("form.show()")
+            # except Exception as e:
+            #     print(e)
+            #     QMessageBox.critical(None, "Error Initializing Program", str(e))
+            # finally:
+            app.exec_()
 
 
 class MainWindow(QMainWindow, ui.Ui_mainWindow):
     
 
     def __init__(self, configValues, userName, defaultInitials, parent=None):
+        print("first line of init")
         super(MainWindow, self).__init__(parent)
-
+        print("before imports")
         import dentistdlg, sterilizerdlg, lotdlg, renewaldlg, testdlg, reportdlg
-
+        print("after imports")
         self.setupUi(self)
         self.setWindowFlags(Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.WindowMinMaxButtonsHint)
         self.setWindowTitle("OML Database")
