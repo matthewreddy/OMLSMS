@@ -80,22 +80,22 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
         self.statusLabel.setText("Connecting to database...")
         QCoreApplication.instance().processEvents()
         print("before try")
-        # try:
-        assert settings.configured
-        settings.DATABASES['default']['USER'] = self.loginLineEdit.text()
-        print(settings.DATABASES['default']['USER'])  #'DESKTOP-AC4D5C6\gray1'self.loginLineEdit.text()
-        settings.DATABASES['default']['PASSWORD'] = "1234" #self.passwordLineEdit.text()
-        print("after db")
+        try:
+            assert settings.configured
+            settings.DATABASES['default']['USER'] = self.loginLineEdit.text()
+            print(settings.DATABASES['default']['USER'])  #'DESKTOP-AC4D5C6\gray1'self.loginLineEdit.text()
+            settings.DATABASES['default']['PASSWORD'] = "1234" #self.passwordLineEdit.text()
+            print("after db")
             # this import must be done here to avoid django error
-        from updatedatabase import updateDatabase
-        updateDatabase()
-        print("updated db returned")
-        self.statusLabel.setText("Performing database maintenance...")
-        QCoreApplication.instance().processEvents()
-        # except Exception as e:
-            # print(e)
-            # print(e.args)
-            # self.statusLabel.setText("Error connecting to database.")
+            from updatedatabase import updateDatabase
+            updateDatabase()
+            print("updated db returned")
+            self.statusLabel.setText("Performing database maintenance...")
+            QCoreApplication.instance().processEvents()
+        except Exception as e:
+            print(e)
+            print(e.args)
+            self.statusLabel.setText("Error connecting to database.")
         QCoreApplication.instance().processEvents()
         print("at the end")
         self.done(True)

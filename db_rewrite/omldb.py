@@ -42,6 +42,7 @@ def main(isTestEnviron, *argv):
     cwd = os.getcwd()
     #webdir = (os.path.split(cwd)[0] + '\web\omlweb').replace('\\','/')
     webdir = OMLWEB_PATH.replace('\\','/') + "/omlweb"
+    print(webdir)
 
     configValues = []
     try:
@@ -63,18 +64,19 @@ def main(isTestEnviron, *argv):
                                 },                     
                 }
             },
-            
-            TEMPLATE_DIRS = (
-                webdir + "/account",
-                webdir + "/base",
-                webdir + "/summary",
-                webdir + "/billing",
-                webdir + "/results",
-                webdir + "/templatetags",
-                webdir + "/letters",
-                webdir + "/labels",
-                webdir + "/reports",
-            ),
+            TEMPLATES = [ {
+                 'BACKEND': 'django.template.backends.django.DjangoTemplates',
+                 'DIRS': [webdir + "/account",
+                        webdir + "/base",
+                        webdir + "/billing",
+                        webdir + "/images",
+                        webdir + "/labels",
+                        webdir + "/letters",
+                        webdir + "/results",
+                        webdir + "/reports",
+                        webdir + "/summary"],
+            }
+        ],
             INSTALLED_APPS = (
                 'omlweb',
                 'django.contrib.auth',
@@ -197,6 +199,7 @@ class MainWindow(QMainWindow, ui.Ui_mainWindow):
 
     
     def on_renewalsPushButton_clicked(self) -> None:
+        print("going to renewals")
         self.showMainDialog(self.renewalDlg)
 
     

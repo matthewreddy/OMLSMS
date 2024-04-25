@@ -6,8 +6,9 @@ from constants import *
 from xhtml2pdf.document import pisaDocument
 
 sys.path.append(OMLWEB_PATH)
+from django.conf import settings
 from django.template import Context, Template
-from django.template.loader import get_template
+from django.template.loader import get_template, render_to_string
 from omlweb.views import getBillingData
 from omlweb.models import Dentist, State, Renewal, Sterilizer, Test
 
@@ -253,12 +254,14 @@ def printOverdueAccountList(renewalList, namesList):
     return(t.render(c))
 
 def printDailyPaymentReport(renewalList, namesList):
-    t = get_template('paymentreport.txt')
-    c = Context({
-    'renewals': renewalList,
-    'names': namesList,
-    })
-    return(t.render(c))
+    # t = get_template('reports/paymentreport.txt')
+    # c = Context({
+    # 'renewals': renewalList,
+    # 'names': namesList,
+    # })
+    
+    return render_to_string('paymentreport.txt',{'renewals': renewalList,
+    'names': namesList,})
 
 def printQuarterlyPaymentSummary(values):
     t = get_template('accountssummary.txt')

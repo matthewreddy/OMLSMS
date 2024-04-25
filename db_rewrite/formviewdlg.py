@@ -22,7 +22,10 @@ class MainDlg(QDialog):
         if html:
             try:
                 if spawn:
-                    threading.start(printpdf.printHTML, (html, useLabelPrinter))
+                    thread = threading.Thread(target=printpdf.printHTML, args=(html,useLabelPrinter ))
+                # Start the execution of the thread
+                    thread.start()
+                    #threading.start(printpdf.printHTML, (html, useLabelPrinter))
                 else:
                     printpdf.printHTML(html, useLabelPrinter)
             except Exception as e:
@@ -31,21 +34,30 @@ class MainDlg(QDialog):
     def printPDF(self, pdf):
         if pdf:
             try:
-                threading.start(printpdf.printPDF, (pdf,))
+                thread = threading.Thread(target=printpdf.printPDF, args=(pdf, ))
+                # Start the execution of the thread
+                thread.start()
+                #threading.start(printpdf.printPDF, (pdf,))
             except Exception as e:
                 QMessageBox.warning(None, "Print Error.", str(e))
 
     def viewText(self, text):
         if text:
             try:
-                threading.start(printpdf.viewText, (text,))
+                thread = threading.Thread(target=printpdf.viewText, args=(text, ))
+                # Start the execution of the thread
+                thread.start()
+                #threading.start(printpdf.viewText, (text,))
             except Exception as e:
                 QMessageBox.warning(None, "View Error.", str(e))
 
     def printText(self, text):
         if text:
             try:
-                threading.start(printpdf.printText, (text,))
+                thread = threading.Thread(target=printpdf.printText, args=(text, ))
+                # Start the execution of the thread
+                thread.start()
+                #threading.start(printpdf.printText, (text,))
             except Exception as e:
                 QMessageBox.warning(None, "Print Error.", str(e))
 

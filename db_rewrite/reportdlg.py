@@ -492,7 +492,9 @@ class PaymentReportDlg(QDialog, ui.Ui_paymentReportDlg):
         return list
 
     def getReport(self):
-        renewalList = self.getPayments(self.dateEdit.date().toPyDate)
+        # self.dateEdit.date().toPyDate().isoformat() insures that the date returned from toPyDate is a valid date which 
+        # is needed for getPayments to run correctly 
+        renewalList = self.getPayments(self.dateEdit.date().toPyDate().isoformat())
         renewalList = renewalList.order_by("payment_amount")
         dentistNameList = getDentistNames(renewalList)
         return(djprint.printDailyPaymentReport(renewalList, dentistNameList))

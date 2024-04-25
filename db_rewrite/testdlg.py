@@ -121,7 +121,8 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
             records = Test.objects.filter(renewal_id=id).order_by("-start_date")
             #print records
             return records[0].start_date
-        except:
+        except Exception as e:
+            print(e)
             return None
 
     def getLatest(self, partial_id):
@@ -145,7 +146,8 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         try:
             dentist = Dentist.objects.get(id=RenewalToDentistID(record.renewal.id))
             self.setWindowTitle("SMS Test - " + dentist.getFullName())
-        except:
+        except Exception as e:
+            print(e)
             self.setWindowTitle("SMS Renewal - " + "( Error retrieving dentist )")
             dentist = None
         self.renewalIdLineEdit.setText(
@@ -300,16 +302,27 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
                 if int(self.historyTableWidget.currentItem.text()) == \
                     int(self.testNumLineEdit.text()):
                     return True
-        except:
+        except Exception as e:
+            print(e)
             pass
         return False
 
     def loadHistory(self, record):
         # fill table with column titles:
         #["renewal", "num", "run", "start", "result", "result", "ctrl"]
-        start = str(record.renewal)[0:-3] + '000'
-        stop = str(record.renewal)[0:-3] + '999'
-        tests = Test.objects.filter(renewal__range=(start,stop))
+        print(str(record.renewal.renewal_date)[0:10])
+        print(record)
+        print(record.renewal.id)
+        start = str(record.renewal.id)[0:-3] 
+        start = start + '000'
+        print(start)
+        stop = str(record.renewal.id)[0:-3] 
+        stop = stop + '999'
+        print(stop)
+        start = int(start)
+        stop = int(stop)
+        #tests = Test.objects.filter(renewal__renewal_date__gte=start, renewal__renewal_date__lte=stop)
+        tests = Test.objects.filter(renewal__id__in=range(start,stop+1)) # this is where an error is 
         tests = tests.order_by("-start_date", "-renewal", "-test_num")
         self.historyTableWidget.setRowCount(len(tests))
 
@@ -317,7 +330,7 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
             if test.renewal_id == int(self.renewalIdLineEdit.text()) and \
             test.test_num == int(self.testNumLineEdit.text()):
                 self.historyTableWidget.setCurrentCell(row, 0)
-            text = range(0, NUM_HISTORY_COLUMNS)
+            text = list(range(0, NUM_HISTORY_COLUMNS))
             text[0] = str(test.renewal_id).zfill(RENEWAL_ID_WIDTH) 
             text[1] = str(test.test_num)
             text[2] = RecordDateToText(test.sample_date, shorten=True)

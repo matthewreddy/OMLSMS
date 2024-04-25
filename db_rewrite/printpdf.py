@@ -1,4 +1,4 @@
-import os, tempfile, subprocess
+import os, tempfile, subprocess, codecs
 from omldb import PDF_PRINTER_PATH, PDF_VIEWER_PATH, HTML_CONVERTER_PATH, LABEL_PRINTER, DEFAULT_PRINTER
 #import time
 #import win32print
@@ -96,14 +96,19 @@ def viewText(text):
     #startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
     try:
-        file = tempfile.NamedTemporaryFile (suffix=".txt", delete=False)
-        file.write (text)
-        file.close()
-    except:
+            # Open a temporary file with a .txt suffix and prevent automatic deletion
+        with tempfile.NamedTemporaryFile(suffix=".txt", delete=False) as temp_file:
+            temp_file_path = temp_file.name  # Get the file path of the temporary file
+
+        # Write the text to the temporary file
+        with codecs.open(temp_file_path, 'w', encoding='utf-8') as file_writer:
+            file_writer.write(text)
+    except Exception as e:
+        print(e)
         raise EnvironmentError(101, "Error opening temporary file.")
 
     try:
-        p = subprocess.Popen(["notepad.exe", file.name], 
+        p = subprocess.Popen(["notepad.exe", temp_file.name], 
                              startupinfo=startupinfo, 
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = p.communicate()
@@ -111,7 +116,7 @@ def viewText(text):
         raise EnvironmentError(103, "Error viewing file.")
     finally:
         try:
-            os.remove(file.name)
+            os.remove(temp_file.name)
         except:
             pass
 
@@ -121,21 +126,27 @@ def printText(text):
     #startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
     try:
-        file = tempfile.NamedTemporaryFile (suffix=".txt", delete=False)
-        file.write (text)
-        file.close()
+            # Open a temporary file with a .txt suffix and prevent automatic deletion
+        with tempfile.NamedTemporaryFile(suffix=".txt", delete=False) as temp_file:
+            temp_file_path = temp_file.name  # Get the file path of the temporary file
+
+        # Write the text to the temporary file
+        with codecs.open(temp_file_path, 'w', encoding='utf-8') as file_writer:
+            file_writer.write(text)
     except:
         raise EnvironmentError(101, "Error opening temporary file.")
 
     try:
-        p = subprocess.Popen(["notepad.exe /P", file.name], 
-                             startupinfo=startupinfo, 
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = p.communicate()
+        p = subprocess.Popen(["notepad.exe", "/P", temp_file.name], shell=True)
+        p.communicate()
+        # p = subprocess.Popen(["notepad.exe /P", temp_file.name], 
+        #                      startupinfo=startupinfo, 
+        #                      stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # stdout, stderr = p.communicate()
     except:
         raise EnvironmentError(102, "Error printing file.")
     finally:
         try:
-            os.remove(file.name)
+            os.remove(temp_file.name)
         except:
             pass           
