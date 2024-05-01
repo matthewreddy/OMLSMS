@@ -24,16 +24,12 @@
 # Note that these operations are really simple. They won't work with
 # many-to-many relationships, and you may have to divide really big
 # lists into smaller chunks before sending them through.
-#
-# History
-# 2010-12-10: quote column names, reported by Beres Botond. 
-
-# Adding a comment here for testing purposes
 
 def insert_many(objects, using="default"):
     """Insert list of Django objects in one SQL query. Objects must be
     of the same Django model. Note that save is not called and signals
-    on the model are not raised."""
+    on the model are not raised.
+    """
     if not objects:
         return
 
@@ -58,7 +54,8 @@ def update_many(objects, fields=[], using="default"):
     """Update list of Django objects in one SQL query, optionally only
     overwrite the given fields (as names, e.g. fields=["foo"]).
     Objects must be of the same Django model. Note that save is not
-    called and signals on the model are not raised."""
+    called and signals on the model are not raised.
+    """
     if not objects:
         return
 
