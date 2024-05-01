@@ -1,19 +1,18 @@
+"""Several helper functions used around the application to get corresponding data."""
+
 import sys
 from datetime import date, timedelta
-import io
 from constants import *
 
-from xhtml2pdf.document import pisaDocument
-
 sys.path.append(OMLWEB_PATH)
-from django.conf import settings
-from django.template import Context, Template
+from django.template import Context
 from django.template.loader import get_template, render_to_string
 from omlweb.views import getBillingData
-from omlweb.models import Dentist, State, Renewal, Sterilizer, Test
+from omlweb.models import Dentist, Renewal, Sterilizer, Test
 
 
 def getBillForSterilizer(sterilizer_id, dentist=None, renewal=None):
+    """Calculates a bill for a specific sterilizer by its ID."""
     if not dentist:
         dentist_id = int(str(sterilizer_id).zfill(STERILIZER_ID_WIDTH )[0:DENTIST_ID_WIDTH])
         dentist = Dentist.objects.get(id=dentist_id)
@@ -43,10 +42,9 @@ def getBillForSterilizer(sterilizer_id, dentist=None, renewal=None):
         payment['due_date'] = renewal.renewal_date + datetime.timedelta(days=30)
 
     c = Context({
-    'dentist': dentist,
-    'payment': payment,
+        'dentist': dentist,
+        'payment': payment,
     })
-    #pdf = create_PDF(t, c).getvalue()
     return(t.render(c))
 
 def chunker(seq, size):
@@ -61,9 +59,10 @@ def encodeTo128Font(value):
         return value + 32
 
 def encodeToCode128(id):
-    # Encode ID string to condensed Code 128c
-    # (Start C) (Encoded Pairs) (Checksum) (End Char)
-    # Checksum =  Value of Start C + (Value * Position) of Encoded Pairs
+    """Encode ID string to condensed Code 128c
+    (Start C) (Encoded Pairs) (Checksum) (End Char)
+    checksum =  Value of Start C + (Value * Position) of Encoded Pairs
+    """
     checksum = 105
     code = ""
     for position, pair in enumerate(chunker(id, 2)):
@@ -73,6 +72,7 @@ def encodeToCode128(id):
     return "&#155" + code + ("&#%d" % checksum) + "&#156"
 
 def getRenewalLabelsForSterilizers(sterilizers, dentists, lot):
+    """Return renewal labels based on given sterilizers, dentists, and lot."""
     t = get_template('renewallabel.html')
     renewal_ids = []
     barcodes = []
@@ -86,26 +86,24 @@ def getRenewalLabelsForSterilizers(sterilizers, dentists, lot):
             id = "%s%s" % (base, str(strip).zfill(STRIP_ID_WIDTH))
             ids.append(id)
             codes.append(encodeToCode128(id))
-        #renewal_ids.append(id)
-        #barcodes.append(encodeToCode128(id))
         renewal_ids.append(ids)
         barcodes.append(codes)
 
     z = zip(sterilizers,renewal_ids,barcodes)
 
     c = Context({
-    'today': date.today(),
-    'sterilizers': sterilizers,
-    'dentists': dentists,
-    'lot': lot,
-    'zips': z,
-    'image_directory': IMAGES_PATH,
-    'num_labels': numLabels,
+        'today': date.today(),
+        'sterilizers': sterilizers,
+        'dentists': dentists,
+        'lot': lot,
+        'zips': z,
+        'image_directory': IMAGES_PATH,
+        'num_labels': numLabels,
     })
     return(t.render(c))
     
 def getBillsForDentist(dentist):
-    #dentist = Dentist.objects.get(id=dentist_id)
+    """Return bills for a specific dentist."""
     (start, stop) = GetSterilizerIDRange(dentist.id)
     sterilizers = Sterilizer.objects.filter(id__range=(start, stop))\
                      .filter(inactive_date=None)
@@ -120,18 +118,8 @@ def getBillsForDentist(dentist):
             html += getBillForSterilizer(sterilizer.id, dentist) 
     return(html)
 
-'''
-def create_PDF(template, context):
-    html  = template.render(context)
-    result = StringIO.StringIO()
-    #print html.encode("ISO-8859-1")
-    pdf = pisaDocument(StringIO.StringIO(html.encode("ISO-8859-1")), result)
-    if not pdf.err:
-        return result
-    return None
-'''
-
 def getResultsDateRange(sterilizer):
+    """Calculate date range using the datetime library for a sterilizer."""
     r = Renewal.objects.filter(sterilizer__id=sterilizer.id)
     r = r.filter(inactive_date__isnull=True).order_by("-renewal_date")
     if len(r) > 1:
@@ -147,6 +135,7 @@ def getResultsDateRange(sterilizer):
     return (start_date, date.today())
   
 def getResultsLetter(dentist, sterilizers, date_range):
+    """Generate a letter displaying results for a dentist. Also requires sterilizers and a date range."""
     results_list = []
     for sterilizer in sterilizers:
         if not date_range:
@@ -157,23 +146,24 @@ def getResultsLetter(dentist, sterilizers, date_range):
         q = q.filter(start_date__range=(start_date, stop_date))
         q = q.order_by('sample_date')
         dict = {
-        'tests':q,
-        'sterilizer': sterilizer,
-        'start_date': start_date,
-        'stop_date': stop_date,
+            'tests': q,
+            'sterilizer': sterilizer,
+            'start_date': start_date,
+            'stop_date': stop_date,
         }
         results_list.append(dict)
 
     t = get_template('report.html')
     c = Context({
-    'today': date.today(),
-    'dentist': dentist,
-    'result_summaries': results_list,
-    'image_directory': IMAGES_PATH,
+        'today': date.today(),
+        'dentist': dentist,
+        'result_summaries': results_list,
+        'image_directory': IMAGES_PATH,
     })
     return(t.render(c))
     
 def getReportForSterilizer(sterilizer_id, date_range = None):
+    """Generates and returns a report for a specific sterilizer by its ID."""
     dentist_id = str(sterilizer_id).zfill(STERILIZER_ID_WIDTH)[0:DENTIST_ID_WIDTH]
     dentist = Dentist.objects.get(id=dentist_id)
     sterilizer = Sterilizer.objects.get(id=sterilizer_id)
@@ -181,6 +171,7 @@ def getReportForSterilizer(sterilizer_id, date_range = None):
     return getResultsLetter(dentist, sterilizers, date_range)
 
 def getReportForDentist(dentist_id, date_range = None):
+    """Generates and returns a report for a specific dentist by their ID."""
     dentist = Dentist.objects.get(id=dentist_id)
     sterilizers = Sterilizer.objects.filter(dentist__id=dentist_id)
     sterilizers = sterilizers.filter(inactive_date__isnull=True)
@@ -189,132 +180,144 @@ def getReportForDentist(dentist_id, date_range = None):
     return getResultsLetter(dentist, sterilizers, date_range)
 
 def printNotifyLetter(dentist, test, user, contacted):
+    """Helper function to render a notify letter."""
     t = get_template('notify_letter.html')
     c = Context({
-    'today': date.today(),
-    'dentist': dentist,
-    'test': test,
-    'user': user,
-    'contacted': contacted,
-    'image_directory': IMAGES_PATH,
+        'today': date.today(),
+        'dentist': dentist,
+        'test': test,
+        'user': user,
+        'contacted': contacted,
+        'image_directory': IMAGES_PATH,
     })
     return(t.render(c))
 
 def printDentistLabelSheet(dentists, skip):
+    """Helper function to render a dentist label sheet."""
     t = get_template('dentist_labelsheet.html')
     c = Context({
-    'dentists': dentists,
-    'skip': skip,
+        'dentists': dentists,
+        'skip': skip,
     })
     return(t.render(c))
     
 def printSterilizerLabelSheet(sterilizers, dentists, skip):
+    """Helper function to render a sterilizer label sheet."""
     t = get_template('sterilizer_labelsheet.html')
     c = Context({
-    'sterilizers': sterilizers,
-    'dentists': dentists,
-    'skip': skip,
+        'sterilizers': sterilizers,
+        'dentists': dentists,
+        'skip': skip,
     })
     return(t.render(c))
 
 def testCountReport(title, testList):
+    """Helper function to render testing lists."""
     t = get_template('testcount.txt')
     c = Context({
-    'title': title,
-    'tests': testList,
+        'title': title,
+        'tests': testList,
     })
     return(t.render(c))
 
 def inactivityReport(sterilizerList, names, weeks, activity):
+    """Helper function to render an inactivity report."""
     t = get_template('inactivityreport.txt')
     c = Context({
-    'sterilizers': sterilizerList,
-    'names': names,
-    'activity': activity,
-    'weeks': weeks,
+        'sterilizers': sterilizerList,
+        'names': names,
+        'activity': activity,
+        'weeks': weeks,
     })
     return(t.render(c))
 
 def getAnomalyReport(suspended, s_names, overlooked, o_names):
+    """Helper function to render an anomaly report."""
     t = get_template('anomalyreport.txt')
     c = Context({
-    'suspended': suspended,
-    's_names': s_names,
-    'overlooked': overlooked,
-    'o_names': o_names,
+        'suspended': suspended,
+        's_names': s_names,
+        'overlooked': overlooked,
+        'o_names': o_names,
     })
     return(t.render(c))
 
 def printOverdueAccountList(renewalList, namesList):
+    """Helper function to render an overdue report/account list."""
     t = get_template('overduereport.txt')
     c = Context({
-    'renewals': renewalList,
-    'names': namesList,
+        'renewals': renewalList,
+        'names': namesList,
     })
     return(t.render(c))
 
 def printDailyPaymentReport(renewalList, namesList):
-    # t = get_template('reports/paymentreport.txt')
-    # c = Context({
-    # 'renewals': renewalList,
-    # 'names': namesList,
-    # })
-    
-    return render_to_string('paymentreport.txt',{'renewals': renewalList,
-    'names': namesList,})
+    """Helper function to stringify a payment report."""
+    return render_to_string('paymentreport.txt', {
+        'renewals': renewalList,
+        'names': namesList
+    })
 
 def printQuarterlyPaymentSummary(values):
+    """Helper function to render an accounts summary.
+    All values must be passed directly to the function in JSON.
+    """
     t = get_template('accountssummary.txt')
-    c = Context(values)
+    c = Context(values)  # could possibly be refactored similar to the other functions
     return(t.render(c))
 
 def viewRenewals(renewalList, namesList, header, start, stop):
+    """Helper function to render renewals."""
     t = get_template('renewallist.txt')
     c = Context({
-    'renewals': renewalList,
-    'names': namesList,
-    'header': header,
-    'begin_date': start,
-    'end_date': stop,
+        'renewals': renewalList,
+        'names': namesList,
+        'header': header,
+        'begin_date': start,
+        'end_date': stop,
     })
     return(t.render(c))
 
 def viewTests(testList, header, start, stop):
+    """Helper function to render tests."""
     t = get_template('testcount.txt')
     c = Context({
-    'tests': testList,
-    'title': header,
-    'begin_date': start,
-    'end_date': stop,
+        'tests': testList,
+        'title': header,
+        'begin_date': start,
+        'end_date': stop,
     })
     return(t.render(c))
 
 def printYearlyComplianceLetter(dentist, sterilizer, compliance, year, numTests, user):
+    """Helper function to render compliance letter."""
     t = get_template('complianceletter.html')
     c = Context({
-    'today': date.today(),
-    'dentist': dentist,
-    'sterilizer': sterilizer,
-    'number_of_tests': numTests,
-    'user': user,
-    'report_year': year,
-    'compliance': compliance,
-    'image_directory': IMAGES_PATH,
+        'today': date.today(),
+        'dentist': dentist,
+        'sterilizer': sterilizer,
+        'number_of_tests': numTests,
+        'user': user,
+        'report_year': year,
+        'compliance': compliance,
+        'image_directory': IMAGES_PATH,
     })
     return(t.render(c))
 
 def printLotRecall(renewalList, namesList):
+    """Helper function to render a lot recall."""
     t = get_template('lotrecall.txt')
     c = Context({
-    'renewals': renewalList,
-    'names': namesList,
+        'renewals': renewalList,
+        'names': namesList,
     })
     return(t.render(c))
 
 def printRenewalsStarted(sterilizerList, namesList):
+    """Helper function to render a renewal being started."""
     t = get_template('startrenewal.txt')
     c = Context({
-    'sterilizers': sterilizerList,
-    'names': namesList,
+        'sterilizers': sterilizerList,
+        'names': namesList,
     })
     return(t.render(c))
