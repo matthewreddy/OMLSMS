@@ -1,3 +1,7 @@
+"""Module for defining the behavior of the updated database.
+Outlining rules on how the data is expected to be stored and retrieved
+in accordance with the other dialog boxes being rendered."""
+
 import sys, datetime
 
 from constants import *
@@ -17,7 +21,7 @@ def updateDatabase():
     #    update.save()
 
 def updateLateFees():
-    print("updating late fees")
+    print("updating late fees")  # I am choosing to leave this for now - Matthew
     # today = datetime.now()
     # print(datetime.date.today())
     # print(type(datetime.date.today()))

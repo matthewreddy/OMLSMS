@@ -1,4 +1,7 @@
-import sys, re, datetime
+"""This file renders the starting and sending dialog boxes for
+renewals, defining their unique types of behaviors."""
+
+import datetime
 from constants import *
 
 from PyQt5.QtCore import *
@@ -6,7 +9,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtSql import *
 from PyQt5.QtWidgets import *
 import ui
-from formviewdlg import FormViewPartialLoadDlg
 from printlabeldlg import PrintLabelDlg
 
 from omlweb.models import Renewal, Sterilizer, Dentist, Lot, Test
@@ -35,7 +37,8 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
             return
 
     def initializeSterilizers(self):
-        # some code duplicated in overdue report
+        """Create the sterilizers to be included in the renewal.
+        Some code is duplicated in the overdue report."""
         try:
             sterilizers = Sterilizer.objects.filter(renew=True)
             sterilizers = sterilizers.filter(inactive_date__isnull=True)
@@ -94,6 +97,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
         return True
     
     def initializeSterilizerTable(self):
+        """Create the table that holds and formats the sterilizers on the renewal."""
         self.tableWidget.setColumnCount(NUM_TABLE_COLUMNS)
         labels = ["sterlizer", "last renewal", "strips", "tests remaining"]
         widths = [         80,             80,               80,                80]
@@ -108,10 +112,10 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
         row = 0
         for sterilizer, num, lot, left in self.sterilizerList:
             text = [
-            str(sterilizer.id).zfill(STERILIZER_ID_WIDTH),
-            str(lot),
-            str(num),
-            str(left),
+                str(sterilizer.id).zfill(STERILIZER_ID_WIDTH),
+                str(lot),
+                str(num),
+                str(left),
             ]
             for column in range(0, len(text)):
                     item = QTableWidgetItem(text[column])
@@ -123,6 +127,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
         self.tableWidget.selectAll()
 
     def initializeLots(self):
+        """Create lots to be used in the renewal."""
         today = datetime.date.today()
         try:
             self.lotList = Lot.objects.filter(inactive_date__isnull=True)
@@ -146,6 +151,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
         return True
 
     def updateCounts(self):
+        """Update and replace counts in the database for the renewal."""
         count = 0
         strips = 0
         for row in range(0, len(self.sterilizerList)):
@@ -156,6 +162,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
         self.stripsRequiredLineEdit.setText(str(int(strips/DEFAULT_NUM_TESTS)))
     
     def selectLot(self, index):
+        """Pinpoint and select the lot specified by the user for the renewal."""
         for row in range(0, len(self.sterilizerList)):
             if self.lotList[index].id <= self.sterilizerList[row][2]:
                 for col in range(0, NUM_TABLE_COLUMNS):
@@ -172,6 +179,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
         self.updateCounts()
 
     def selectNumRenewals(self, num):
+        """Select renewals the specified number of times."""
         i = 0
         index = self.lotComboBox.currentIndex()
         for row in range(0, len(self.sterilizerList)):
@@ -183,6 +191,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
                 break
 
     def selectNumStrips(self, num):
+        """Select strips the specified number of times."""
         i = 0
         index = self.lotComboBox.currentIndex()
         for row in range(0, len(self.sterilizerList)):
@@ -196,22 +205,8 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
                 break
         
     def startRenewal(self, sterilizers):
+        """Instantiate the renewal."""
         lot = self.lotList[self.lotComboBox.currentIndex()]
-
-        '''
-        dentist_ids = []
-        dentists = []
-        for sterilizer in sterilizers:
-            id = SterilizerToDentistID(sterilizer.id)
-            dentist_ids.append(id)
-        
-        dentistList = Dentist.objects.filter(id__in=dentist_ids)
-        
-        for id in dentist_ids:
-            for dentist in dentistList:
-                if id == dentist.id:
-                    dentists.append(dentist)
-        '''
         
         sortList = [(SterilizerToDentistID(x.id), x) for x in sterilizers]
         sortList.sort()
@@ -233,6 +228,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
                 dentist = sterilizer.dentist
                 self.parent().printHTML(djprint.getRenewalLabelsForSterilizers([sterilizer], [dentist], lot), spawn=False, useLabelPrinter=True)
 
+    # Functions for defining behavior upon pushing buttons.
     
     def on_sendPushButton_clicked(self) -> None:
         self.statusLabel.setText("Printing Renewals")
@@ -286,17 +282,20 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
             self.updateCounts()
     
     def selectSterilizer(self):
+        """Select which sterilizer to be included in the 
+        renewal using the find dialog functionality.
+        """
         findDlg = FindDlg(
-        "Sterilizer",
-        self.sterilizerList,
-        ["id", "enroll_date"],
-        {
-        'field_widths': [250, 200],
-        'window_height': 400,
-        'window_width': 600
-        },
-        self
-        )
+            "Sterilizer",
+            self.sterilizerList,
+            ["id", "enroll_date"],
+            {
+            'field_widths': [250, 200],
+            'window_height': 400,
+            'window_width': 600
+            },
+            self
+            )
         return (findDlg.exec_())
 
 
@@ -343,6 +342,7 @@ class SendRenewalDlg(QDialog, ui.Ui_sendRenewalDlg):
             self.error_initializing = True
 
     def createRenewal(self, sterilizer, lot):
+        """Initialize the renewal and set its default values."""
         renewal = Renewal()
         renewal.id = int(str(sterilizer.id) + str(lot.id))
         renewal.sterilizer = sterilizer
@@ -359,13 +359,18 @@ class SendRenewalDlg(QDialog, ui.Ui_sendRenewalDlg):
         return renewal
 
     def insertIntoDatabase(self, renewal):
+        """Save the renewal, translate it into a form that
+        can be understood by the database, and store it.
+        """
         renewal.save(force_insert=True)
         sterilizer = renewal.sterilizer
         sterilizer.renew = False
         sterilizer.save()
 
     def getSterilizers(self):
-        # get sterilizers in same order as self.renewals with one database access
+        """Retrieve sterilizers in the same order as
+        self.renewals with one access to the database.
+        """
         sterilizer_ids = []
         for renewal in self.renewals:
             sterilizer_ids.append(RenewalToSterilizerID(renewal.id))
@@ -379,6 +384,7 @@ class SendRenewalDlg(QDialog, ui.Ui_sendRenewalDlg):
         return list
         
     def getDentists(self):
+        """Retrieve stored dentists for the renewal."""
         dentist_ids = []
         for renewal in self.renewals:
             dentist_ids.append(RenewalToDentistID(renewal.id))
@@ -386,19 +392,23 @@ class SendRenewalDlg(QDialog, ui.Ui_sendRenewalDlg):
         return list
     
     def printBill(self, renewal):
+        """Request a print for the renewal bill."""
         id = RenewalToSterilizerID(renewal.id)
         self.parent().printHTML(djprint.getBillForSterilizer(id))
 
     def printMailingLabels(self):
+        """Request a print for the renewal mailing labels."""
         dentists = self.getDentists()
         labelDlg = PrintLabelDlg(self.parent(), dentists)
         labelDlg.exec_()
 
     def printReports(self):
+        """Request a print for the renewal reports."""
         sterilizers = self.getSterilizers()
         for sterilizer in sterilizers:
             self.parent().printHTML(djprint.getReportForSterilizer(sterilizer.id), spawn=False)
 
+    # Functions for defining behavior upon pushing buttons.
     
     def on_renewalIdLineEdit_returnPressed(self) -> None:
         text = self.renewalIdLineEdit.text()
@@ -500,12 +510,16 @@ class SendRenewalDlg(QDialog, ui.Ui_sendRenewalDlg):
         self.close()
 
     def keyPressEvent(self, event):
+        """Define behavior to occur upon the pressing of a key.
+        We are only paying attention to the Escape key.
+        """
         if not event.key() == Qt.Key_Escape:
             super(SendRenewalDlg, self).keyPressEvent(event)
         else:
             self.close()
 
     def close(self):
+        """Define behavior to happen when the dialog is closed."""
         self.renewalIdLineEdit.releaseKeyboard()
         self.renewalIdLineEdit.setDisabled(True)
         close = True

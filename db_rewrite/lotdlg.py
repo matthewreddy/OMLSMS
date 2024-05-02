@@ -1,3 +1,6 @@
+"""This file renders the dialog box for lots. It helps define
+behavior for loading and saving records and forms."""
+
 import sys, re
 from constants import *
 
@@ -34,14 +37,15 @@ class LotDlg(FormViewDlg, ui.Ui_lotDlg):
         
         self.findValues = ["id", "name", "receive_date", "expiration_date", "comment"]
         self.findSizes = {
-        'field_widths': [50, 100, 100, 100, 200],
-        'window_height': 400,
-        'window_width': 600,
-        'zfill': [LOT_ID_WIDTH, None, None, None, None],
+            'field_widths': [50, 100, 100, 100, 200],
+            'window_height': 400,
+            'window_width': 600,
+            'zfill': [LOT_ID_WIDTH, None, None, None, None],
         }
         self.disableEditing()
 
     def initializeModel(self, bookmark):
+        """Sets up underlying model."""
         if not self.chemicalVaporComboBox.count():
             vapors = Vapor.objects.filter(active=True).order_by("id")
             for vapor in vapors:
@@ -50,11 +54,13 @@ class LotDlg(FormViewDlg, ui.Ui_lotDlg):
         self.goToBookmark(bookmark)
 
     def loadRecords(self, record_id=None):
+        """Retrieves lot records from database."""
         self.records = Lot.objects.all().order_by("id")
         if record_id:
             self.findRecord(record_id)
 
     def loadForm(self, record):
+        """Retrieves and renders form data."""
         self.idLineEdit.setText(
             str(record.id).zfill(LOT_ID_WIDTH) if record.id else ""
         )
@@ -67,6 +73,7 @@ class LotDlg(FormViewDlg, ui.Ui_lotDlg):
         self.commentLineEdit.setText(record.comment)
 
     def verifyFormData(self):
+        """Helps verify form data, and displays errors if something is wrong."""
         if self.idLineEdit.text() != "" and \
                 not re.match("^\d{%s}$" % LOT_ID_WIDTH, self.idLineEdit.text()):
             return self.idLineEdit, "Lot ID has improper format."
@@ -87,6 +94,7 @@ class LotDlg(FormViewDlg, ui.Ui_lotDlg):
         return None, None
 
     def saveForm(self, record, id=None):
+        """Saves the form and stores it in the database."""
         if self.idLineEdit.text():
             assert record.id == int(self.idLineEdit.text())
         else:
@@ -101,19 +109,21 @@ class LotDlg(FormViewDlg, ui.Ui_lotDlg):
         record.comment = self.commentLineEdit.text()
 
     def prepareNewRecord(self):
+        """Defines behavior for initializing a new record."""
         try:
             default_vapor = Vapor.objects.get(id=DEFAULT_CHEMICAL_VAPOR)
         except:
             return None
         return Lot(
-        id = None,
-        receive_date = datetime.date.today(),
-        expiration_date = datetime.date.today(),
-        count = DEFAULT_LOT_COUNT,
-        vapor = default_vapor,
+            id = None,
+            receive_date = datetime.date.today(),
+            expiration_date = datetime.date.today(),
+            count = DEFAULT_LOT_COUNT,
+            vapor = default_vapor,
         )
     
     def getTargetInsertId(self, record):
+        """Find the target ID in which the next item will be inserted."""
         try:
             value = Lot.objects.all().aggregate(Max('id'))['id__max'] + 1
         except:
@@ -121,19 +131,22 @@ class LotDlg(FormViewDlg, ui.Ui_lotDlg):
         return value
 
     def makeBookmark(self):
+        """Creates a new bookmark based on the ID line."""
         if self.idLineEdit.text():
             return {
-            'lot': self.idLineEdit.text()
+                'lot': self.idLineEdit.text()
             }
         return {}
 
     def goToBookmark(self, bookmark):
+        """Navigates to specified bookmark."""
         if 'lot' in bookmark:
             self.findRecord(int(bookmark['lot']))
         else:
             self.findRecord(self.records[len(self.records) - 1].id)
 
-    
+    # Functions for defining behavior upon pushing buttons.
+
     def on_dateInactivePushButton_clicked(self) -> None:
         msgBox = QMessageBox()
         id = self.idLineEdit.text()
