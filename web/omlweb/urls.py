@@ -1,3 +1,5 @@
+"""Module for holding and defining URL paths that Django can navigate to and interact with."""
+
 from django.urls import include, re_path
 from omlweb.views import home, summary, billing, results, billPDF, \
                             resultsPDF, invalidSterilizer
