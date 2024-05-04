@@ -1,3 +1,6 @@
+"""This file renders the dialog box for results. It is used
+as a parent to several other child dialog boxes."""
+
 import sys, datetime
 from constants import *
 
@@ -35,6 +38,7 @@ class ResultDlg(QDialog, ui.Ui_resultDlg):
         self.endDateEdit.setDate(end)
         self.endDateEdit.setCalendarPopup(True)
 
+    # Functions for defining behavior upon pushing buttons.
     
     def on_defaultPeriodRadioButton_clicked(self, checked: bool) -> None:
         self.startDateEdit.setDisabled(True)

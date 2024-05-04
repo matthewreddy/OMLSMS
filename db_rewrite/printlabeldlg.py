@@ -1,4 +1,9 @@
-import sys, re, datetime
+"""This file renders the dialog box for printing labels.
+Behavior is defined for initializing denstists in accordance
+with the labels, as well as adding dentists and sterilizers
+to the label.
+"""
+
 from constants import *
 
 from PyQt5.QtCore import *
@@ -30,6 +35,9 @@ class PrintLabelDlg(QDialog, ui.Ui_printLabelDlg):
         self.printSterilizersPushButton.setDisabled(True)
     
     def initializeDentists(self, dentists):
+        """Translate dentists into a form that can be understood
+        by the current label being requested to be printed.
+        """
         for dentist in dentists:
             text = "%s - %s %s %s" % (
                    str(dentist.id).zfill(DENTIST_ID_WIDTH),
@@ -41,6 +49,7 @@ class PrintLabelDlg(QDialog, ui.Ui_printLabelDlg):
             self.dentists[dentist.id] = (dentist, True, item)
 
     def addDentist(self, dentist_id, printLabel=True):
+        """Add a dentist to the label by their ID."""
         if not dentist_id in self.dentists:
             dentist = Dentist.objects.get(id=dentist_id)
             text = "%s - %s %s %s" % (
@@ -63,6 +72,7 @@ class PrintLabelDlg(QDialog, ui.Ui_printLabelDlg):
             self.printDentistsPushButton.setEnabled(True)
     
     def addSterilizer(self, sterilizer_id):
+        """Add a sterilizer to the label by its ID."""
         if not sterilizer_id in self.sterilizers:
             sterilizer = Sterilizer.objects.get(id=sterilizer_id)
             text = "%s - %s" % (
@@ -79,7 +89,8 @@ class PrintLabelDlg(QDialog, ui.Ui_printLabelDlg):
             self.sterilizers[sterilizer_id] = (sterilizer)
         self.printSterilizersPushButton.setEnabled(True)
         
-    
+    # Functions for defining behavior upon pushing buttons.
+
     def on_addDentistPushButton_clicked(self) -> None:
         dentist_id = self.selectDentist()
         if dentist_id:
@@ -136,31 +147,33 @@ class PrintLabelDlg(QDialog, ui.Ui_printLabelDlg):
         self.close()
 
     def selectDentist(self):
+        """Select a dentist using the find dialog functionality."""
         findDlg = FindDlg(
-        "Dentist",
-        Dentist.objects.filter(inactive_date__isnull=True),
-        ["id", "practice_name", "lname", "fname"],
-        {
-        'field_widths': [50, 250, 160, 90],
-        'window_height': 400,
-        'window_width': 600,
-        'zfill': [DENTIST_ID_WIDTH, None, None, None]
-        },
-        self
+            "Dentist",
+            Dentist.objects.filter(inactive_date__isnull=True),
+            ["id", "practice_name", "lname", "fname"],
+            {
+                'field_widths': [50, 250, 160, 90],
+                'window_height': 400,
+                'window_width': 600,
+                'zfill': [DENTIST_ID_WIDTH, None, None, None]
+            },
+            self
         )
         return (findDlg.exec_())
     
     def selectSterilizer(self):
+        """Select a sterilizer using the find dialog functionality."""
         findDlg = FindDlg(
-        "Sterilizer",
-        Sterilizer.objects.filter(inactive_date__isnull=True),
-        ["id", "enroll_date"],
-        {
-        'field_widths': [250, 200],
-        'window_height': 400,
-        'window_width': 600,
-        'zfill':[STERILIZER_ID_WIDTH, None]
-        },
-        self
+            "Sterilizer",
+            Sterilizer.objects.filter(inactive_date__isnull=True),
+            ["id", "enroll_date"],
+            {
+                'field_widths': [250, 200],
+                'window_height': 400,
+                'window_width': 600,
+                'zfill':[STERILIZER_ID_WIDTH, None]
+            },
+            self
         )
         return (findDlg.exec_())

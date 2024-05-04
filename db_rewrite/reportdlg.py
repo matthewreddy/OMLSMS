@@ -1,3 +1,6 @@
+"""This file renders several dialog boxes for reports. It also
+defines a function that helps retrieve the names of all dentists."""
+
 import sys, datetime, locale
 
 from PyQt5.QtCore import *
@@ -14,11 +17,12 @@ from omlweb.models import Lot, Renewal, Sterilizer, Dentist, Test
 from django.db.models import F
 import djprint
 from printlabeldlg import PrintLabelDlg
-from finddlg import FindDlg
 
 
-# also used by SendRenewal
 def getDentistNames(itemList, isRenewalList=True):
+    """Retrieve all dentist names currently stored in the database.
+    This function is also used by Send Renewal.
+    """
     try:
         dentist_lookup = {}
         dentists = Dentist.objects.all()
@@ -55,6 +59,7 @@ class ReportDlg(MainDlg, ui.Ui_reportDlg):
         self.dlg = None
 
     def dlgPos(self, pushButton):
+        """Define positioning of the dialog."""
         if pushButton:
             p = QPoint(self.rect().right(), pushButton.pos().y())
         else:
@@ -62,14 +67,17 @@ class ReportDlg(MainDlg, ui.Ui_reportDlg):
         return self.pos() + p + QPoint(20, 30)
     
     def hide(self):
+        """Set the dialog to be invisible to the user."""
         if self.dlg:
             self.dlg.close()
         super(ReportDlg, self).hide()
         
     def show(self, bookmark):
+        """Set the dialog to be visible to the user."""
         super(ReportDlg, self).show()
 
-    
+    # Functions for defining behavior upon pushing buttons.
+
     def on_testCountPushButton_clicked(self) -> None:
         if self.dlg:
             self.dlg.close()
@@ -141,10 +149,12 @@ class TestCountDlg(QDialog, ui.Ui_testCountDlg):
         self.setButtonCount(self.overduePushButton, len(self.needResults))
 
     def setButtonCount(self, button, count):
+        """Modifies the button count amount stored in memory."""
         button.setText(str(count))
         button.setEnabled(count)
 
-   
+    # Functions for defining behavior upon pushing buttons.
+
     def on_dateEdit_dateChanged(self, q_date : QDate) -> None:
         date = q_date.toPyDate()
         count = Test.objects.filter(start_date=date).count()
@@ -228,7 +238,7 @@ class ActivityReportDlg(QDialog, ui.Ui_activityReportDlg):
         self.statusLabel.setText("")
 
     def getReport(self):
-        # report sterilizers that have missed more than 2 weeks in a row
+        """Report sterilizers that have missed more than 2 weeks in a row."""
         today = datetime.date.today()
         first_of_week = today - datetime.timedelta(days = today.weekday())
         stop_date = first_of_week - datetime.timedelta(days = 1)
@@ -273,7 +283,8 @@ class ActivityReportDlg(QDialog, ui.Ui_activityReportDlg):
         names = getDentistNames(list, False)
         return (djprint.inactivityReport(list, names, weeks, records))
 
-    
+    # Functions for defining behavior upon pushing buttons.
+
     def on_viewReportPushButton_clicked(self) -> None:
         self.statusLabel.setText("Working...")
         QCoreApplication.instance().processEvents()
@@ -301,6 +312,7 @@ class AnomalyReportDlg(QDialog, ui.Ui_anomalyReportDlg):
         self.statusLabel.setText("")
 
     def excludeUnpaid(self, sterilizers):
+        """Hide things that correspond to accounts marked as unpaid."""
         dentist_ids = [SterilizerToDentistID(sterilizer.id) for sterilizer in sterilizers]
 
         #recent unpaid renewals for those dentists
@@ -319,7 +331,7 @@ class AnomalyReportDlg(QDialog, ui.Ui_anomalyReportDlg):
         return [sterilizer for sterilizer in sterilizers if SterilizerToDentistID(sterilizer.id) not in exclude]
         
     def getActivateCandidates(self):
-        #all supsended but active sterilizers
+        """View all sterilizers that are suspended, but active."""
         sterilizers = Sterilizer.objects.filter(inactive_date__isnull=True)
         sterilizers = sterilizers.filter(dentist__inactive_date__isnull=True)
         sterilizers = sterilizers.filter(suspend=True)
@@ -328,7 +340,7 @@ class AnomalyReportDlg(QDialog, ui.Ui_anomalyReportDlg):
         return self.excludeUnpaid(sterilizers)
 
     def getRenewCandidates(self):
-        #all active sterilizers not marked for renewal
+        """View all sterilizers that are not marked for renewal."""
         sterilizers = Sterilizer.objects.filter(inactive_date__isnull=True)
         sterilizers = sterilizers.filter(dentist__inactive_date__isnull=True)
         sterilizers = sterilizers.filter(renew=False)
@@ -361,12 +373,14 @@ class AnomalyReportDlg(QDialog, ui.Ui_anomalyReportDlg):
         return candidates
 
     def getReport(self):
+        """Return an anomaly report of all active candidates."""
         activateCandidates = self.getActivateCandidates()
         a_names = getDentistNames(activateCandidates, False)
         renewCandidates = self.getRenewCandidates()
         r_names = getDentistNames(renewCandidates, False)
         return (djprint.getAnomalyReport(activateCandidates, a_names, renewCandidates, r_names))
         
+    # Functions for defining behavior upon pushing buttons.
     
     def on_viewReportPushButton_clicked(self) -> None:
         self.statusLabel.setText("Working...")
@@ -397,6 +411,7 @@ class OverdueReportDlg(QDialog, ui.Ui_overdueReportDlg):
         self.printReportPushButton.setDisabled(True)
         
     def getOverdueAccounts(self):
+        """View all accounts marked as overdue in the system."""
         days = datetime.timedelta(days = self.daysOverdueSpinBox.value())
         latest_date = datetime.date.today() - days
         earliest_date = datetime.date.today() - datetime.timedelta(days = MAX_DAYS_FOR_COLLECTIONS)
@@ -412,7 +427,9 @@ class OverdueReportDlg(QDialog, ui.Ui_overdueReportDlg):
         return list
 
     def getAccountsToRenew(self):
-        # code duplicated in sendrenewal
+        """View all accounts that should be renewed.
+        This code is duplicated in Send Renewal.
+        """
         sterilizers = Sterilizer.objects.filter(renew=True)
         sterilizers = sterilizers.filter(inactive_date__isnull=True)
         sterilizers = sterilizers.filter(suspend=False)
@@ -427,6 +444,7 @@ class OverdueReportDlg(QDialog, ui.Ui_overdueReportDlg):
         return latest_renewals
 
     def mergeMatches(self, overdue, renewals):
+        """Merge all entries of the given data that match."""
         mergeList = []
         d = {}
         f = {}
@@ -453,6 +471,7 @@ class OverdueReportDlg(QDialog, ui.Ui_overdueReportDlg):
         return mergeList
 
     def getReport(self):
+        """Return a report of all overdue accounts."""
         overdueList = self.getOverdueAccounts()
         if self.renewalOnlyCheckBox.isChecked():
             tempList = self.getAccountsToRenew()
@@ -462,6 +481,7 @@ class OverdueReportDlg(QDialog, ui.Ui_overdueReportDlg):
         dentistNameList = getDentistNames(renewalList)
         return(djprint.printOverdueAccountList(renewalList, dentistNameList))
         
+    # Functions for defining behavior upon pushing buttons.
     
     def on_viewReportPushButton_clicked(self) -> None:
         self.parent().viewText(self.getReport())
@@ -488,10 +508,12 @@ class PaymentReportDlg(QDialog, ui.Ui_paymentReportDlg):
         self.dateEdit.setCalendarPopup(True)
 
     def getPayments(self, date):
+        """Retrieve all payments entered in the database."""
         list = Renewal.objects.filter(payment_date=date)
         return list
 
     def getReport(self):
+        """Generate a payment report based on the renewal list."""
         # self.dateEdit.date().toPyDate().isoformat() insures that the date returned from toPyDate is a valid date which 
         # is needed for getPayments to run correctly 
         renewalList = self.getPayments(self.dateEdit.date().toPyDate().isoformat())
@@ -499,6 +521,7 @@ class PaymentReportDlg(QDialog, ui.Ui_paymentReportDlg):
         dentistNameList = getDentistNames(renewalList)
         return(djprint.printDailyPaymentReport(renewalList, dentistNameList))
 
+    # Functions for defining behavior upon pushing buttons.
     
     def on_viewReportPushButton_clicked(self) -> None:
         self.parent().viewText(self.getReport())
@@ -570,6 +593,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         self.monthRadioButton.setChecked(True)
 
     def updateDates(self):
+        """Update dates in the payment summary."""
         month = int(self.monthLineEdit.text())
         year = int(self.yearLineEdit.text())
         if self.monthRadioButton.isChecked():
@@ -593,6 +617,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         self.blankForm()
         
     def blankForm(self):
+        """Defines a blank form in the payment summary."""
         for widget in self.summaryWidgets:
             widget.setDisabled(True)
         
@@ -604,6 +629,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
             widget.setText("0")
             widget.setDisabled(True)
 
+    # Functions for defining behavior upon pushing buttons.
     
     def on_prevMonthPushButton_clicked(self) -> None:
         month = int(self.monthLineEdit.text())
@@ -674,18 +700,26 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
             self.updateDates()
 
     def disablePeriodSelection(self):
+        """Disable the widget for its specified period."""
         for widget in self.yearSelectWidgets + self.monthSelectWidgets + self.freeformSelectWidgets:
             widget.setDisabled(True)
 
     def countTests(self, startDate, stopDate):
+        """Counts the total amount of tests in the database.
+        To be used by the payment summary.
+        """
         tests = Test.objects.filter(start_date__range=(startDate, stopDate))
         return tests.count()
 
     def getRenewals(self, startDate, stopDate):
+        """Retrieves all renewals stored in the database.
+        To be used by the payment summary.
+        """
         renewals = Renewal.objects.filter(renewal_date__range=(startDate, stopDate))
         return renewals
 
     def getData(self):
+        """Retrieve and calculate all data relevant for payment summary."""
         start = self.beginDateEdit.date().toPyDate()
         stop = self.endDateEdit.date().toPyDate()
         renewals = self.getRenewals(start, stop)
@@ -739,31 +773,32 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
                 balances[i] += payment
         
         values = {
-        'start_date': start,
-        'end_date': stop,
-        'total_tests': self.countTests(start, stop),
-        'total_charged': -total_charged,
-        'total_received': total_received,
-        'total_late_fees': -total_late_fees,
-        'total_late_fee_payments': total_late_fees_received,
-        'total_balance': total_balance,
-        'total_renewals': len(renewals),
-        'total_uncharged': total_uncharged,
-        'paid': paid,
-        'num_paid': sum(paid) + total_uncharged,
-        'balance': balances,
-        'total_payments': sum(balances),
-        'unpaid': unpaid,
-        'num_unpaid': sum(unpaid),
-        'unpaid_balance': unpaid_balances,
-        'total_unpaid': sum(unpaid_balances),
-        'total_payments_pending': total_pending,
-        'payments_pending': [],
-        'partial_payments': partial_payments,
+            'start_date': start,
+            'end_date': stop,
+            'total_tests': self.countTests(start, stop),
+            'total_charged': -total_charged,
+            'total_received': total_received,
+            'total_late_fees': -total_late_fees,
+            'total_late_fee_payments': total_late_fees_received,
+            'total_balance': total_balance,
+            'total_renewals': len(renewals),
+            'total_uncharged': total_uncharged,
+            'paid': paid,
+            'num_paid': sum(paid) + total_uncharged,
+            'balance': balances,
+            'total_payments': sum(balances),
+            'unpaid': unpaid,
+            'num_unpaid': sum(unpaid),
+            'unpaid_balance': unpaid_balances,
+            'total_unpaid': sum(unpaid_balances),
+            'total_payments_pending': total_pending,
+            'payments_pending': [],
+            'partial_payments': partial_payments,
         }
         return values
 
     def fillForm(self):
+        """Fill in form values based on selections."""
         if not self.data:
             return
         
@@ -810,6 +845,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
                 widget.setEnabled(True)
     
     def getReport(self):
+        """Retrieve report and fill in the form based on the data."""
         if not self.data:
             self.data = self.getData()
             self.fillForm()
@@ -817,11 +853,13 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
             return(djprint.printQuarterlyPaymentSummary(self.data))
 
     def previewReport(self):
+        """View report before filling in the form."""
         if not self.data:
             self.data = self.getData()
         self.fillForm()
 
     def showRenewals(self, title, filter):
+        """View all renewals within the specified date range."""
         start = self.beginDateEdit.date().toPyDate()
         stop = self.endDateEdit.date().toPyDate()
         renewals = filter(start, stop)
@@ -829,10 +867,12 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         self.parent().viewText(djprint.viewRenewals(renewals, names, title, start, stop))
 
     def getRenewalFees(self, startDate, stopDate):
+        """Retrieve renewal fees stored in the database."""
         renewals = Renewal.objects.filter(renewal_date__range=(startDate, stopDate))
         renewals = renewals.filter(renewal_fee__gt=0)
         return renewals
 
+    # Functions for defining behavior upon pushing buttons.
     
     def on_renewalFeesPushButton_clicked(self) -> None:
         title = "Renewals with Fees"
@@ -851,10 +891,12 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         self.showRenewals(title, filter)
 
     def getLateFees(self, startDate, stopDate):
+        """Retrieve late fee entries stored in the database."""
         renewals = Renewal.objects.filter(renewal_date__range=(startDate, stopDate))
         renewals = renewals.filter(late_fee__gt=0)
         return renewals
 
+    # Functions for defining behavior upon pushing buttons.
    
     def on_lateFeesPushButton_clicked(self) -> None:
         title = "Renewals with Late Fees"
@@ -862,11 +904,13 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         self.showRenewals(title, filter)
 
     def getLateFeePayments(self, startDate, stopDate):
+        """Retrieve late fee payment entrites stored in the database."""
         renewals = Renewal.objects.filter(renewal_date__range=(startDate, stopDate))
         renewals = renewals.filter(late_fee__gt=0)
         renewals = renewals.filter(payment_amount__gt=F('renewal_fee'))
         return renewals
 
+    # Functions for defining behavior upon pushing buttons.
     
     def on_lateFeePaymentsPushButton_clicked(self) -> None:
         title = "Renewals with Late Fee Payments"
@@ -874,10 +918,12 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         self.showRenewals(title, filter)
 
     def getUnassignedPayments(self, startDate, stopDate):
+        """Retrieve all payments stored in the database that are unassigned."""
         renewals = Renewal.objects.filter(renewal_date__range=(startDate, stopDate))
         renewals = renewals.filter(payment_amount__gt=F('renewal_fee')+F('late_fee'))
         return renewals
     
+    # Functions for defining behavior upon pushing buttons.
     
     def on_unassignedPaymentsPushButton_clicked(self) -> None:
         title = "Renewals with Unassigned Payments"
@@ -899,11 +945,13 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         self.showRenewals(title, filter)
 
     def getPartialPayments(self, startDate, stopDate):
+        """Retrieve all payments stored in the database partially."""
         renewals = Renewal.objects.filter(renewal_date__range=(startDate, stopDate))
         renewals = renewals.filter(payment_amount__lt=F('renewal_fee')+F('late_fee'))
         renewals = renewals.filter(payment_amount__gt=0)
         return renewals
         
+    # Functions for defining behavior upon pushing buttons.
     
     def on_partialPaymentsPushButton_clicked(self) -> None:
         title = "Partial Payments"
@@ -922,6 +970,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         self.showRenewals(title, filter)
 
     def showPaidRenewals(self, title, range):
+        """View renewal payments."""
         intervals = [0,30,60,90,120]
         min = intervals[range-1]
         max = None
@@ -937,6 +986,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         names = getDentistNames(renewals)
         self.parent().viewText(djprint.viewRenewals(renewals, names, title, startDate, stopDate))
 
+    # Functions for defining behavior upon pushing buttons.
     
     def on_paidPushButton1_clicked(self) -> None:
         title = "Paid 0-29 days."
@@ -963,10 +1013,12 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         self.showPaidRenewals(title, 5)
 
     def getTotalPaid(self, startDate, stopDate):
+        """Return the total amount paid stored in the database."""
         renewals = Renewal.objects.filter(renewal_date__range=(startDate, stopDate))
         renewals = renewals.filter(payment_amount__gte=F('renewal_fee')+F('late_fee'))
         return renewals
 
+    # Functions for defining behavior upon pushing buttons.
     
     def on_totalPaidPushButton_clicked(self) -> None:
         title = "All Fully Paid Renewals."
@@ -974,6 +1026,10 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         self.showRenewals(title, filter)
 
     def showUnpaidRenewals(self, title, range):
+        """Show all renewals that are marked as unpaid.
+        Filter them into intervals from 0-29 days,
+        30-59 days, 60-89 days, 90-119 days, and 120+ days.
+        """
         intervals = [0,30,60,90,120]
         min = datetime.date.today() - datetime.timedelta(days = intervals[range-1])
         max = None
@@ -990,6 +1046,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         names = getDentistNames(renewals)
         self.parent().viewText(djprint.viewRenewals(renewals, names, title, startDate, stopDate))
 
+    # Functions for defining behavior upon pushing buttons.
     
     def on_unpaidPushButton1_clicked(self) -> None:
         title = "Unpaid 0-29 days."
@@ -1016,11 +1073,13 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         self.showUnpaidRenewals(title, 5)
 
     def getTotalUnpaid(self, startDate, stopDate):
+        """Retreive all renewals marked as unpaid."""
         renewals = Renewal.objects.filter(renewal_date__range=(startDate, stopDate))
         renewals = renewals.exclude(payment_amount__gte=F('renewal_fee')+F('late_fee'))
         renewals = renewals.exclude(renewal_fee=0)
         return renewals
 
+    # Functions for defining behavior upon pushing buttons.
     
     def on_totalUnpaidPushButton_clicked(self) -> None:
         title = "All Unpaid Renewals."
@@ -1061,6 +1120,7 @@ class YearlyComplianceDlg(QDialog, ui.Ui_yearlyComplianceDlg):
         self.printing = False
 
     def getData(self):
+        """Retrieve all data to be used in the yearly compliance report."""
         sterilizers = Sterilizer.objects.filter(inactive_date__isnull=True)
         sterilizers = sterilizers.filter(dentist__inactive_date__isnull=True)
         sterilizers = sterilizers.order_by("id")
@@ -1080,6 +1140,7 @@ class YearlyComplianceDlg(QDialog, ui.Ui_yearlyComplianceDlg):
                 
         return (dentists, lookup)
 
+    # Functions for defining behavior upon pushing buttons.
     
     def on_printLettersPushButton_clicked(self) -> None:
         (dentists, sterilizerDict) = self.getData()
@@ -1141,18 +1202,18 @@ class LotRecallDlg(QDialog, ui.Ui_lotRecallDlg):
         self.printReportPushButton.setDisabled(True)
 
     def getRenewals(self, lot):
+        """Retrieve all renewal entries stored in the database under the lot name."""
         list = Renewal.objects.filter(lot=lot.name)
         return list
 
     def getReport(self):
+        """Generate a lot recall report."""
         lot = self.lotList[self.lotComboBox.currentIndex()]
         renewalList = self.getRenewals(lot)
-        #if renewalList:
         dentistNameList = getDentistNames(renewalList)
         return(djprint.printLotRecall(renewalList, dentistNameList))
-        #else:
-        #    return ""
 
+    # Functions for defining behavior upon pushing buttons.
    
     def on_viewReportPushButton_clicked(self) -> None:
         self.parent().viewText(self.getReport())

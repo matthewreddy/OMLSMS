@@ -18,6 +18,9 @@ import printpdf
 import ctypes
 
 def main(isTestEnviron, *argv):
+    """Main function. Initializes and sets up database
+    in such a way that can be used by the application.
+    """
 
     app=QApplication(sys.argv)
     app.setOrganizationName("Oral Microbiology Laboratory")
@@ -40,7 +43,6 @@ def main(isTestEnviron, *argv):
     #print buf.value
 
     cwd = os.getcwd()
-    #webdir = (os.path.split(cwd)[0] + '\web\omlweb').replace('\\','/')
     webdir = OMLWEB_PATH.replace('\\','/') + "/omlweb"
     print(webdir)
 
@@ -96,12 +98,11 @@ def main(isTestEnviron, *argv):
         printpdf.defaultPrinterName = configValues[DEFAULT_PRINTER]
         printpdf.testPrinting = isTestEnviron
         constants.IMAGES_PATH = (webdir + "/images/").replace('/','\\')
-        #constants.IMAGES_PATH = configValues[IMAGES_PATH]
         
         if len(argv):
             configValues[USER_INITIALS] = argv[0]
 
-        print("before login")
+        print("before login")  # I will leave this stuff here for now - Matthew
         login = logindlg.LoginDlg(configValues[DEFAULT_USER])
         if login.exec_():
             print("after login")
@@ -121,7 +122,7 @@ def main(isTestEnviron, *argv):
 
 
 class MainWindow(QMainWindow, ui.Ui_mainWindow):
-    
+    """Overarching window that holds all dialog boxes."""
 
     def __init__(self, configValues, userName, defaultInitials, parent=None):
         print("first line of init")
@@ -148,12 +149,12 @@ class MainWindow(QMainWindow, ui.Ui_mainWindow):
         self.reportDlg = reportdlg.ReportDlg(self)
         
         self.dialogs = [
-        self.dentistDlg,
-        self.sterilizerDlg,
-        self.lotDlg,
-        self.renewalDlg,
-        self.testDlg,
-        self.reportDlg
+            self.dentistDlg,
+            self.sterilizerDlg,
+            self.lotDlg,
+            self.renewalDlg,
+            self.testDlg,
+            self.reportDlg
         ]
 
         self.userList = omlweb.models.ClientProfile.objects.all()
@@ -168,24 +169,28 @@ class MainWindow(QMainWindow, ui.Ui_mainWindow):
                 self.userComboBox.setCurrentIndex(number)
     
     def showMainDialog(self, show=None):
-        # Note: only one MainDialog should be open at once
-        # don't leave active dialog if currently editing
+        """Defines behavior for displaying the main dialog.
+        Note that only one MainDialog object should be open at once.
+        In other words, you should not leave the active dialog if
+        you are currently editing.
+        """
         for dialog in [x for x in self.dialogs if (x.isVisible() and x.editing)]:
             QApplication.beep()
             dialog.activateWindow()
             return
-        # hide all dialogs, saving a bookmark from the visible dialog
+        # Hide all dialogs, saving a bookmark from the visible dialog
         for dialog in self.dialogs:
             if dialog.isVisible():
                 self.bookmark.update(dialog.makeBookmark())
                 dialog.hide()
-        # show the desired dialog, initialized as appropriate for the bookmark
+        # Show the desired dialog, initialized as appropriate for the bookmark
         if show.isHidden():
             show.move(self.pos() + QPoint(5, self.height() + 50))
             show.show(self.bookmark)
             self.currentChild = show
     
-    
+    # Functions for defining behavior upon pushing buttons.
+
     def on_dentistsPushButton_clicked(self) -> None:
         self.showMainDialog(self.dentistDlg)
         
@@ -218,4 +223,5 @@ class MainWindow(QMainWindow, ui.Ui_mainWindow):
             self.currentChild.activateWindow()
 
 if __name__ == "__main__":
+    # Run as test environment
 	main(True, *sys.argv[1:])
