@@ -32,7 +32,13 @@ This project is focused on rewritting OMLSMS and updating all of its imports to 
     ```
    Ensure that the version installed is 1.5
 
-7. Install ODBC Driver 17 at https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver16
+7. Install xhtml2pdf by running:
+   ```
+    pip install xhtml2pdf
+    ```
+   Ensure that the version installed is 1.5
+
+8. Install ODBC Driver 17 at https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver16
 
 ## Setting up the application
 
