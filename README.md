@@ -96,3 +96,15 @@ If you run into errors at any point in this process, the internet and Dr. Reisdo
 - [Connor Morin](https://github.com/connor2702)
 
 - [Jason Manning](https://github.com/jasonmanning27)
+
+
+
+## Pictures
+
+Application:
+![Application](app.png)
+
+
+Successful Django connection:
+![Django connection](django.png)
+
