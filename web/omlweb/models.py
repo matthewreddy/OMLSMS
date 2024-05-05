@@ -1,3 +1,5 @@
+"""Module for defining models that can be translated and understood by the Django ORM."""
+
 from django.db import models
 from django.contrib.auth.models import User
 

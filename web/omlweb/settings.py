@@ -1,3 +1,5 @@
+"""Configuration for Django."""
+
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent
 print(BASE_DIR)
@@ -148,6 +150,7 @@ TEMPLATES = [
                  BASE_DIR / "images",
                  BASE_DIR / "labels",
                  BASE_DIR / "letters",
+                 BASE_DIR / "reports",
                  BASE_DIR / "results",
                  BASE_DIR / "summary"],
         'APP_DIRS': True,

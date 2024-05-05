@@ -1,3 +1,6 @@
+"""This file renders the dialog box for renewals, helping
+to load specific records and save them to the database."""
+
 import sys, re, datetime
 from constants import *
 
@@ -41,10 +44,10 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
 
         self.findValues = ["id", "lot", "renewal_date"]
         self.findSizes = {
-        'field_widths': [150, 150, 150],
-        'window_height': 400,
-        'window_width': 500,
-        'zfill': [RENEWAL_ID_WIDTH, None, None],
+            'field_widths': [150, 150, 150],
+            'window_height': 400,
+            'window_width': 500,
+            'zfill': [RENEWAL_ID_WIDTH, None, None],
         }
         self.allRecords = Renewal.objects.all()
 
@@ -63,12 +66,14 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
         self.disableEditing()
 
     def loadPartialRecords(self):
+        """Use the partial records functionality to load records."""
         start_date, stop_date = self.getDateRange()
         self.records = Renewal.objects.filter(renewal_date__gte=start_date)
         self.records = self.records.filter(renewal_date__lt=stop_date)
         self.records = self.records.order_by("renewal_date", "id")
 
     def getRecordDate(self, id):
+        """Get a record date by its ID."""
         try:
             record = Renewal.objects.get(id=id)
             return record.renewal_date
@@ -76,8 +81,12 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
             return datetime.date.today()
         
     def getLatestID(self, partial_id):
-        #unfortunately, leading zeros of the id are lost in database translation
-        #we still need to use this information so dentist 2 doesn't become 20
+        """Retrieve the latest ID in the database.
+        It seems that leading zeroes of the ID are lost when translating
+        to a form that can be understood by the database. We still need to
+        use this information, though, so that dentist 2 remains separate from
+        dentist 20.
+        """
         max_id = partial_id
         min_id = partial_id
         for i in range(0,RENEWAL_ID_WIDTH - len(partial_id)):
@@ -91,6 +100,7 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
             return None
         
     def loadForm(self, record):
+        """Define functionality for loading and rendering a renewal form."""
         try:
             dentist = Dentist.objects.get(id=RenewalToDentistID(record.id))
             self.setWindowTitle("SMS Renewal - " + dentist.getFullName())
@@ -114,11 +124,13 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
         self.loadHistory(record)
 
     def saveRecord(self, record, id=None):
+        """Save the renewal record to the database."""
         val = super(RenewalDlg, self).saveRecord(record)
         self.loadHistory(record)
         return val
     
     def verifyFormData(self):
+        """Verify the form data provided by the user before saving it."""
         if self.idLineEdit.text() != "" and \
                 not re.match("^\d{%s}$" % RENEWAL_ID_WIDTH, self.idLineEdit.text()):
             return self.idLineEdit, "Renewal ID has improper format."
@@ -152,6 +164,9 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
         return None, None
     
     def saveForm(self, record, id=None):
+        """Save the renewal form to the database.
+        Be sure that it is valid before calling this function.
+        """
         if self.idLineEdit.text():
             assert record.id == int(self.idLineEdit.text())
         else:
@@ -170,14 +185,17 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
         record.inactive_date = FormDateToRecord(self.dateInactiveLineEdit.text())
 
     def prepareNewRecord(self):
-        # records are created only through Send Renewals function
+        """Records are only created through the Send Renewals function;
+        thus, nothing is defined to happen here."""
         return None
     
     def getTargetInsertId(self, record):
-        # records are created only through Send Renewals function
+        """Records are only created through the Send Renewals function;
+        thus, nothing is defined to happen here."""
         return None
 
     def makeBookmark(self):
+        """Create a bookmark for the new renewal."""
         if re.match("^\d{%s}$" % RENEWAL_ID_WIDTH, self.idLineEdit.text()):
             return {
             'dentist': self.idLineEdit.text()[0:DENTIST_ID_WIDTH],
@@ -188,6 +206,7 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
         return {}
 
     def goToBookmark(self, bookmark):
+        """Navigate to the renewal bookmark."""
         if 'renewal' in bookmark and \
         bookmark['renewal'][0:STERILIZER_ID_WIDTH] == bookmark['sterilizer'] and \
         bookmark['renewal'][0:DENTIST_ID_WIDTH] == bookmark['dentist']:
@@ -207,6 +226,7 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
                 self.reportNotFound('Renewal', 'Dentist', bookmark['dentist'])
 
     def historyIsLoaded(self):
+        """Helper method to see if history has been loaded yet."""
         try:
             row = self.historyTableWidget.currentRow()
             self.historyTableWidget.setCurrentCell(row, 0)
@@ -218,8 +238,10 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
         return False
 
     def loadHistory(self, record):
-        # fill table with column titles:
-        #["renewed", "lot", "fee", "late", "total", "paid", "sent", "back", "last"]
+        """Load history of the given record.
+        Table should be filled with the following column titles:
+        ["renewed", "lot", "fee", "late", "total", "paid", "sent", "back", "last"]
+        """
         renewals = Renewal.objects.filter(sterilizer=record.sterilizer)
         renewals = renewals.order_by("-renewal_date")
         tests = Test.objects.filter(renewal__sterilizer__exact=record.sterilizer)
@@ -227,7 +249,7 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
         for row, renewal in enumerate(renewals):
             if renewal.id == int(self.idLineEdit.text()):
                 self.historyTableWidget.setCurrentCell(row, 0)
-            text = range(0, NUM_HISTORY_COLUMNS)
+            text = list(range(0, NUM_HISTORY_COLUMNS))
             text[0] = str(renewal.id).zfill( RENEWAL_ID_WIDTH) 
             text[1] = RecordDateToText(renewal.renewal_date, shorten=True)
             text[2] = renewal.lot
@@ -257,10 +279,12 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
                 self.historyTableWidget.setItem(row, column, item)
 
     def updateAmountDue(self):
+        """Helper function to update the amount due stored in memory."""
         self.amountDueSpinBox.setValue(
             self.renewalFeeSpinBox.value() + self.lateFeeSpinBox.value()
         )
     
+    # Functions for defining behavior upon pushing buttons.
     
     def on_dateInactivePushButton_clicked(self) -> None:
         msgBox = QMessageBox()

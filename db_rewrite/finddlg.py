@@ -1,3 +1,7 @@
+"""This file renders the dialog box for searching/finding,
+defining behavior for filtering and populating the browser
+under certain criteria."""
+
 import datetime
 from constants import *
 
@@ -36,6 +40,7 @@ class FindDlg(QDialog):
 
 
     def filterData(self):
+        """Filter returned data based on criteria provided in the fields."""
         text = self.filterLineEdit.text()
         if not text:
             return
@@ -53,10 +58,10 @@ class FindDlg(QDialog):
         self.populateBrowser(self.fields, self.records)
 
     def populateBrowser(self, fields, records):
+        """Populate the browser with results from find."""
         self.tableWidget.setDisabled(True)
         self.tableWidget.verticalHeader().hide()
         self.tableWidget.horizontalHeader().hide()
-        #self.tableWidget.resizeColumnsToContents()
 
         if records.count() > MAX_FIND_DISPLAY_ROWS:
             self.tableWidget.setColumnCount(1)
@@ -108,7 +113,10 @@ class FindDlg(QDialog):
 
 
     def buildDisplay(self):
-        # layout the form manually to be adaptive (no .ui file here!)
+        """Lays out the form manually. This is done to help
+        the form be more adaptive to the results.
+        Note that no .ui file exists for this dialog.
+        """
         self.search_label = QLabel("Search:")
         self.filterLineEdit = QLineEdit(self)
         self.filterPushButton = QPushButton(self)
@@ -140,13 +148,15 @@ class FindDlg(QDialog):
         self.setLayout(layout)
 
     def getSelectedId(self):
+        """Returns specific ID selected by the user."""
         row = self.tableWidget.currentRow()
         if row >= 0:
             return getattr(self.records[row], "id", None)
         else:
             return None
 
-   
+    # Functions for defining behavior upon pushing buttons.
+
     def on_selectPushButton_clicked(self) -> None:
         id = self.getSelectedId()
         if id:

@@ -1,3 +1,5 @@
+"""Import dependencies for the UI."""
+
 from ui.ui_main import Ui_mainWindow
 
 from ui.ui_login import Ui_loginDlg

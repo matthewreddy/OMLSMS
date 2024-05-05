@@ -1,4 +1,7 @@
-import sys, datetime
+"""This file renders the dialog box for notifying the user
+of tests. It helps to establish this behavior based on test criteria."""
+
+import datetime
 from constants import *
 
 from PyQt5.QtCore import *
@@ -39,6 +42,7 @@ class TestNotifyDlg(QDialog, ui.Ui_testNotifyDlg):
         self.emailLineEdit.setText(dentist.email)
         self.comment = None
 
+    # Functions for defining behavior upon pushing buttons.
    
     def on_printNotifiedPushButton_clicked(self) -> None:
         self.parent().printHTML(djprint.printNotifyLetter(self.dentist, self.test, self.user, True))

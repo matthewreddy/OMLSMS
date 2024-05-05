@@ -1,3 +1,12 @@
+"""This file defines two dialogs: the main parent dialog for
+all others, and the form view dialog, which is the parent
+of several other dialog boxes.
+
+It defines basic behavior for each dialog, including functions
+that should be implemented by its children, as well as functions
+that can safely be inherited.
+"""
+
 import threading
 from constants import *
 
@@ -13,44 +22,59 @@ import printpdf
 class MainDlg(QDialog):
 
     def makeBookmark(self):
+        """Generally overwritten by child classes."""
         return {}
 
     def goToBookmark(self, bookmark):
+        """Skeleton. To be overwritten."""
         pass
 
     def printHTML(self, html, spawn=True, useLabelPrinter=False):
+        """Base functionality for rendering HTML."""
         if html:
             try:
                 if spawn:
-                    threading.start(printpdf.printHTML, (html, useLabelPrinter))
+                    thread = threading.Thread(target=printpdf.printHTML, args=(html,useLabelPrinter ))
+                    # Start the execution of the thread
+                    thread.start()
                 else:
                     printpdf.printHTML(html, useLabelPrinter)
             except Exception as e:
                 QMessageBox.warning(None, "Print Error.", str(e))
 
     def printPDF(self, pdf):
+        """Base functionality for rendering a PDF."""
         if pdf:
             try:
-                threading.start(printpdf.printPDF, (pdf,))
+                thread = threading.Thread(target=printpdf.printPDF, args=(pdf, ))
+                # Start the execution of the thread
+                thread.start()
             except Exception as e:
                 QMessageBox.warning(None, "Print Error.", str(e))
 
     def viewText(self, text):
+        """Base functionality for viewing text."""
         if text:
             try:
-                threading.start(printpdf.viewText, (text,))
+                thread = threading.Thread(target=printpdf.viewText, args=(text, ))
+                # Start the execution of the thread
+                thread.start()
             except Exception as e:
                 QMessageBox.warning(None, "View Error.", str(e))
 
     def printText(self, text):
+        """Base functionality for printing text."""
         if text:
             try:
-                threading.start(printpdf.printText, (text,))
+                thread = threading.Thread(target=printpdf.printText, args=(text, ))
+                # Start the execution of the thread
+                thread.start()
             except Exception as e:
                 QMessageBox.warning(None, "Print Error.", str(e))
 
     def _configValues(self):
         return(self.parent().configValues)
+    
     configValues = property(fget=_configValues)
 
 
@@ -64,55 +88,66 @@ class FormViewDlg(MainDlg):
         self.orderedByRecordNumber = True
 
     def initializeModel(self, bookmark={}):
+        """Setup initial model."""
         self.loadRecords()
         self.goToBookmark(bookmark)
 
     def loadRecords(self, record_id=None):
-        # define for child class
-        # load database records into self.records
+        """Should be defined for child classes.
+        Load database records into self.records.
+        """
         self.records = []
-        #self.findRecord(record.id)
 
     def loadForm(self, record):
-        # define for child class
-        # load data from record to form
+        """Skeleton. Should be defined for child classes.
+        Load data from the record into the form.
+        """
         pass
     
     def verifyFormData(self):
-        # define for child class
-        # verify form data, on error return a widget with data in violation
+        """Skeleton. Should be defined for child classes.
+        Verify form data. On error, return a widget with 
+        the data that created the violation.
+        """
         return None, None
 
     def saveForm(self, record, id=None):
-        # define for child class
-        # save form data to database
+        """Skeleton. Should be defined for child classes.
+        Save form data to the database.
+        """
         pass
 
     def prepareNewRecord(self):
-        # define for child class
-        # return a "blank" new record
+        """Skeleton. Should be defined for child classes.
+        Return a 'blank' new record that can be interacted with.
+        """
         pass
     
     def getTargetInsertId(self, record):
-        # define for child class
-        # return the ID to assign for record when it is inserted
+        """Skeleton. Should be defined for child classes.
+        Return the ID to assign for the record when it is inserted.
+        """
         return None
 
     def makeBookmark(self):
-        # define for child class
-        # return dictionary containing key information about the current record
+        """Skeleton. Should be defined for child classes.
+        Return a dictionary containing key information about the current record.
+        """
         return {}
 
     def goToBookmark(self, bookmark):
-        # define for child class
-        # set the current record in response to the bookmark (if possible)
+        """Skeleton. Should be defined for child classes.
+        If possible, set the current record in response to the bookmark.
+        """
         pass
 
     def reportNotFound(self, search, type, id):
+        """Displays warning if a report cannot be found."""
         msg = "Could not find %s for %s: %s" % (search, type, id)
         QMessageBox.warning(self, "Not Found", msg)
 
     def saveRecord(self, record, id=None):
+        """Save record to the database."""
         widget, message = self.verifyFormData()
         if widget:
             QMessageBox.warning(self, "Data Error", message)
@@ -128,12 +163,14 @@ class FormViewDlg(MainDlg):
         return True, None
 
     def getCurrentRecord(self):
+        """Return record currently selected."""
         if self.inserting:
             return self.inserting
         else:
             return self.records[self.recordNum]
     
     def setRecordNum(self, value):
+        """Initialize record number for record currently selected."""
         if not self.records or not len(self.records):
             self.recordNum = None
         elif self.records and value >= 0 and value < len(self.records):
@@ -141,6 +178,7 @@ class FormViewDlg(MainDlg):
             self.loadForm(self.getCurrentRecord())
 
     def findRecord(self, id):
+        """Locate record."""
         if id and self.orderedByRecordNumber:
             for index, record in enumerate(self.records):
                 if record.id >= id:
@@ -154,14 +192,17 @@ class FormViewDlg(MainDlg):
         self.setRecordNum(0)
 
     def decrementRecordNum(self):
+        """Decrease record number by one."""
         if self.recordNum is not None:
             self.setRecordNum(self.recordNum - 1)
 
     def incrementRecordNum(self):
+        """Increase record number by one."""
         if self.recordNum is not None:
             self.setRecordNum(self.recordNum + 1)
 
     def disableEditing(self):
+        """Set to be read-only."""
         for widget in self.editWidgets:
             widget.setDisabled(True)
         for widget in self.menuWidgets:
@@ -176,6 +217,7 @@ class FormViewDlg(MainDlg):
             pass
     
     def enableEditing(self):
+        """Allow editing for current form."""
         self.editing = True
         for widget in self.editWidgets:
             widget.setEnabled(True)
@@ -190,6 +232,7 @@ class FormViewDlg(MainDlg):
             pass
 
     def toggleActive(self, id, type, disableMsg, enableMsg):
+        """Set whether or not the current form is in focus."""
         msgBox = QMessageBox()
         if not self.inactiveDateIsSet():
             ttl = "Disable %s" % type
@@ -217,10 +260,12 @@ class FormViewDlg(MainDlg):
                 self.loadForm(self.getCurrentRecord())
 
     def inactiveDateIsSet(self):
+        """Determine whether the set date is inactive."""
         return (len(self.dateInactiveLineEdit.text()) == 10)
 
     
     def show(self, bookmark={}) -> None:
+        """Load the window."""
         try:
             self.initializeModel(bookmark)
         except Exception as e:
@@ -232,6 +277,7 @@ class FormViewDlg(MainDlg):
             )
         super(FormViewDlg, self).show()
 
+    # Functions for defining behavior upon pushing buttons.
     
     def on_findPushButton_clicked(self) -> None:
         findDlg = FindDlg(self.windowTitle(), self.records, self.findValues, self.findSizes, self)
@@ -294,7 +340,7 @@ class FormViewPartialLoadDlg(FormViewDlg):
         super(FormViewPartialLoadDlg, self).__init__(parent)
 
     def loadRecords(self, record_id=None):
-        # partial load records by date to improve initial response time
+        """Partial load records by date to improve initial response time."""
         if record_id:
             self.findRecord(record_id, None)
         self.loadPartialRecords()
@@ -309,10 +355,7 @@ class FormViewPartialLoadDlg(FormViewDlg):
         if not record_id:
             self.setRecordNum(len(self.records) - 1)
 
-    #
-    # Redefine seek buttons to handle partial loading by month
-    #
-
+    # Redefine seek buttons to handle partial loading by month.
     
     def on_seekFirstPushButton_clicked(self) -> None:
         if self.recordNum > 0:
@@ -352,11 +395,11 @@ class FormViewPartialLoadDlg(FormViewDlg):
             self.setRecordNum(len(self.records) - 1)
 
     def getDateRange(self):
+        """Return date range for the date currently set."""
         return DateRangeForMonth(self.current_year, self.current_month)
     
     def decrementDateRange(self):
-        month = self.current_month
-        year = self.current_year
+        """Decrease the date range by one."""
         if self.current_month > 1:
             self.current_month = self.current_month - 1
         else:
@@ -366,6 +409,7 @@ class FormViewPartialLoadDlg(FormViewDlg):
         return self.records
     
     def incrementDateRange(self):
+        """Increase the date range by one."""
         month = self.current_month
         year = self.current_year
         if self.current_month < 12:
@@ -377,6 +421,7 @@ class FormViewPartialLoadDlg(FormViewDlg):
         return self.records
 
     def findDatedRecord(self, id, date):
+        """Locate record by ID and date."""
         if (date.month != self.current_month or date.year != self.current_year):
             self.current_month = date.month
             self.current_year = date.year
@@ -388,11 +433,13 @@ class FormViewPartialLoadDlg(FormViewDlg):
         self.setRecordNum(0)
 
     def findRecord(self, id, record=None):
+        """Locate record by ID."""
         if id:
             record_date = self.getRecordDate(id)
             return self.findDatedRecord(id, record_date)
 
-    
+    # Functions for defining behavior upon pushing buttons.
+
     def on_findPushButton_clicked(self) -> None:
         findDlg = FindDlg(self.windowTitle(), self.allRecords, self.findValues, self.findSizes, self)
         if findDlg:

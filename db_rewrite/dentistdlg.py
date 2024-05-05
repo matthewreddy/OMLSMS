@@ -1,3 +1,6 @@
+"""This file renders the dialog box for dentists, including
+their records, bookmarks, and forms associated with them."""
+
 import sys, datetime, re
 from constants import *
 
@@ -54,12 +57,14 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         self.lastFaxNumber = ""
 
     def loadRecords(self, record_id=None):
+        """Set records for the dentist."""
         self.records = Dentist.objects.all()
         self.records = self.records.order_by("id")
         if record_id:
             self.findRecord(record_id)
 
     def loadForm(self, record):
+        """Fill in forms corresponding to the dentist."""
         self.setWindowTitle("SMS Dentist - " + record.getFullName())
         self.idLineEdit.setText(
             str(record.id).zfill(DENTIST_ID_WIDTH) if record.id else ""
@@ -84,6 +89,7 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         self.commentTextEdit.setText(record.comment)
     
     def verifyFormData(self):
+        """Ensures form input is valid before saving."""
         if self.idLineEdit.text() != "" and \
                 not re.match("^\d{%s}$" % DENTIST_ID_WIDTH, self.idLineEdit.text()):
             return self.idLineEdit, "Dentist ID has improper format."
@@ -124,6 +130,7 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         return None, None
 
     def saveForm(self, record, id=None):
+        """Save form to the dentist's profile."""
         if self.idLineEdit.text():
             assert record.id == int(self.idLineEdit.text())
         else:
@@ -149,6 +156,7 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         record.comment = self.commentTextEdit.toPlainText()
 
     def prepareNewRecord(self):
+        """Helper function for loading new record."""
         return Dentist(
         id=None,
         state=State.objects.get(abbreviation="NC"),
@@ -156,6 +164,7 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         )
 
     def getTargetInsertId(self, record):
+        """Find the next valid place to insert something within the dentist's profile."""
         try:
             value = Dentist.objects.all().aggregate(Max('id'))['id__max'] + 1
         except:
@@ -163,21 +172,26 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         return value
 
     def makeBookmark(self):
+        """Save a bookmark under the dentist's profile."""
         if re.match("^\d{%s}$" % DENTIST_ID_WIDTH, self.idLineEdit.text()):
             return {'dentist': self.idLineEdit.text()}
 
     def goToBookmark(self, bookmark):
+        """Locate a bookmark under the dentist's profile."""
         if 'dentist' in bookmark:
             self.findRecord(int(bookmark['dentist']))
         else:
             self.findRecord(None)
 
     def findRecord(self, id):
+        """Locate a record under the dentist's profile."""
         for index, record in enumerate(self.records):
             if record.id == id:
                 self.setRecordNum(index)
                 return
         self.setRecordNum(0)
+
+    # Functions for defining behavior upon pushing buttons.
 
     def on_dateInactivePushButton_clicked(self) -> None:
         msgBox = QMessageBox()

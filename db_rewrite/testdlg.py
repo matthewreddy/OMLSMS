@@ -1,3 +1,5 @@
+"""This file renders the dialog box for tests."""
+
 import sys, re, datetime, time
 from constants import *
 
@@ -46,19 +48,12 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
 
         self.findValues = ["id", "lot", "renewal_date"]
         self.findSizes = {
-        'field_widths': [150, 150, 150],
-        'window_height': 400,
-        'window_width': 500,
-        'zfill': [RENEWAL_ID_WIDTH, None, None],
+            'field_widths': [150, 150, 150],
+            'window_height': 400,
+            'window_width': 500,
+            'zfill': [RENEWAL_ID_WIDTH, None, None],
         }
         
-        #self.findValues = ["renewal.id", "test_num", "start_date", "result_date", "result"]
-        #self.findSizes = {
-        #'field_widths': [150, 50, 100, 100, 50],
-        #'window_height': 400,
-        #'window_width': 500,
-        #'zfill': [RENEWAL_ID_WIDTH, None, None, None, None],
-        #}
         self.sterilizeDateEdit.setCalendarPopup(True)
         self.allRecords = Test.objects.all()
 
@@ -86,7 +81,9 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         self.disableEditing()
 
     def findDatedRecord(self, id, date, testNum=None):
-        #print "find", id, date, testNum
+        """Locate a test record by its ID and date,
+        optionally providing a test number.
+        """
         if (date.month != self.current_month or date.year != self.current_year):
             self.current_month = date.month
             self.current_year = date.year
@@ -99,7 +96,7 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         self.setRecordNum(0)
 
     def findRecord(self, id, record):
-        #print "find test %s" % id
+        """Locate a test record by its ID."""
         if id:
             if record:
                 record_date = record.start_date
@@ -110,23 +107,27 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
             return self.findDatedRecord(id, record_date, testNum)
 
     def loadPartialRecords(self):
+        """Render records partially."""
         start_date, stop_date = self.getDateRange()
-        #print "load start: %s, stop %s" % (str(start_date), str(stop_date))
         self.records = Test.objects.filter(start_date__gte=start_date)
         self.records = self.records.filter(start_date__lt=stop_date)
         self.records = self.records.order_by("start_date",  "renewal", "test_num")
 
     def getRecordDate(self, id):
+        """Retrieve a date for a specific test record by its ID."""
         try:
             records = Test.objects.filter(renewal_id=id).order_by("-start_date")
-            #print records
             return records[0].start_date
-        except:
+        except Exception as e:
+            print(e)
             return None
 
     def getLatest(self, partial_id):
-        #unfortunately, leading zeros of the id are lost in database translation
-        #we still need to use this information so dentist 2 doesn't become 20
+        """Retrieve the latest test records stored in the database.
+        It seems that leading zeroes of the ID are lost upon translating
+        to a language understood by the database. We still need to use this
+        information, though, so that dentist 2 does not become dentist 20.
+        """
         max_id = partial_id
         min_id = partial_id
         for i in range(0,RENEWAL_ID_WIDTH - len(partial_id)):
@@ -134,18 +135,18 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
             min_id += '0'
         records = Test.objects.filter(renewal__id__range=(int(min_id), int(max_id)))
         records = records.filter(renewal__id__startswith=int(partial_id)).order_by("-start_date")
-        #print records
         if records:
             return records[0]
         else:
             return None
 
     def loadForm(self, record):
-        #print "loading " + str(record)
+        """Load a test form from a given record."""
         try:
             dentist = Dentist.objects.get(id=RenewalToDentistID(record.renewal.id))
             self.setWindowTitle("SMS Test - " + dentist.getFullName())
-        except:
+        except Exception as e:
+            print(e)
             self.setWindowTitle("SMS Renewal - " + "( Error retrieving dentist )")
             dentist = None
         self.renewalIdLineEdit.setText(
@@ -166,10 +167,12 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         self.commentTextEdit.setText(record.comment)
         self.stripNumLineEdit.setText(str(record.strip_num) if record.strip_num else "")
         
-        #if not self.historyIsLoaded():
         self.loadHistory(record)
 
     def verifyFormData(self):
+        """Verify the data supplied by the user before
+        sending it and storing it to the database.
+        """
         if not re.match("^\d{%s}$" % RENEWAL_ID_WIDTH, self.renewalIdLineEdit.text()):
             return self.renewalIdLineEdit, "Renewal ID has improper format."
         try:
@@ -230,11 +233,13 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         return None, None
 
     def saveRecord(self, record, id=None):
+        """Save the test record into the database."""
         val = super(TestDlg, self).saveRecord(record)
         self.loadHistory(record)
         return val
 
     def saveForm(self, record, id=None):
+        """Save the test form into the database."""
         record.sample_date = self.sterilizeDateEdit.date().toPyDate()
         record.start_date = FormDateToRecord(self.startDateLineEdit.text())
         record.result = self.testResultPushButton.text()
@@ -250,23 +255,22 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         self.notifyPushButton.setEnabled(self.testResultPushButton.text() == "+")
 
     def makeBookmark(self):
+        """Create a bookmark for the test record."""
         if re.match("^\d{%s}$" % RENEWAL_ID_WIDTH, self.renewalIdLineEdit.text()) and \
            re.match("^\d{1,2}$", self.testNumLineEdit.text()):
             return {
-            'dentist': self.renewalIdLineEdit.text()[0:DENTIST_ID_WIDTH],
-            'sterilizer': self.renewalIdLineEdit.text()[0:STERILIZER_ID_WIDTH],
-            'renewal': self.renewalIdLineEdit.text(),
-            'lot': self.renewalIdLineEdit.text()[STERILIZER_ID_WIDTH:],
-            #'test': self.renewalIdLineEdit.text() + self.testNumLineEdit.text(),
+                'dentist': self.renewalIdLineEdit.text()[0:DENTIST_ID_WIDTH],
+                'sterilizer': self.renewalIdLineEdit.text()[0:STERILIZER_ID_WIDTH],
+                'renewal': self.renewalIdLineEdit.text(),
+                'lot': self.renewalIdLineEdit.text()[STERILIZER_ID_WIDTH:],
             }
         return {}
 
     def goToBookmark(self, bookmark):
-        #print 'bookmark', bookmark
+        """Navigate to a bookmark corresponding to a test record."""
         if 'renewal' in bookmark and \
         bookmark['renewal'][0:STERILIZER_ID_WIDTH] == bookmark['sterilizer'] and \
         bookmark['renewal'][0:DENTIST_ID_WIDTH] == bookmark['dentist']:
-            #print "renewal bookmark %s" % bookmark['renewal']
             record = self.getLatest(bookmark['renewal'])
             if not record:
                 record = self.getLatest(bookmark['renewal'][0:STERILIZER_ID_WIDTH])
@@ -276,14 +280,12 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
                 self.reportNotFound('Test', 'Renewal', bookmark['renewal'])
         elif 'sterilizer' in bookmark and \
         bookmark['sterilizer'][0:DENTIST_ID_WIDTH] == bookmark['dentist']:
-            #print "sterilizer bookmark %s" % bookmark['sterilizer']
             record = self.getLatest(bookmark['sterilizer'])
             if record:
                 self.findRecord(record.renewal_id, record)
             else:
                 self.reportNotFound('Test', 'Sterilizer', bookmark['sterilizer'])
         elif 'dentist' in bookmark:
-            #print "dentist bookmark %s" % bookmark['dentist']
             record = self.getLatest(bookmark['dentist'])
             if record:
                 self.findRecord(record.renewal_id, record)
@@ -291,6 +293,7 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
                 self.reportNotFound('Test', 'Dentist', bookmark['dentist'])
 
     def historyIsLoaded(self):
+        """Determine whether the history of the test has been viewed."""
         try:
             row = self.historyTableWidget.currentRow()
             self.historyTableWidget.setCurrentCell(row, 0)
@@ -300,16 +303,28 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
                 if int(self.historyTableWidget.currentItem.text()) == \
                     int(self.testNumLineEdit.text()):
                     return True
-        except:
+        except Exception as e:
+            print(e)
             pass
         return False
 
     def loadHistory(self, record):
-        # fill table with column titles:
-        #["renewal", "num", "run", "start", "result", "result", "ctrl"]
-        start = str(record.renewal)[0:-3] + '000'
-        stop = str(record.renewal)[0:-3] + '999'
-        tests = Test.objects.filter(renewal__range=(start,stop))
+        """Load the history of the test record.
+        Fill the table with the following column titles:
+        ["renewal", "num", "run", "start", "result", "result", "ctrl"]
+        """
+        print(str(record.renewal.renewal_date)[0:10])
+        print(record)
+        print(record.renewal.id)
+        start = str(record.renewal.id)[0:-3] 
+        start = start + '000'
+        print(start)
+        stop = str(record.renewal.id)[0:-3] 
+        stop = stop + '999'
+        print(stop)
+        start = int(start)
+        stop = int(stop)
+        tests = Test.objects.filter(renewal__id__in=range(start,stop+1)) # this is where an error is 
         tests = tests.order_by("-start_date", "-renewal", "-test_num")
         self.historyTableWidget.setRowCount(len(tests))
 
@@ -317,7 +332,7 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
             if test.renewal_id == int(self.renewalIdLineEdit.text()) and \
             test.test_num == int(self.testNumLineEdit.text()):
                 self.historyTableWidget.setCurrentCell(row, 0)
-            text = range(0, NUM_HISTORY_COLUMNS)
+            text = list(range(0, NUM_HISTORY_COLUMNS))
             text[0] = str(test.renewal_id).zfill(RENEWAL_ID_WIDTH) 
             text[1] = str(test.test_num)
             text[2] = RecordDateToText(test.sample_date, shorten=True)
@@ -333,10 +348,12 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         self.historyTableWidget.resizeColumnsToContents()
 
     def dlgPos(self):
+        """Position the dialog box on the window."""
         p = QPoint(self.rect().right(), self.rect().top())
         return self.pos() + p + QPoint(20, 30)
     
     def makeNotifyWindow(self, record, user):
+        """Set the window as notifying."""
         self.notifying = True
         for widget in self.editWidgets:
             widget.setDisabled(True)
@@ -369,6 +386,7 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
                     widget.setEnabled(True)
 
     def getIDinput(self, ttl):
+        """Retrieve the input for the test dialog."""
         for widget in self.menuWidgets:
             widget.setDisabled(True)
         self.cancelPushButton.setEnabled(True)
@@ -397,10 +415,12 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         self.lastInsert = None
 
     def startTests(self):
+        """Initialize and begin tests."""
         self.getIDinput("Start New Test: Input Test ID")
         self.startingTests = True
 
     def startTest(self, id, strip, renewal, tests):
+        """Begin tests."""
         try:
             try:
                 assert not renewal.inactive_date
@@ -470,6 +490,7 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         self.editStart()
 
     def createTest(self, id, strip, renewal, tests):
+        """Instantiate a new test and store it in the database after it is translated."""
         if tests:
             test_num = tests[0].test_num + 1
         else:
@@ -489,6 +510,7 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         )
 
     def editStart(self):
+        """Set form fields to be editable."""
         self.renewalIdLineEdit.setDisabled(True)
         self.sterilizeDateEdit.setEnabled(True)
         self.prevDayPushButton.setEnabled(True)
@@ -497,6 +519,7 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         self.omittedPushButton.setEnabled(True)
     
     def stopEditStart(self):
+        """Set form fields to not be editable."""
         self.sterilizeDateEdit.setEnabled(False)
         self.prevDayPushButton.setEnabled(False)
         self.nextDayPushButton.setEnabled(False)
@@ -504,10 +527,14 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         self.omittedPushButton.setEnabled(False)
         
     def enterResults(self):
+        """Display the option to enter test results."""
         self.getIDinput("Enter Test Results: Input Test ID")
         self.enteringResults = True
 
     def enterResult(self, id, strip, renewal, tests):
+        """Handle functionality of entering a test result and
+        storing it in the database after being translated.
+        """
         match = None
         count = 0
         if strip:
@@ -567,12 +594,14 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         self.editResults()
             
     def initializeResults(self):
+        """Initialize the results of the test."""
         self.testResultPushButton.setText("-")
         self.controlResultPushButton.setText("+")
         self.resultDateLineEdit.setText(datetime.date.today().strftime(DATETIME_FORMAT))
         self.resultsByLineEdit.setText(self.parent().user.initials)
     
     def editResults(self):
+        """Set result fields to be editable."""
         self.renewalIdLineEdit.setDisabled(True)
         self.testResultPushButton.setEnabled(True)
         self.controlResultPushButton.setEnabled(True)
@@ -580,12 +609,14 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         self.savePushButton.grabKeyboard()
     
     def stopEditResults(self):
+        """Set result fields to not be editable."""
         self.testResultPushButton.setDisabled(True)
         self.controlResultPushButton.setDisabled(True)
         self.savePushButton.setDisabled(True)
         self.savePushButton.releaseKeyboard()
 
     def insertTest(self, verified=True):
+        """Initial function for inserting tests."""
         self.stopEditStart()
         self.addStartComments(verified)
         success, widget = self.saveRecord(self.getCurrentRecord())
@@ -609,6 +640,7 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
             self.lastInsert = True
     
     def addStartComments(self, verified=True):
+        """Function for helping append starting comments to a test."""
         sample_date = self.sterilizeDateEdit.date().toPyDate()
         try:
             start_date = FormDateToRecord(self.startDateLineEdit.text())
@@ -632,6 +664,7 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         self.commentTextEdit.setText(comment)
     
     def addResultComments(self):
+        """Function for helping append result comments to a test."""
         result = self.testResultPushButton.text()
         control = self.controlResultPushButton.text()
         comment = self.commentTextEdit.toPlainText()
@@ -645,6 +678,7 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
             comment = "Control Strip appears sterilized; unable to verify results.\n" + comment
         self.commentTextEdit.setText(comment)
 
+    # Functions for defining behavior upon pushing buttons.
     
     def on_historyTableWidget_itemClicked(self, item : QTableWidgetItem) -> None:
         if not self.editing and not self.notifying:

@@ -1,7 +1,6 @@
-import re
-from datetime import date
-from constants import *
+"""This file renders the dialog box for logging in."""
 
+from constants import *
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -43,7 +42,8 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
         self.updateUi()
         return super(LoginDlg, self).exec_()
 
-    
+    # Functions for defining behavior upon pushing buttons.
+
     def on_loginLineEdit_textEdited(self, text: str) -> None:
         self.updateUi()
 
@@ -62,6 +62,7 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
             self.attemptLogin()
 
     def updateUi(self):
+        """Enables buttons when username and password are properly given."""
         login_text = self.loginLineEdit.text()
         password_text = self.passwordLineEdit.text()
 
@@ -77,25 +78,29 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
         self.attemptLogin()
 
     def attemptLogin(self):
+        """Handles logging in.
+        Connects to the database, initializes other views,
+        and processes events configured to the current user.
+        """
         self.statusLabel.setText("Connecting to database...")
         QCoreApplication.instance().processEvents()
-        print("before try")
-        # try:
-        assert settings.configured
-        settings.DATABASES['default']['USER'] = self.loginLineEdit.text()
-        print(settings.DATABASES['default']['USER'])  #'DESKTOP-AC4D5C6\gray1'self.loginLineEdit.text()
-        settings.DATABASES['default']['PASSWORD'] = "1234" #self.passwordLineEdit.text()
-        print("after db")
+        print("before try")  # I will leave this stuff here for now - Matthew
+        try:
+            assert settings.configured
+            settings.DATABASES['default']['USER'] = self.loginLineEdit.text()
+            print(settings.DATABASES['default']['USER'])  #'DESKTOP-AC4D5C6\gray1'self.loginLineEdit.text()
+            settings.DATABASES['default']['PASSWORD'] = "1234" #self.passwordLineEdit.text()
+            print("after db")
             # this import must be done here to avoid django error
-        from updatedatabase import updateDatabase
-        updateDatabase()
-        print("updated db returned")
-        self.statusLabel.setText("Performing database maintenance...")
-        QCoreApplication.instance().processEvents()
-        # except Exception as e:
-            # print(e)
-            # print(e.args)
-            # self.statusLabel.setText("Error connecting to database.")
+            from updatedatabase import updateDatabase
+            updateDatabase()
+            print("updated db returned")
+            self.statusLabel.setText("Performing database maintenance...")
+            QCoreApplication.instance().processEvents()
+        except Exception as e:
+            print(e)
+            print(e.args)
+            self.statusLabel.setText("Error connecting to database.")
         QCoreApplication.instance().processEvents()
         print("at the end")
         self.done(True)

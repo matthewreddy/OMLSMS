@@ -1,3 +1,6 @@
+"""This file renders the dialog box for sterilizers, including
+their records, bookmarks, and forms associated with them."""
+
 import sys, re
 from constants import *
 
@@ -47,6 +50,7 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
         self.disableEditing()
 
     def initializeModel(self, bookmark):
+        """Initialize the underlying model for the sterilizer dialog."""
         if not self.methodComboBox.count():
             methods = SterilizerMethod.objects.filter(active=True).order_by("id")
             for method in methods:
@@ -55,11 +59,13 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
         self.goToBookmark(bookmark)
     
     def loadRecords(self, record_id=None):
+        """Set records for the sterilizer."""
         self.records = Sterilizer.objects.all().order_by("id")
         if record_id:
             self.findRecord(record_id)
 
     def loadForm(self, record):
+        """Fill in forms corresponding to the record of the sterilizer."""
         try:
             dentist = record.dentist
             self.setWindowTitle("SMS Sterilizer - " + dentist.getFullName())
@@ -76,8 +82,6 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
         self.serialNumLineEdit.setText(record.serial_num)
         self.modelLineEdit.setText(record.model)
         self.methodComboBox.setCurrentIndex(record.method.id - 1)
-        #self.monthlyReportLineEdit.setText(RecordDateToText(record.last_report_date))
-        #self.yearlyReportLineEdit.setText(RecordDateToText(record.last_certificate_date))
         if record.inactive_date:
             self.dateInactiveLineEdit.setText(RecordDateToText(record.inactive_date))
         else:
@@ -94,6 +98,9 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
         self.suspendRenewalsCheckBox.setChecked(record.suspend)
     
     def verifyFormData(self):
+        """Verify the form data provided by the user
+        before it is saved in the database.
+        """
         if self.idLineEdit.text() != "" and \
                 not re.match("^\d{%s}$" % STERILIZER_ID_WIDTH, self.idLineEdit.text()):
             return self.idLineEdit, "Sterilizer ID has improper format."
@@ -114,6 +121,9 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
         return None, None
 
     def saveForm(self, record, id=None):
+        """Take the values provided by the user, translate them into
+        language that can be understood by the database, and store it.
+        """
         assert record.id == int(self.idLineEdit.text())
         record.enroll_date = self.enrollDateEdit.date().toPyDate()
         record.num_tests = self.numTestsSpinBox.value()
@@ -130,6 +140,7 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
         record.suspend = self.suspendRenewalsCheckBox.isChecked()
 
     def prepareNewRecord(self):
+        """Define behavior for instantiating a new record for sterilizers."""
         self.dentistForInsert = self.selectDentistForInsert()
         try:
             method = SterilizerMethod.objects.get(id=DEFAULT_STERILIZER_METHOD)
@@ -152,6 +163,7 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
         )
     
     def getTargetInsertId(self, record):
+        """Retrieve the next ID that can be used to store a new record."""
         try:
             dentist_factor = 10 ** (STERILIZER_ID_WIDTH - DENTIST_ID_WIDTH)
             id_lower = self.dentistForInsert * dentist_factor
@@ -169,6 +181,7 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
         return value
 
     def makeBookmark(self):
+        """Create a bookmark for the sterilizer."""
         if re.match("^\d{%s}$" % STERILIZER_ID_WIDTH, self.idLineEdit.text()):
             return {
             'dentist': self.idLineEdit.text()[0:DENTIST_ID_WIDTH],
@@ -177,6 +190,7 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
         return {}
 
     def goToBookmark(self, bookmark):
+        """Navigate to a bookmark for a sterilizer."""
         dentist_factor = 10 ** (STERILIZER_ID_WIDTH - DENTIST_ID_WIDTH)
         if 'sterilizer' in bookmark and \
         bookmark['sterilizer'][0:DENTIST_ID_WIDTH] == bookmark['dentist']:
@@ -187,20 +201,24 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
             self.findRecord(None)
 
     def selectDentistForInsert(self):
+        """Select a dentist using the find dialog functionality
+        that can be used in conjunction with the sterilizer.
+        """
         findDlg = FindDlg(
-        "Dentist",
-        Dentist.objects.filter(inactive_date__isnull=True),
-        ["id", "practice_name", "lname", "fname"],
-        {
-        'field_widths': [50, 250, 160, 90],
-        'window_height': 400,
-        'window_width': 600,
-        'zfill': [DENTIST_ID_WIDTH, None, None, None]
-        },
-        self
-        )
+            "Dentist",
+            Dentist.objects.filter(inactive_date__isnull=True),
+            ["id", "practice_name", "lname", "fname"],
+            {
+            'field_widths': [50, 250, 160, 90],
+            'window_height': 400,
+            'window_width': 600,
+            'zfill': [DENTIST_ID_WIDTH, None, None, None]
+            },
+            self
+            )
         return (findDlg.exec_())
 
+    # Functions for defining behavior upon pushing buttons.
     
     def on_dateInactivePushButton_clicked(self) -> None:
         #msgBox = QMessageBox()
@@ -222,16 +240,7 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
         success, widget = self.saveRecord(self.getCurrentRecord())
         self.loadForm(self.getCurrentRecord())
     
-    #@pyqtSignature("")
-    #def on_renewalTimePushButton_clicked(self):
-    #    if self.renewalLineEdit.text() == 'yes':
-    #        self.renewalLineEdit.setText('no')
-    #    else:
-    #        self.renewalLineEdit.setText('yes')
-    #    success, widget = self.saveRecord(self.getCurrentRecord())
-    #    self.loadForm(self.getCurrentRecord())
 
-    
     def on_labelPushButton_clicked(self) -> None:
         labelDlg = PrintLabelDlg(self)
         labelDlg.exec_()
