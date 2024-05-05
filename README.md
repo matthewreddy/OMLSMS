@@ -77,7 +77,7 @@ This project is focused on rewritting OMLSMS and updating all of its imports to 
 
     These should be your next steps before trying to implement new features in the application. 
 
-If you run into errors at any point in this process, the internet and Dr. Reisndof will be your best friend. Best of Luck!
+If you run into errors at any point in this process, the internet and Dr. Reisdorf will be your best friend. One last thing that might be helpful is asking for videos of what the expected usage/output of the database features are supposed to look like. Best of Luck!
 
 ## Authors
 
