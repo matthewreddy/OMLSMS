@@ -313,15 +313,10 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         Fill the table with the following column titles:
         ["renewal", "num", "run", "start", "result", "result", "ctrl"]
         """
-        print(str(record.renewal.renewal_date)[0:10])
-        print(record)
-        print(record.renewal.id)
         start = str(record.renewal.id)[0:-3] 
         start = start + '000'
-        print(start)
         stop = str(record.renewal.id)[0:-3] 
         stop = stop + '999'
-        print(stop)
         start = int(start)
         stop = int(stop)
         tests = Test.objects.filter(renewal__id__in=range(start,stop+1)) # this is where an error is 

@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import *
 
 import ui, logindlg
 
+# enables django stuff(templates etc) to be used, make sure OMLWEB_PATH is updated to your machine in constants.py
 sys.path.append(OMLWEB_PATH)
 from django.conf import settings
 import omlweb
@@ -44,15 +45,15 @@ def main(isTestEnviron, *argv):
 
     cwd = os.getcwd()
     webdir = OMLWEB_PATH.replace('\\','/') + "/omlweb"
-    print(webdir)
-
+    
+    # Go to config.txt to see what these values are
     configValues = []
     try:
         configValues = readConfigValues(cwd + "\config.txt")
     except Exception as e:
         QMessageBox.critical(None, "Error Reading Configuration File", str(e))
     else:
-        # Django settings
+        # Django configure settings specifically for the application, will need to add more django if needed to these lines
         settings.configure(
             DATABASES = {
                 'default': {
@@ -89,6 +90,7 @@ def main(isTestEnviron, *argv):
                 'django.contrib.staticfiles',
             )
         )
+        # Starts django
         django.setup()
 
         printpdf.pdfview_filename = configValues[PDF_VIEWER_PATH]
@@ -102,34 +104,26 @@ def main(isTestEnviron, *argv):
         if len(argv):
             configValues[USER_INITIALS] = argv[0]
 
-        print("before login")  # I will leave this stuff here for now - Matthew
+        # Login box initialized here
         login = logindlg.LoginDlg(configValues[DEFAULT_USER])
         if login.exec_():
-            print("after login")
-            # try:
-            print("before first statement")
-            form=MainWindow(configValues, login.loginLineEdit.text(), configValues[USER_INITIALS])
-            print("after first form")
-            form.move(configValues[MAIN_X_POS], configValues[MAIN_Y_POS])
-            print("after second form")
-            form.show()
-            print("form.show()")
-            # except Exception as e:
-            #     print(e)
-            #     QMessageBox.critical(None, "Error Initializing Program", str(e))
-            # finally:
-            app.exec_()
+            try:
+                form=MainWindow(configValues, login.loginLineEdit.text(), configValues[USER_INITIALS])
+                form.move(configValues[MAIN_X_POS], configValues[MAIN_Y_POS])
+                form.show()
+            except Exception as e:
+                print(e)
+                QMessageBox.critical(None, "Error Initializing Program", str(e))
+            finally:
+                app.exec_()
 
 
 class MainWindow(QMainWindow, ui.Ui_mainWindow):
     """Overarching window that holds all dialog boxes."""
 
     def __init__(self, configValues, userName, defaultInitials, parent=None):
-        print("first line of init")
         super(MainWindow, self).__init__(parent)
-        print("before imports")
         import dentistdlg, sterilizerdlg, lotdlg, renewaldlg, testdlg, reportdlg
-        print("after imports")
         self.setupUi(self)
         self.setWindowFlags(Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.WindowMinMaxButtonsHint)
         self.setWindowTitle("OML Database")

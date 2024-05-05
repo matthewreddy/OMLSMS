@@ -21,16 +21,8 @@ def updateDatabase():
     #    update.save()
 
 def updateLateFees():
-    print("updating late fees")  # I am choosing to leave this for now - Matthew
-    # today = datetime.now()
-    # print(datetime.date.today())
-    # print(type(datetime.date.today()))
-    # print(datetime.timedelta(days=MAX_DAYS_FOR_COLLECTIONS))
-    # print(type(datetime.timedelta(days=MAX_DAYS_FOR_COLLECTIONS)))
     today = datetime.date.today()
     date = datetime.datetime.combine(today, datetime.datetime.min.time()) - datetime.timedelta(days=MAX_DAYS_FOR_COLLECTIONS)
-    print(date)
-    print("after date")
     list = Renewal.objects.filter(renewal_date__gte=date)
     list = list.exclude(payment_amount__gte=F('renewal_fee')) #if they pay the principal, don't add to late fees
     list = list.exclude(renewal_fee=0)
@@ -58,7 +50,6 @@ def updateLateFees():
 def calculateLateFee(Renewal: Renewal):
     if Renewal.renewal_fee == 0:
         return 0
-    print("Renewal Date", Renewal.renewal_date)
     
     daysOverdue = (datetime.datetime.combine(datetime.date.today(), datetime.datetime.min.time()) - Renewal.renewal_date).days
     if daysOverdue < 45:

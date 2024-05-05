@@ -84,17 +84,15 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
         """
         self.statusLabel.setText("Connecting to database...")
         QCoreApplication.instance().processEvents()
-        print("before try")  # I will leave this stuff here for now - Matthew
         try:
             assert settings.configured
-            settings.DATABASES['default']['USER'] = self.loginLineEdit.text()
-            print(settings.DATABASES['default']['USER'])  #'DESKTOP-AC4D5C6\gray1'self.loginLineEdit.text()
+            # Editing the password line must be done
+            settings.DATABASES['default']['USER'] = self.loginLineEdit.text() #'DESKTOP-AC4D5C6\gray1'self.loginLineEdit.text()
             settings.DATABASES['default']['PASSWORD'] = "1234" #self.passwordLineEdit.text()
-            print("after db")
             # this import must be done here to avoid django error
             from updatedatabase import updateDatabase
+            # This method can cause trouble when connecting
             updateDatabase()
-            print("updated db returned")
             self.statusLabel.setText("Performing database maintenance...")
             QCoreApplication.instance().processEvents()
         except Exception as e:
@@ -102,7 +100,6 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
             print(e.args)
             self.statusLabel.setText("Error connecting to database.")
         QCoreApplication.instance().processEvents()
-        print("at the end")
         self.done(True)
 
     
