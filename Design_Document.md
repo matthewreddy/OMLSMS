@@ -3,7 +3,7 @@ Written by Jason Manning, Matthew Reddy, Grayson Clark, Connor Morin.
 Updated May 5, 2024
 
 ## Architecture
-![alt text](Final Architecture Diagram - Team F - Comp 523.jpg)
+![alt text](/Final%20Architecture%20Diagram%20-%20Team%20F%20-%20Comp%20523.jpg)
 
 
 ## Code Repository
