@@ -2,6 +2,24 @@
 
 > Oral Microbiology Lab's Sterilization Monitoring Service (OMLSMS) is used to monitor the functioning of dental sterilizers in offices across the region.
 
+## Authors
+
+### Original Authors
+
+- [Maik Ruckauf](https://github.com/MaikRuckauf)
+
+- [Kemani Simms](https://github.com/Kasmanian)
+
+### Current Authors
+
+- [Matthew Reddy](https://github.com/matthewreddy)
+
+- [Grayson Clark](https://github.com/graysonjclark1)
+
+- [Connor Morin](https://github.com/connor2702)
+
+- [Jason Manning](https://github.com/jasonmanning27)
+
 ## Description
 
 The original OMLSMS application was developed as part of a class capstone project at UNC Chapel Hill in 2014. At the time, it was coded in Python 2.7 and used PyQt4 as the GUI framework. Django was used for the database abstraction layer and template language. Django-mssql permitted the use of a SQL Server with Django. XHTML2PDF was used to convert HTML files into PDF files.
@@ -97,25 +115,7 @@ Once you have gotten past the login dialog box, you will see a screen as such th
 
 These should be your next steps before trying to implement new features in the application. 
 
-If you run into errors at any point in this process, the internet and Dr. Reisdorf will be your best friend. One last thing that might be helpful is asking for videos of what the expected usage/output of the database features are supposed to look like. Best of Luck!
-
-## Authors
-
-### Original Authors
-
-- [Maik Ruckauf](https://github.com/MaikRuckauf)
-
-- [Kemani Simms](https://github.com/Kasmanian)
-
-### Current Authors
-
-- [Matthew Reddy](https://github.com/matthewreddy)
-
-- [Grayson Clark](https://github.com/graysonjclark1)
-
-- [Connor Morin](https://github.com/connor2702)
-
-- [Jason Manning](https://github.com/jasonmanning27)
+If you run into errors at any point in this process, the internet and Dr. Reisdorf will be your best friend. One last thing that might be helpful is asking for videos of what the expected usage/output of the database features are supposed to look like. Best of luck!
 
 ## Pictures
 
