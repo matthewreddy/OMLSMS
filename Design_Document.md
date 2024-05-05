@@ -8,7 +8,7 @@ Updated May 5, 2024
 
 ## Code Repository
 1. https://github.com/matthewreddy/OMLSMS
-2. The README.md is included in the top level of the directory.
+2. The README.md is included in the top level of the directory. ![Link to Readme](/README.md)
 
 ## Detailed Data Definitions
 1. A PDF of the database schema can be found here (db_schema.pdf in the top level of the repository). It includes all tables, attributes and their respective types, and any constraints such as 
