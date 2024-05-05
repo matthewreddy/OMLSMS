@@ -251,7 +251,7 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
                 self.historyTableWidget.setCurrentCell(row, 0)
             text = list(range(0, NUM_HISTORY_COLUMNS))
             text[0] = str(renewal.id).zfill( RENEWAL_ID_WIDTH) 
-            text[1] = RecordDateToText(renewal.renewal_date, shorten=True)
+            text[1] = RecordDateToText(renewal.renewal_date, shortened=True)
             text[2] = renewal.lot
             text[3] = NumToCurrency(renewal.renewal_fee)
             text[4] = NumToCurrency(renewal.late_fee)
@@ -269,7 +269,7 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
                     test_date = test.start_date
             if test_date:
                 text[8] = str(max_test_num)
-                text[9] = RecordDateToText(test_date, shorten=True)
+                text[9] = RecordDateToText(test_date, shortened=True)
             else:
                 text[8] = ""
                 text[9] = ""

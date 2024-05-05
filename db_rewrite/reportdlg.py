@@ -262,7 +262,8 @@ class ActivityReportDlg(QDialog, ui.Ui_activityReportDlg):
             last_week = -1
             act = []
             for i, dict in enumerate(test_record):
-                if sterilizer.id in dict or sterilizer.enroll_date > weeks[i][0]:
+                # datetime.combine(weeks[i][0], datetime.min.time()) -  creates a datetime.datetime object with time set to midnight
+                if sterilizer.id in dict or sterilizer.enroll_date > datetime.datetime.combine(weeks[i][0], datetime.datetime.min.time()):
                     count = 0
                     last_week = i
                     if sterilizer.id in dict:
@@ -440,7 +441,7 @@ class OverdueReportDlg(QDialog, ui.Ui_overdueReportDlg):
             sterilizer_id = RenewalToSterilizerID(renewal.id)
             if not (sterilizer_id in latest_renewal) or latest_renewal[sterilizer_id].id < renewal.id:
                 latest_renewal[sterilizer_id] = renewal
-        latest_renewals = [renewal for key, renewal in latest_renewal.iteritems()]
+        latest_renewals = [latest_renewal[key] for key in latest_renewal]
         return latest_renewals
 
     def mergeMatches(self, overdue, renewals):
@@ -462,7 +463,7 @@ class OverdueReportDlg(QDialog, ui.Ui_overdueReportDlg):
                 f[dentist_id] = d[dentist_id]
                 if renewal not in f[dentist_id]:
                     f[dentist_id].append(renewal)
-        for key, list in sorted(f.iteritems()):
+        for key, list in sorted(f.items()):
             mergeList.append(None) # indicates a blank line
             for renewal in list:
                 mergeList.append(renewal)

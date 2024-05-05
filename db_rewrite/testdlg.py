@@ -335,9 +335,9 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
             text = list(range(0, NUM_HISTORY_COLUMNS))
             text[0] = str(test.renewal_id).zfill(RENEWAL_ID_WIDTH) 
             text[1] = str(test.test_num)
-            text[2] = RecordDateToText(test.sample_date, shorten=True)
-            text[3] = RecordDateToText(test.start_date, shorten=True)
-            text[4] = RecordDateToText(test.result_date, shorten=True)
+            text[2] = RecordDateToText(test.sample_date, shortened=True)
+            text[3] = RecordDateToText(test.start_date, shortened=True)
+            text[4] = RecordDateToText(test.result_date, shortened=True)
             text[5] = test.result if test.result else ""
             text[6] = test.control_result if test.control_result else ""
             for column in range(0, len(text)):

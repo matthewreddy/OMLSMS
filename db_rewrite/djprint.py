@@ -41,11 +41,11 @@ def getBillForSterilizer(sterilizer_id, dentist=None, renewal=None):
         payment['amount'] = payment['amount'] + amount
         payment['due_date'] = renewal.renewal_date + datetime.timedelta(days=30)
 
-    c = Context({
+    return render_to_string('bill.html', {
         'dentist': dentist,
-        'payment': payment,
+        'payment': payment
     })
-    return(t.render(c))
+    
 
 def chunker(seq, size):
     return (seq[pos:pos + size] for pos in range(0, len(seq), size))
@@ -73,7 +73,6 @@ def encodeToCode128(id):
 
 def getRenewalLabelsForSterilizers(sterilizers, dentists, lot):
     """Return renewal labels based on given sterilizers, dentists, and lot."""
-    t = get_template('renewallabel.html')
     renewal_ids = []
     barcodes = []
     numLabels = 0
@@ -91,16 +90,15 @@ def getRenewalLabelsForSterilizers(sterilizers, dentists, lot):
 
     z = zip(sterilizers,renewal_ids,barcodes)
 
-    c = Context({
+    return render_to_string('renewallabel.html', {
         'today': date.today(),
-        'sterilizers': sterilizers,
+         'sterilizers': sterilizers,
         'dentists': dentists,
         'lot': lot,
         'zips': z,
         'image_directory': IMAGES_PATH,
         'num_labels': numLabels,
     })
-    return(t.render(c))
     
 def getBillsForDentist(dentist):
     """Return bills for a specific dentist."""
@@ -153,14 +151,13 @@ def getResultsLetter(dentist, sterilizers, date_range):
         }
         results_list.append(dict)
 
-    t = get_template('report.html')
-    c = Context({
+    
+    return render_to_string('report.html', {
         'today': date.today(),
         'dentist': dentist,
         'result_summaries': results_list,
         'image_directory': IMAGES_PATH,
     })
-    return(t.render(c))
     
 def getReportForSterilizer(sterilizer_id, date_range = None):
     """Generates and returns a report for a specific sterilizer by its ID."""
@@ -181,8 +178,7 @@ def getReportForDentist(dentist_id, date_range = None):
 
 def printNotifyLetter(dentist, test, user, contacted):
     """Helper function to render a notify letter."""
-    t = get_template('notify_letter.html')
-    c = Context({
+    return render_to_string('notify_letter.html', {
         'today': date.today(),
         'dentist': dentist,
         'test': test,
@@ -190,66 +186,54 @@ def printNotifyLetter(dentist, test, user, contacted):
         'contacted': contacted,
         'image_directory': IMAGES_PATH,
     })
-    return(t.render(c))
+
 
 def printDentistLabelSheet(dentists, skip):
     """Helper function to render a dentist label sheet."""
-    t = get_template('dentist_labelsheet.html')
-    c = Context({
+    return render_to_string('dentist_labelsheet.html', {
         'dentists': dentists,
         'skip': skip,
     })
-    return(t.render(c))
     
 def printSterilizerLabelSheet(sterilizers, dentists, skip):
     """Helper function to render a sterilizer label sheet."""
-    t = get_template('sterilizer_labelsheet.html')
-    c = Context({
+    return render_to_string('sterilizer_labelsheet.html', {
         'sterilizers': sterilizers,
         'dentists': dentists,
         'skip': skip,
     })
-    return(t.render(c))
 
 def testCountReport(title, testList):
     """Helper function to render testing lists."""
-    t = get_template('testcount.txt')
-    c = Context({
+    return render_to_string('testcount.txt', {
         'title': title,
-        'tests': testList,
+        'tests': testList
     })
-    return(t.render(c))
 
 def inactivityReport(sterilizerList, names, weeks, activity):
     """Helper function to render an inactivity report."""
-    t = get_template('inactivityreport.txt')
-    c = Context({
+    return render_to_string('inactivityreport.txt', {
         'sterilizers': sterilizerList,
         'names': names,
         'activity': activity,
         'weeks': weeks,
     })
-    return(t.render(c))
 
 def getAnomalyReport(suspended, s_names, overlooked, o_names):
     """Helper function to render an anomaly report."""
-    t = get_template('anomalyreport.txt')
-    c = Context({
+    return render_to_string('anomalyreport.txt', {
         'suspended': suspended,
         's_names': s_names,
         'overlooked': overlooked,
         'o_names': o_names,
     })
-    return(t.render(c))
 
 def printOverdueAccountList(renewalList, namesList):
     """Helper function to render an overdue report/account list."""
-    t = get_template('overduereport.txt')
-    c = Context({
+    return render_to_string('overduereport.txt', {
         'renewals': renewalList,
         'names': namesList,
     })
-    return(t.render(c))
 
 def printDailyPaymentReport(renewalList, namesList):
     """Helper function to stringify a payment report."""
@@ -262,37 +246,39 @@ def printQuarterlyPaymentSummary(values):
     """Helper function to render an accounts summary.
     All values must be passed directly to the function in JSON.
     """
-    t = get_template('accountssummary.txt')
-    c = Context(values)  # could possibly be refactored similar to the other functions
-    return(t.render(c))
+    # Leaving this here for future developers:
+    # It's unclear how to replace this function like the others, if this functionality doesn't work as intend, 
+    # it will be needed to be looked into
+
+    # Old:
+    # t = get_template('accountssummary.txt')
+    # c = Context(values)  # could possibly be refactored similar to the other functions
+    
+    # New
+    return render_to_string('accountssummary.txt', values)
 
 def viewRenewals(renewalList, namesList, header, start, stop):
     """Helper function to render renewals."""
-    t = get_template('renewallist.txt')
-    c = Context({
+    return render_to_string('renewallist.txt', {
         'renewals': renewalList,
         'names': namesList,
         'header': header,
         'begin_date': start,
         'end_date': stop,
     })
-    return(t.render(c))
 
 def viewTests(testList, header, start, stop):
     """Helper function to render tests."""
-    t = get_template('testcount.txt')
-    c = Context({
+    return render_to_string('testcount.txt', {
         'tests': testList,
         'title': header,
         'begin_date': start,
         'end_date': stop,
     })
-    return(t.render(c))
 
 def printYearlyComplianceLetter(dentist, sterilizer, compliance, year, numTests, user):
     """Helper function to render compliance letter."""
-    t = get_template('complianceletter.html')
-    c = Context({
+    return render_to_string('complianceletter.html', {
         'today': date.today(),
         'dentist': dentist,
         'sterilizer': sterilizer,
@@ -302,22 +288,18 @@ def printYearlyComplianceLetter(dentist, sterilizer, compliance, year, numTests,
         'compliance': compliance,
         'image_directory': IMAGES_PATH,
     })
-    return(t.render(c))
 
 def printLotRecall(renewalList, namesList):
     """Helper function to render a lot recall."""
-    t = get_template('lotrecall.txt')
-    c = Context({
+    return render_to_string('lotrecall.txt', {
         'renewals': renewalList,
         'names': namesList,
     })
-    return(t.render(c))
+
 
 def printRenewalsStarted(sterilizerList, namesList):
     """Helper function to render a renewal being started."""
-    t = get_template('startrenewal.txt')
-    c = Context({
+    return render_to_string('startrenewal.txt', {
         'sterilizers': sterilizerList,
         'names': namesList,
     })
-    return(t.render(c))
