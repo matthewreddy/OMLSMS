@@ -8,10 +8,12 @@ Updated May 5, 2024
 
 ## Code Repository
 1. https://github.com/matthewreddy/OMLSMS
-2. The README.md is included in the top level of the directory.
+2. The README.md is included in the top level of the directory. ![Link to Readme](/README.md)
 
 ## Detailed Data Definitions
-1. A PDF of the database schema can be found here (db_schema.pdf in the top level of the repository). It includes all tables, attributes and their respective types, and any constraints such as length, primary key, or foreign key constraints.
+1. A PDF of the database schema can be found here (db_schema.pdf in the top level of the repository). It includes all tables, attributes and their respective types, and any constraints such as 
+length, primary key, or foreign key constraints.
+![Link to Database Schema](/db_schema.pdf)
 2. To see the definitions of each table in Python that can be understood by Django’s ORM, view this file in the repository (web/omlweb/models.py). It includes all “models,” which are tables with all their attributes listed as fields. Types of all of the attributes are given, and constraints are also included.
 
 ## Design Rationale: Design Decisions
