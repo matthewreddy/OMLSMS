@@ -1,3 +1,10 @@
+"""Configuration for Django."""
+
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent
+print(BASE_DIR)
+
+
 # Django settings for omlweb project.
 
 DEBUG = True
@@ -17,15 +24,11 @@ MANAGERS = ADMINS
 # SQL Server database configuration
 DATABASES = {
     'default': {
-        'ENGINE': 'sqlserver_ado',
+        'ENGINE': 'mssql',
         'NAME': 'omlsms',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': 'DAVID-HP\SQLEXPRESS',
-        'PORT': '',
+        'HOST': 'DESKTOP-AC4D5C6\DEMO',
         'OPTIONS' : {
-                    'provider': 'SQLOLEDB',
-                    'use_mars': True,
+                     'driver': 'ODBC Driver 17 for SQL Server',  # Adjust the driver version based on your installation  # Use Windows Authentication
                     },                     
     }
 }
@@ -77,7 +80,7 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    'C:/omlsms/web/omlweb/images',
+    BASE_DIR / "images",
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -101,32 +104,67 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
-MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
+# MIDDLEWARE_CLASSES = (
+#     'django.middleware.common.CommonMiddleware',
+#     'django.contrib.sessions.middleware.SessionMiddleware',
+#     'django.middleware.csrf.CsrfViewMiddleware',
+#     'django.contrib.auth.middleware.AuthenticationMiddleware',
+#     'django.contrib.messages.middleware.MessageMiddleware',
+#     # Uncomment the next line for simple clickjacking protection:
+#     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+# )
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
 
 ROOT_URLCONF = 'omlweb.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'omlweb.wsgi.application'
 
-TEMPLATE_DIRS = (
-    "C:/omlsms/web/omlweb",
-    "C:/omlsms/web/omlweb/account",
-    "C:/omlsms/web/omlweb/base",
-    "C:/omlsms/web/omlweb/summary",
-    "C:/omlsms/web/omlweb/billing",
-    "C:/omlsms/web/omlweb/results",
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-)
+# TEMPLATE_DIRS = (
+#     "C:/omlsms/web/omlweb",
+#     "C:/omlsms/web/omlweb/account",
+#     "C:/omlsms/web/omlweb/base",
+#     "C:/omlsms/web/omlweb/summary",
+#     "C:/omlsms/web/omlweb/billing",
+#     "C:/omlsms/web/omlweb/results",
+#     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+#     # Always use forward slashes, even on Windows.
+#     # Don't forget to use absolute paths, not relative paths.
+# )
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / "account",
+                 BASE_DIR / "base",
+                 BASE_DIR / "billing",
+                 BASE_DIR / "images",
+                 BASE_DIR / "labels",
+                 BASE_DIR / "letters",
+                 BASE_DIR / "reports",
+                 BASE_DIR / "results",
+                 BASE_DIR / "summary"],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -170,3 +208,5 @@ LOGGING = {
         },
     }
 }
+# settings.py
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
