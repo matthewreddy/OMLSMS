@@ -4,6 +4,11 @@ Updated May 5, 2024
 
 ## Architecture
 ![alt text](img/Final%20Architecture%20Diagram%20-%20Team%20F%20-%20Comp%20523.jpg)
+Notes:
+1. Python is the main language of this project. 
+2. The computer application contains a frontend interface displayed by PyQt, which is also written in Python. 
+3. Django uses a Model-view-template
+4. The application communicates with the server using Django MSSQL as an Object Relational Mapper(ORM). This allows you to use Python to edit the database backend which is run on Microsoft SQL Server. 
 
 ## Code Repository
 1. https://github.com/matthewreddy/OMLSMS
