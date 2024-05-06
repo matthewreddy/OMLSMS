@@ -4,12 +4,12 @@
 
 ## Supporting Documents
 
-![User Documentation](/UserDocumentation.doc)
-- Supporting info for users
-![Admin Documentation](/Admin_Documentation.docx)
-- Supporting info for admins
-![Design Documentation](/Design_Document.md)
-- Document for anyone who needs to understand and maintain the code.
+
+- Supporting info for users [User Documentation](/UserDocumentation.doc)
+
+- Supporting info for admins [Admin Documentation](/Admin_Documentation.docx)
+
+- Document for anyone who needs to understand and maintain the code. [Design Documentation](/Design_Document.md)
 
 ## Authors
 
