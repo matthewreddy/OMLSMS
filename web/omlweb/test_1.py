@@ -17,6 +17,7 @@ USERNAME = 'UNC-PF2A3Z3S\Connor'   # add the username here
 PASSWORD = ''                      # if needed, add the password here
 connectionString = f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={SERVER};DATABASE={DATABASE};UID={USERNAME};PWD={PASSWORD};encrypt=no;Trusted_Connection=yes;'
 
+
 # Attempt to make a connection to the database
 def make_connection():
     conn = pyodbc.connect(connectionString)
@@ -32,6 +33,7 @@ def make_connection():
 # Test the database connection to ensure it is recognized
 def test_connection():
     make_connection()
+
 
 # Pull the value of the Director from the query
 def pull_director():
@@ -50,6 +52,7 @@ def pull_director():
 def test_director():
     pull_director()
 
+
 # Pull the value of the Lab Manager from the query
 def pull_manager():
     conn = pyodbc.connect(connectionString)
@@ -66,6 +69,111 @@ def pull_manager():
 # Test the value of the Lab Manager from the query
 def test_manager():
     pull_manager()
+
+
+# Pull the value of the Lab Tech from the query
+def pull_lab_tech():
+    conn = pyodbc.connect(connectionString)
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM dbo.client_user")
+        roles = cursor.fetchall()
+        assert roles[3][4] == "Lab Tech"
+    except pyodbc.Error as e:
+        pytest.fail(f"Database connection failed: {e}")
+    finally:
+        conn.close()
+
+# Test the value of the Lab Tech from the query
+def test_lab_tech():
+    pull_lab_tech()
+
+
+# Pull the value of the Accounts Manager from the query
+def pull_accounts_manager():
+    conn = pyodbc.connect(connectionString)
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM dbo.client_user")
+        roles = cursor.fetchall()
+        assert roles[4][4] == "Accounts Manager"
+    except pyodbc.Error as e:
+        pytest.fail(f"Database connection failed: {e}")
+    finally:
+        conn.close()
+
+
+# Test the value of the Accounts Manager from the query
+def test_accounts_manager():
+    pull_accounts_manager()
+
+def pull_dentist():
+    conn = pyodbc.connect(connectionString)
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM dbo.sms_dentist")
+        roles = cursor.fetchall()
+        assert roles[1][1] == "Reynolds Mountain Dentistry"
+    except pyodbc.Error as e:
+        pytest.fail(f"Database connection failed: {e}")
+    finally:
+        conn.close()
+
+# Test the value of a dentist from the query
+def test_dentist():
+    pull_dentist()
+
+
+def pull_sterilizer():
+    conn = pyodbc.connect(connectionString)
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM dbo.sms_sterilizer")
+        roles = cursor.fetchall()
+        assert roles[2][7] == "2101B10104"
+    except pyodbc.Error as e:
+        pytest.fail(f"Database connection failed: {e}")
+    finally:
+        conn.close()
+
+# Test the value of a dentist from the query
+def test_sterilizer():
+    pull_sterilizer()
+
+
+def pull_renewal():
+    conn = pyodbc.connect(connectionString)
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM dbo.sms_renewal")
+        roles = cursor.fetchall()
+        assert roles[7][2] == "R315731"
+    except pyodbc.Error as e:
+        pytest.fail(f"Database connection failed: {e}")
+    finally:
+        conn.close()
+
+# Test the value of a renewal from the query
+def test_renewal():
+    pull_renewal()
+
+
+def pull_lot():
+    conn = pyodbc.connect(connectionString)
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM dbo.sms_lot")
+        roles = cursor.fetchall()
+        assert roles[6][1] == "GS106E"
+    except pyodbc.Error as e:
+        pytest.fail(f"Database connection failed: {e}")
+    finally:
+        conn.close()
+        
+
+# Test the value of a lot from the query
+def test_lot():
+    pull_lot()
 
 def encodeTo128Font(value): # from db_rewrite.djprint
     if value == 0:
