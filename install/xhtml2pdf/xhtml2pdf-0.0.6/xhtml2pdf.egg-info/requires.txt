@@ -1,4 +1,0 @@
-html5lib
-pyPdf2
-Pillow
-reportlab>=2.2

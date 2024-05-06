@@ -1,3 +1,5 @@
+"""Module for defining models that can be translated and understood by the Django ORM."""
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -35,7 +37,7 @@ class Dentist(models.Model):
     address1 = models.CharField(max_length=80)
     address2 = models.CharField(max_length=80)
     city = models.CharField(max_length=40)
-    state = models.ForeignKey(State)
+    state = models.ForeignKey(State, on_delete=models.CASCADE)
     zip = models.CharField(max_length=10)
     phone = models.CharField(max_length=25)
     fax = models.CharField(max_length=25)
@@ -73,7 +75,7 @@ class SterilizerMethod(models.Model):
 
 class Sterilizer(models.Model):
     id = models.IntegerField(primary_key = True)
-    dentist = models.ForeignKey(Dentist)
+    dentist = models.ForeignKey(Dentist, on_delete=models.CASCADE)
     sterilizer = models.IntegerField()
     enroll_date = models.DateField()
     num_tests = models.IntegerField()
@@ -81,7 +83,7 @@ class Sterilizer(models.Model):
     renew_fee = models.DecimalField(max_digits=8, decimal_places=2)
     serial_num = models.CharField(max_length = 20)
     model = models.CharField(max_length = 50) #todo: standardize
-    method = models.ForeignKey(SterilizerMethod)
+    method = models.ForeignKey(SterilizerMethod, on_delete=models.CASCADE)
     last_report_date = models.DateField(blank=True, null=True)
     last_certificate_date = models.DateField(blank=True, null=True)
     inactive_date = models.DateField(blank=True, null=True)
@@ -113,7 +115,7 @@ class Lot(models.Model):
     receive_date = models.DateField()
     expiration_date = models.DateField()
     count = models.IntegerField()
-    vapor = models.ForeignKey(Vapor)
+    vapor = models.ForeignKey(Vapor, on_delete=models.CASCADE)
     inactive_date = models.DateField(blank=True, null=True)
     comment = models.TextField()
 
@@ -126,7 +128,7 @@ class Lot(models.Model):
 
 class Renewal(models.Model):
     id = models.IntegerField(primary_key = True)
-    sterilizer = models.ForeignKey(Sterilizer)
+    sterilizer = models.ForeignKey(Sterilizer, on_delete=models.CASCADE)
     lot =  models.CharField(max_length=12) #todo: models.ForeignKey(Lot)?
     renewal_date = models.DateField()
     num_tests = models.IntegerField()
@@ -149,7 +151,7 @@ class Renewal(models.Model):
 
 
 class Test(models.Model):
-    renewal = models.ForeignKey(Renewal)
+    renewal = models.ForeignKey(Renewal, on_delete=models.CASCADE)
     test_num = models.IntegerField()
     sample_date = models.DateField()
     start_date = models.DateField()
@@ -169,10 +171,10 @@ class Test(models.Model):
 
     
 class UserProfile(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     # Other fields here
-    dentist = models.OneToOneField(Dentist)
+    dentist = models.OneToOneField(Dentist, on_delete=models.CASCADE)
     
     def __unicode__(self):
         return self.dentist.__unicode__()    
