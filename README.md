@@ -2,6 +2,15 @@
 
 > Oral Microbiology Lab's Sterilization Monitoring Service (OMLSMS) is used to monitor the functioning of dental sterilizers in offices across the region.
 
+## Supporting Documents
+
+![User Documentation](/UserDocumentation.doc)
+- Supporting info for users
+![Admin Documentation](/Admin_Documentation.docx)
+- Supporting info for admins
+![Design Documentation](/Design_Document.md)
+- Document for anyone who needs to understand and maintain the code.
+
 ## Authors
 
 ### Original Authors
