@@ -2,7 +2,11 @@
 functions are working as they should as we go along.
 
 Note that the SERVER, DATABASE, USERNAME and PASSWORD fields will meed to be
-changed according to your database instance for some tests to pass."""
+changed according to your database instance for some tests to pass.
+
+Note that some functions are redefined here in order to test some functions without altering settings
+(There were issues with the path that, if not resolved, will cause 0 tests to run, so this ensures
+anybody can at least run tests with just a server)"""
 
 import pyodbc
 import pytest
@@ -62,3 +66,46 @@ def pull_manager():
 # Test the value of the Lab Manager from the query
 def test_manager():
     pull_manager()
+
+def encodeTo128Font(value): # from db_rewrite.djprint
+    if value == 0:
+        return 128
+    elif value >= 95:
+        return value + 50
+    else:
+        return value + 32
+
+def test_encoding_1():
+    assert encodeTo128Font(0) == 128
+
+def test_encoding_2():
+    assert encodeTo128Font(95) == 145
+
+def test_encoding_3():
+    assert encodeTo128Font(94) == 126
+
+def chunker(seq, size):            # from db_rewrite.djprint
+    return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+
+def encodeToCode128(id):            # from db_rewrite.djprint
+    """Encode ID string to condensed Code 128c
+    (Start C) (Encoded Pairs) (Checksum) (End Char)
+    checksum =  Value of Start C + (Value * Position) of Encoded Pairs
+    """
+    checksum = 105
+    code = ""
+    for position, pair in enumerate(chunker(id, 2)):
+        checksum += int(pair) * (position + 1)
+        code = code + "&#%d" % encodeTo128Font(int(pair))
+    checksum = encodeTo128Font(checksum % 103)
+    return "&#155" + code + ("&#%d" % checksum) + "&#156"
+
+# testing some manually calculated encodings below to ensure encodeToCode128 outputs correctly
+def test_encoding_4():
+    assert encodeToCode128('123456') == "&#155&#44&#66&#88&#76&#156"
+
+def test_encoding_5():
+    assert encodeToCode128('1427') == "&#155&#46&#59&#102&#156"
+
+def test_encoding_6():
+    assert encodeToCode128('274705') == "&#155&#59&#79&#37&#67&#156"
