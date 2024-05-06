@@ -7,7 +7,7 @@ Updated May 5, 2024
 Notes:
 1. Python is the main language of this project used across almost the entirety of the application.
 2. The computer application contains a frontend interface displayed by PyQt, which is also written in Python. This is the GUI.
-3. Django is set up with a ![model/view/template](/https://www.google.com/search?client=safari&rls=en&q=django+model+view+tempalte&ie=UTF-8&oe=UTF-8) arrangement which can be read about here. 
+3. Django is set up with a [model/view/template](/https://www.google.com/search?client=safari&rls=en&q=django+model+view+tempalte&ie=UTF-8&oe=UTF-8) arrangement which can be read about here. 
 4. The application communicates with the server using Django MSSQL as an Object Relational Mapper(ORM). This allows you to use Python to edit the database backend which is run on Microsoft SQL Server. 
 
 ## Code Repository
