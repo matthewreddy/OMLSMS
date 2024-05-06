@@ -111,7 +111,6 @@ Once you have gotten past the login dialog box, you will see a screen as such th
 
 1. View/Printing reports in the Reports section
 2. Other small bugs related to buttons in other parts of the application (we think)
-3. Work will also needed to be done by including the correct installation files/updating the current instructions
 
 These should be your next steps before trying to implement new features in the application. 
 
