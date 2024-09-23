@@ -278,7 +278,8 @@ class ActivityReportDlg(QDialog, ui.Ui_activityReportDlg):
             if week_flagged:
                 reportList.append((-week_flagged, last_week, sterilizer))
             activity[sterilizer.id] = act
-        reportList.sort()
+        # Sort on week_flagged
+        reportList.sort(key=lambda x:x[0])
         list = [x[2] for x in reportList] # accounts needing action tend to be on top
         records = [activity[x.id] for x in list]
         names = getDentistNames(list, False)
@@ -326,8 +327,10 @@ class AnomalyReportDlg(QDialog, ui.Ui_anomalyReportDlg):
         # exclude sterilizers for unpaid accounts
         exclude = {}
         date = datetime.date.today() - datetime.timedelta(days=DAYS_UNTIL_OVERDUE)
+        # for valid comparision, convert date to datetime.datetime using .combine
+        valid_date = datetime.datetime.combine(date,datetime.time())
         for renewal in renewals:
-            if renewal.renewal_date <= date:
+            if renewal.renewal_date <= valid_date:
                 exclude[RenewalToDentistID(renewal.id)] = True
         return [sterilizer for sterilizer in sterilizers if SterilizerToDentistID(sterilizer.id) not in exclude]
         
@@ -357,7 +360,7 @@ class AnomalyReportDlg(QDialog, ui.Ui_anomalyReportDlg):
             sterilizer_id = RenewalToSterilizerID(renewal.id)
             if not (sterilizer_id in latest_renewal) or latest_renewal[sterilizer_id].id < renewal.id:
                 latest_renewal[sterilizer_id] = renewal
-        latest_renewals = [renewal for key, renewal in latest_renewal.iteritems()]
+        latest_renewals = [renewal for key, renewal in latest_renewal.items()]
         tests = Test.objects.filter(renewal_id__in=latest_renewals)
         latest_test = {}
         for renewal in latest_renewals:
@@ -757,7 +760,8 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
             if balance < 0:
                 if renewal.payment_amount:
                     partial_payments += 1
-                days = (datetime.date.today() - renewal.renewal_date).days
+                valid_dt = datetime.datetime.combine(datetime.date.today(),datetime.time())
+                days = (valid_dt - renewal.renewal_date).days
             elif not renewal.payment_date:
                 days = 0
             else:
@@ -810,7 +814,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         self.unassignedPaymentsLabel.setText(locale.currency(float(self.data['total_payments_pending']), grouping=True))
         self.balanceLabel.setText(locale.currency(float(self.data['total_balance']), grouping=True))
         
-        self.renewalFeesPushButton.setEnabled(self.data['total_charged'])
+        self.renewalFeesPushButton.setEnabled(self.data['total_charged']) #9/23/2024
         self.renewalFeePaymentsPushButton.setEnabled(self.data['total_received'])
         self.lateFeesPushButton.setEnabled(self.data['total_late_fees'])
         self.lateFeePaymentsPushButton.setEnabled(self.data['total_late_fee_payments'])
