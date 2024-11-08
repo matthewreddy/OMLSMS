@@ -814,11 +814,11 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         self.unassignedPaymentsLabel.setText(locale.currency(float(self.data['total_payments_pending']), grouping=True))
         self.balanceLabel.setText(locale.currency(float(self.data['total_balance']), grouping=True))
         
-        self.renewalFeesPushButton.setEnabled(self.data['total_charged']) #9/23/2024
-        self.renewalFeePaymentsPushButton.setEnabled(self.data['total_received'])
-        self.lateFeesPushButton.setEnabled(self.data['total_late_fees'])
-        self.lateFeePaymentsPushButton.setEnabled(self.data['total_late_fee_payments'])
-        self.unassignedPaymentsPushButton.setEnabled(self.data['total_payments_pending'])
+        self.renewalFeesPushButton.setEnabled(True) #9/23/2024. self.data[total_charged]
+        self.renewalFeePaymentsPushButton.setEnabled(True)
+        self.lateFeesPushButton.setEnabled(True)
+        self.lateFeePaymentsPushButton.setEnabled(True)
+        self.unassignedPaymentsPushButton.setEnabled(True)
 
         self.testsCompletedPushButton.setText(str(self.data['total_tests']))
         self.renewalsIssuedPushButton.setText(str(self.data['total_renewals']))
@@ -1161,7 +1161,7 @@ class YearlyComplianceDlg(QDialog, ui.Ui_yearlyComplianceDlg):
             for sterilizer in sterilizerDict[dentist.id]:
                 start = str(sterilizer.id) + '000'
                 stop = str(sterilizer.id) + '999'
-                tests = Test.objects.filter(renewal__range=(start,stop))
+                tests = Test.objects.filter(renewal__id__range=(start,stop)) # renewal__range
                 tests = tests.filter(sample_date__lte=self.endDateEdit.date().toPyDate())
                 tests = tests.filter(sample_date__gte=self.beginDateEdit.date().toPyDate())
                 numTests = tests.count()

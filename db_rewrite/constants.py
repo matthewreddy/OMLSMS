@@ -6,10 +6,10 @@ import datetime, locale, sys
 locale.setlocale( locale.LC_ALL, '' )
 
 # Configuration File Constants
-CONFIG_FILENAME = "\OMLSMS\config.txt"
+CONFIG_FILENAME = "\\OMLSMS\\config.txt"
 #must be set here for imports
 #OMLWEB_PATH = "C:\\Users\\gray1\\comp523\\web" #test directory, change to whatever your path is
-OMLWEB_PATH = "J:\Share\D R C\OML\OMLSMSv2\web" #installation directory
+OMLWEB_PATH = "C:\\Users\\Grayson\\omlsms\\web" #installation directory
 IMAGES_PATH = "" #set by configuration file
 
 # Defines a range of dates that should be in the database

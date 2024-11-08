@@ -26,7 +26,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'mssql',
         'NAME': 'omlsms',
-        'HOST': 'DESKTOP-AC4D5C6\DEMO',
+        'HOST': 'UNC-CTUCB7BC3RK\Grayson',
         'OPTIONS' : {
                      'driver': 'ODBC Driver 17 for SQL Server',  # Adjust the driver version based on your installation  # Use Windows Authentication
                     },                     
@@ -40,7 +40,7 @@ DATABASES = {
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'America/NewYork'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html

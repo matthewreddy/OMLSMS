@@ -87,7 +87,10 @@ def zip_lists(a, b):
 @register.filter(name='zip2')
 def zip_lists2(a, b):
     """Define alternate zipping behavior between two parameters based on the values within the parameters."""
-    return zip(zip(*a)[0], zip(*a)[1], b)
+
+    # Convert A to a list to make sure its subscriptable
+    a = list(a)
+    return zip(a[0], a[1], b)
 
 @register.filter(name='times') 
 def times(number):

@@ -21,11 +21,12 @@ def printHTML(HTML_string, useLabelPrinter=False):
         print_app = pdfview_filename
 
     try:
-        file = tempfile.NamedTemporaryFile (suffix=".html", delete=False)
-        file.write (HTML_string)
+        file = tempfile.NamedTemporaryFile(suffix=".html", delete=False)
+        string_html = str(HTML_string).encode()
+        file.write(string_html)
         file.close()
     except:
-        raise EnvironmentError(101, "Error opening temporary file.")
+        raise EnvironmentError(101, "Error opening temporary file.") 
 
     try:
         pdffilename = os.path.join(os.path.dirname(file.name),
@@ -34,6 +35,7 @@ def printHTML(HTML_string, useLabelPrinter=False):
                              startupinfo=startupinfo, 
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = p.communicate()
+        print(htmltopdf_filename)
         if testPrinting:
             print_command = [pdfview_filename, pdffilename]
         elif useLabelPrinter:
@@ -42,12 +44,16 @@ def printHTML(HTML_string, useLabelPrinter=False):
             print_command = [gsprint_filename, pdffilename, '-printer', '%s' % defaultPrinterName]
         else:
             print_command = [gsprint_filename, pdffilename]
-        
+            
+        # This line is the problem
+       
         p = subprocess.Popen(print_command, 
                              startupinfo=startupinfo, 
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = p.communicate()
-    except:
+        
+    except Exception as e:
+        print(e)
         raise EnvironmentError(102, "Error printing file.")
     finally:
         try:
