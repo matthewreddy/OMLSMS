@@ -87,8 +87,10 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
         try:
             assert settings.configured
             # Editing the password line must be done
-            settings.DATABASES['default']['USER'] = 'gray' #'DESKTOP-AC4D5C6\gray1'self.loginLineEdit.text()
-            settings.DATABASES['default']['PASSWORD'] = "12345" #self.passwordLineEdit.text()
+            settings.DATABASES['default']['USER'] = self.loginLineEdit.text()
+            settings.DATABASES['default']['PASSWORD'] = "sinJ4juMper#123"
+            # settings.DATABASES['default']['USER'] = 'gray' #'DESKTOP-AC4D5C6\gray1'self.loginLineEdit.text()
+            # settings.DATABASES['default']['PASSWORD'] = "12345" #self.passwordLineEdit.text()
             # this import must be done here to avoid django error
             from updatedatabase import updateDatabase
             # This method can cause trouble when connecting

@@ -12,7 +12,7 @@ EVS                     # Default user initials
 
 omltech                 # Default SQL Server user name
 
-UNC-CTUCB7BC3RK\Grayson        # Server address
+SODOMLSQL\SQLEXPRESS       # Server address UNC-CTUCB7BC3RK\Grayson  
 
 default                 # Port number
 
@@ -37,7 +37,9 @@ c:\program files\ghostgum\gsview\gsview64.exe       #PDF Viewer's path c:\progra
 
 c:\program files\ghostgum\gsview\gsprint.exe        #PDF Printer's path c:\program files\ghostgum\gsview\gsprint.exe 
 
-C:\Users\Grayson\AppData\Local\Programs\Python\Python312\Scripts\xhtml2pdf    #HTML to PDF converter c:\python27\scripts\xhtml2pdf.exe 
+c:\python27\scripts\xhtml2pdf.exe    #HTML to PDF converter c:\python27\scripts\xhtml2pdf.exe 
+
+# C:\Users\Grayson\AppData\Local\Programs\Python\Python312\Scripts\xhtml2pdf  
 
 #-----------------------------------------------------------
 
