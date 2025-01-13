@@ -151,7 +151,7 @@ def getResultsLetter(dentist, sterilizers, date_range):
         }
         results_list.append(dict)
 
-    
+    # issue in "report html"
     return render_to_string('report.html', {
         'today': date.today(),
         'dentist': dentist,
@@ -165,6 +165,7 @@ def getReportForSterilizer(sterilizer_id, date_range = None):
     dentist = Dentist.objects.get(id=dentist_id)
     sterilizer = Sterilizer.objects.get(id=sterilizer_id)
     sterilizers = [sterilizer]
+    # 1/13/2025, test printing result letter 
     return getResultsLetter(dentist, sterilizers, date_range)
 
 def getReportForDentist(dentist_id, date_range = None):
