@@ -49,6 +49,7 @@ def main(isTestEnviron, *argv):
     # Go to config.txt to see what these values are
     configValues = []
     try:
+        #configValues = readConfigValues(cwd + "\\config.txt")
         configValues = readConfigValues(cwd + "\config.txt")
     except Exception as e:
         QMessageBox.critical(None, "Error Reading Configuration File", str(e))
@@ -61,7 +62,7 @@ def main(isTestEnviron, *argv):
                     'NAME': 'omlsms',
                     'USER': '', # value is altered in logindlg
                     'PASSWORD': '', # value is altered in logindlg
-                    'HOST': 'SODOMLSQL\SQLEXPRESS',
+                    'HOST': 'SODOMLSQL\SQLEXPRESS', # UNC-CTUCB7BC3RK on Grayson's PC
                     'OPTIONS' : {
                                 'driver' : 'ODBC Driver 17 for SQL Server',
                                 },                     

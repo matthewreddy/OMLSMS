@@ -7,9 +7,11 @@ locale.setlocale( locale.LC_ALL, '' )
 
 # Configuration File Constants
 CONFIG_FILENAME = "\OMLSMS\config.txt"
+# This is right on Grayson's PC CONFIG_FILENAME = "\\OMLSMS\\config.txt"
 #must be set here for imports
 #OMLWEB_PATH = "C:\\Users\\gray1\\comp523\\web" #test directory, change to whatever your path is
-OMLWEB_PATH = "J:\Share\D R C\OML\OMLSMSv2\web" #installation directory
+#OMLWEB_PATH = "C:\\Users\\Grayson\\omlsms\\web" #installation directory
+OMLWEB_PATH = "J:\Share\D R C\OML\OMLSMSv2\web"
 IMAGES_PATH = "" #set by configuration file
 
 # Defines a range of dates that should be in the database
