@@ -44,12 +44,12 @@ class ResultDlg(QDialog, ui.Ui_resultDlg):
         self.startDateEdit.setDisabled(True)
         self.endDateEdit.setDisabled(True)
             
-    
+    # Potential Problem here
+    # TypeError: ResultDlg.on_specificPeriodRadioButton_clicked() missing 1 required positional argument: 'checked'
     def on_specificPeriodRadioButton_clicked(self, checked: bool) -> None:
         self.startDateEdit.setEnabled(True)
         self.endDateEdit.setEnabled(True)
 
-    
     def on_printPushButton_clicked(self) -> None:
         if self.specificPeriodRadioButton.isChecked():
             period = (self.startDateEdit.date().toPyDate(),

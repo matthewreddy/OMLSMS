@@ -15,21 +15,21 @@
             right: 1in;
             bottom: 2.3in;
         }
-	    @frame letterhead {
+	    letterhead {
             -pdf-frame-content: letterheadContent;
             top: 1in;
             margin-left: 1in;
             margin-right: 1in;
             height: 1.0in;
         }
-        @frame header {
+        header {
             -pdf-frame-content: headerContent;
             top: 2.0in;
             margin-left: 1in;
             margin-right: 1in;
             height: 1.2in;
         }
-        @frame footer {
+        footer {
             -pdf-frame-content: footerContent;
             bottom: 0in;
             margin-left: 0.5in;
@@ -57,7 +57,7 @@
         font-size: 12px;
         text-align: left;
         vertical-align: text-top;
-	line-height:110%;
+	    line-height:110%;
         }
 
 	table.footer
@@ -168,7 +168,7 @@
         {% include "address.html" %}
     </div>
         <table>
-        <tr><td class="sterilization">Sterilization Monitoring Report</tr></td>
+        <tr><td class="sterilization">Sterilization Monitoring Report</td></tr>
         </table>
         {% for summary in result_summaries %}
         <table style="margin-top:20px">
