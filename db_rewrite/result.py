@@ -23,7 +23,7 @@ class ResultDlg(QDialog, ui.Ui_resultDlg):
             ("Dentist #" if dentist else "Sterilizer #", 
              str(id).zfill(DENTIST_ID_WIDTH if dentist else STERILIZER_ID_WIDTH)))
         
-        self.defaultPeriodRadioButton.setChecked(True)
+        self.specificPeriodRadioButton.setChecked(True)
         self.startDateEdit.setDisabled(True)
         self.endDateEdit.setDisabled(True)
         
@@ -40,16 +40,18 @@ class ResultDlg(QDialog, ui.Ui_resultDlg):
 
     # Functions for defining behavior upon pushing buttons.
     
-    def on_defaultPeriodRadioButton_clicked(self, checked: bool) -> None:
-        self.startDateEdit.setDisabled(True)
-        self.endDateEdit.setDisabled(True)
+    def on_defaultPeriodRadioButton_clicked(self) -> None:
+            if self.specificPeriodRadioButton.isChecked():
+                self.specificPeriodRadioButton.setChecked(False)
+            self.startDateEdit.setDisabled(True)
+            self.endDateEdit.setDisabled(True)
             
-    
-    def on_specificPeriodRadioButton_clicked(self, checked: bool) -> None:
-        self.startDateEdit.setEnabled(True)
-        self.endDateEdit.setEnabled(True)
+    def on_specificPeriodRadioButton_clicked(self) -> None:
+            if self.defaultPeriodRadioButton.isChecked():
+                self.defaultPeriodRadioButton.setChecked(False)
+            self.startDateEdit.setEnabled(True)
+            self.endDateEdit.setEnabled(True)
 
-    
     def on_printPushButton_clicked(self) -> None:
         if self.specificPeriodRadioButton.isChecked():
             period = (self.startDateEdit.date().toPyDate(),

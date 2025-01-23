@@ -173,7 +173,7 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         """Verify the data supplied by the user before
         sending it and storing it to the database.
         """
-        if not re.match("^\d{%s}$" % RENEWAL_ID_WIDTH, self.renewalIdLineEdit.text()):
+        if not re.match(r"^\d{%s}$" % RENEWAL_ID_WIDTH, self.renewalIdLineEdit.text()):
             return self.renewalIdLineEdit, "Renewal ID has improper format."
         try:
             i = int(self.testNumLineEdit.text())
@@ -256,8 +256,8 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
 
     def makeBookmark(self):
         """Create a bookmark for the test record."""
-        if re.match("^\d{%s}$" % RENEWAL_ID_WIDTH, self.renewalIdLineEdit.text()) and \
-           re.match("^\d{1,2}$", self.testNumLineEdit.text()):
+        if re.match(r"^\d{%s}$" % RENEWAL_ID_WIDTH, self.renewalIdLineEdit.text()) and \
+           re.match(r"^\d{1,2}$", self.testNumLineEdit.text()):
             return {
                 'dentist': self.renewalIdLineEdit.text()[0:DENTIST_ID_WIDTH],
                 'sterilizer': self.renewalIdLineEdit.text()[0:STERILIZER_ID_WIDTH],

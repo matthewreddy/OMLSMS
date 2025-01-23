@@ -26,8 +26,8 @@ class TestNotifyDlg(QDialog, ui.Ui_testNotifyDlg):
         self.test = test
         self.user = user
         self.move(pos)
-        
-        dentist_id = str(test.renewal).zfill(RENEWAL_ID_WIDTH)[0:DENTIST_ID_WIDTH]
+        # Changed to Test.renewal.id
+        dentist_id = str(test.renewal.id).zfill(RENEWAL_ID_WIDTH)[0:DENTIST_ID_WIDTH]
         self.dentist = Dentist.objects.get(id=dentist_id)
         dentist = self.dentist
 

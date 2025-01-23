@@ -151,7 +151,6 @@ def getResultsLetter(dentist, sterilizers, date_range):
         }
         results_list.append(dict)
 
-    
     return render_to_string('report.html', {
         'today': date.today(),
         'dentist': dentist,

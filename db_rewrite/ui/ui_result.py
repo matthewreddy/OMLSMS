@@ -71,6 +71,7 @@ class Ui_resultDlg(object):
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
 
         self.retranslateUi(resultDlg)
+        # This connects all the signals to slots 
         QtCore.QMetaObject.connectSlotsByName(resultDlg)
 
     def retranslateUi(self, resultDlg):
