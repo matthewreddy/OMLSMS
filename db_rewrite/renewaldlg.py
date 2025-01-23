@@ -132,7 +132,7 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
     def verifyFormData(self):
         """Verify the form data provided by the user before saving it."""
         if self.idLineEdit.text() != "" and \
-                not re.match("^\d{%s}$" % RENEWAL_ID_WIDTH, self.idLineEdit.text()):
+                not re.match(r"^\d{%s}$" % RENEWAL_ID_WIDTH, self.idLineEdit.text()):
             return self.idLineEdit, "Renewal ID has improper format."
         try:
             renewal_date = FormDateToRecord(self.renewalDateLineEdit.text())
@@ -196,7 +196,7 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
 
     def makeBookmark(self):
         """Create a bookmark for the new renewal."""
-        if re.match("^\d{%s}$" % RENEWAL_ID_WIDTH, self.idLineEdit.text()):
+        if re.match(r"^\d{%s}$" % RENEWAL_ID_WIDTH, self.idLineEdit.text()):
             return {
             'dentist': self.idLineEdit.text()[0:DENTIST_ID_WIDTH],
             'sterilizer': self.idLineEdit.text()[0:STERILIZER_ID_WIDTH],
@@ -323,9 +323,16 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
 
     
     def on_startPushButton_clicked(self) -> None:
+        print("hello")
         startDlg = StartRenewalDlg(self)
-        if not startDlg.error_initializing:
-            startDlg.exec_()
+        # if not startDlg.error_initializing:
+        #     print("here")
+        #startDlg.exec_()
+        try:
+            startDlg.exec()
+        except Exception as e:
+            print(e)
+        
 
    
     def on_sendPushButton_clicked(self) -> None:

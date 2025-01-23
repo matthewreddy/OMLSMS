@@ -55,7 +55,6 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
             QMessageBox.information(self, "No Renewals", "No sterilizers are in need of renewal.")
             self.error_initializing = True
             return False
-        
         try:
             renewals = Renewal.objects.filter(sterilizer__in=sterilizers)
             latest_renewal = {}
@@ -67,7 +66,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
                     latest_lot[sterilizer_id] = RenewalToLotID(renewal.id)
                     if not renewal.inactive_date:
                         latest_renewal[sterilizer_id] = renewal
-            latest_renewals = [renewal for key, renewal in latest_renewal.iteritems()]
+            latest_renewals = [renewal for key, renewal in latest_renewal.items()]
             tests = Test.objects.filter(renewal_id__in=latest_renewals)
             latest_test = {}
             for test in tests:
@@ -91,7 +90,8 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
                     latest_lot[sterilizer.id] if renewal else 0,
                     numTests))
             self.sterilizerList.sort(key=lambda tup: tup[3])
-        except:
+        except Exception as e:
+            print(e)
             self.error_initializing = True
             return False
         return True
@@ -163,6 +163,10 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
     
     def selectLot(self, index):
         """Pinpoint and select the lot specified by the user for the renewal."""
+        # Index here is being changed, maybe a result of the two threads?
+        index = int(index)
+        print(index)
+        print(len(self.lotList))
         for row in range(0, len(self.sterilizerList)):
             if self.lotList[index].id <= self.sterilizerList[row][2]:
                 for col in range(0, NUM_TABLE_COLUMNS):
@@ -242,6 +246,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
 
     
     def on_tableWidget_itemSelectionChanged(self) -> None:
+        print("here")
         self.updateCounts()
 
     
@@ -250,6 +255,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
         
     
     def on_lotComboBox_currentIndexChanged(self, index: int) -> None:
+        print("here")
         self.selectLot(index)
 
     
