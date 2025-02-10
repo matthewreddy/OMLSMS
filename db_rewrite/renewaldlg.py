@@ -323,13 +323,9 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
 
     
     def on_startPushButton_clicked(self) -> None:
-        print("hello")
         startDlg = StartRenewalDlg(self)
-        # if not startDlg.error_initializing:
-        #     print("here")
-        #startDlg.exec_()
         try:
-            startDlg.exec()
+            startDlg.exec_()
         except Exception as e:
             print(e)
         
