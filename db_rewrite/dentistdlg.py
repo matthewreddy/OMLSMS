@@ -91,7 +91,7 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
     def verifyFormData(self):
         """Ensures form input is valid before saving."""
         if self.idLineEdit.text() != "" and \
-                not re.match("^\d{%s}$" % DENTIST_ID_WIDTH, self.idLineEdit.text()):
+                not re.match(r"^\d{%s}$" % DENTIST_ID_WIDTH, self.idLineEdit.text()):
             return self.idLineEdit, "Dentist ID has improper format."
         if self.practiceNameLineEdit.text() == "" and \
                 self.lastNameLineEdit.text() == "":
@@ -102,19 +102,20 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         if self.cityLineEdit.text() == "":
             return self.cityLineEdit, "Enter city."
         try:
-            self.stateLineEdit.setText(self.stateLineEdit.text().toUpper())
-            State.objects.get(abbreviation=self.stateLineEdit.text())
-        except:
+            self.stateLineEdit.setText(self.stateLineEdit.text().upper())
+            State.objects.get(abbreviation=self.stateLineEdit.text().upper())
+        except Exception as e:
+            print(e)
             return self.stateLineEdit, "Can't find state in database."
-        if not re.match("^\d{5}(-\d{4})?$", self.zipLineEdit.text()):
+        if not re.match(r"^\d{5}(-\d{4})?$", self.zipLineEdit.text()):
             return self.zipLineEdit, "Improper ZIP code."
-        if not re.match("^\d{3}-\d{3}-\d{4}(/\d*)?$", self.phoneLineEdit.text()):
+        if not re.match(r"^\d{3}-\d{3}-\d{4}(/\d*)?$", self.phoneLineEdit.text()):
             return self.phoneLineEdit, "Improper phone number."
         if self.faxLineEdit.text() != "" and \
-            not re.match("^\d{3}-\d{3}-\d{4}(/\d*)?$", self.faxLineEdit.text()):
+            not re.match(r"^\d{3}-\d{3}-\d{4}(/\d*)?$", self.faxLineEdit.text()):
             return self.faxLineEdit, "Improper phone number."
         if self.emailLineEdit.text() and \
-            not re.match("^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.[a-zA-Z]{2,6}$",
+            not re.match(r"^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.[a-zA-Z]{2,6}$",
             self.emailLineEdit.text()
         ):
             return self.emailLineEdit, "Improper E-mail address."
@@ -173,7 +174,7 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
 
     def makeBookmark(self):
         """Save a bookmark under the dentist's profile."""
-        if re.match("^\d{%s}$" % DENTIST_ID_WIDTH, self.idLineEdit.text()):
+        if re.match(r"^\d{%s}$" % DENTIST_ID_WIDTH, self.idLineEdit.text()):
             return {'dentist': self.idLineEdit.text()}
 
     def goToBookmark(self, bookmark):
@@ -198,9 +199,9 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         id = self.idLineEdit.text()
         type = "Dentist"
         disableMsg = "Disabling this dentist will disable all associated sterilizers" + \
-            "and renewals.  Proceed?"
+            " and renewals.  Proceed?"
         enableMsg = "Enabling this dentist will enable all associated sterilizers" + \
-            "and renewals that were not individually disabled.  Proceed?"
+            " and renewals that were not individually disabled.  Proceed?"
         toggled = self.toggleActive(id, type, disableMsg, enableMsg)
 
     
