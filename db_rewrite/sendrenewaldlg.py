@@ -162,6 +162,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
     def selectLot(self, index):
         """Pinpoint and select the lot specified by the user for the renewal."""
         # Index here is being changed by something somewhere
+        # Unsure if this is working correctly but the current code runs without technical error
         index = self.lotComboBox.currentIndex()
         for row in range(0, len(self.sterilizerList)):
             if self.lotList[index].id <= self.sterilizerList[row][2]:
@@ -242,7 +243,6 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
 
     
     def on_tableWidget_itemSelectionChanged(self) -> None:
-        print("here")
         self.updateCounts()
 
     
@@ -251,6 +251,8 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
         
     
     def on_lotComboBox_currentIndexChanged(self, index: int) -> None:
+        # Not sure if current code acheives intended functionality
+        print(index)
         self.selectLot(index)
 
     
@@ -353,7 +355,7 @@ class SendRenewalDlg(QDialog, ui.Ui_sendRenewalDlg):
         renewal.renewal_fee = sterilizer.renew_fee
         renewal.late_fee = 0
         renewal.payment_date = None
-        renewal.payement_amount = None
+        renewal.payment_amount = None
         renewal.check_num = ""
         renewal.comment = ""
         renewal.inactive_date = None
@@ -410,7 +412,8 @@ class SendRenewalDlg(QDialog, ui.Ui_sendRenewalDlg):
             self.parent().printHTML(djprint.getReportForSterilizer(sterilizer.id), spawn=False)
 
     # Functions for defining behavior upon pushing buttons.
-    
+    # Need for find a way to get to bottom of code (add renewal for sterilizer)
+    # Also to test print buttons
     def on_renewalIdLineEdit_returnPressed(self) -> None:
         text = self.renewalIdLineEdit.text()
         status_text = "Error: Could not add renewal #%s." % text
