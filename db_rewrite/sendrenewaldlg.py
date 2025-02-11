@@ -1,6 +1,6 @@
 """This file renders the starting and sending dialog boxes for
 renewals, defining their unique types of behaviors."""
-
+import threading
 import datetime
 from constants import *
 
@@ -55,7 +55,6 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
             QMessageBox.information(self, "No Renewals", "No sterilizers are in need of renewal.")
             self.error_initializing = True
             return False
-        
         try:
             renewals = Renewal.objects.filter(sterilizer__in=sterilizers)
             latest_renewal = {}
@@ -67,7 +66,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
                     latest_lot[sterilizer_id] = RenewalToLotID(renewal.id)
                     if not renewal.inactive_date:
                         latest_renewal[sterilizer_id] = renewal
-            latest_renewals = [renewal for key, renewal in latest_renewal.iteritems()]
+            latest_renewals = [renewal for key, renewal in latest_renewal.items()]
             tests = Test.objects.filter(renewal_id__in=latest_renewals)
             latest_test = {}
             for test in tests:
@@ -91,7 +90,8 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
                     latest_lot[sterilizer.id] if renewal else 0,
                     numTests))
             self.sterilizerList.sort(key=lambda tup: tup[3])
-        except:
+        except Exception as e:
+            print(e)
             self.error_initializing = True
             return False
         return True
@@ -137,14 +137,12 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
         except:
             QMessageBox.information(self, "Database Error", "Error reading database.")
             self.error_initializing = True
-
         try:
             assert len(self.lotList) != 0
         except:
             QMessageBox.warning(self, "No Lots", "No valid lots found for renewal.")
             self.error_initializing = True
             return False
-        
         for number, lot in enumerate(self.lotList):
             self.lotComboBox.insertItem(number, str(lot.id))
         self.lotComboBox.setCurrentIndex(0)
@@ -163,6 +161,9 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
     
     def selectLot(self, index):
         """Pinpoint and select the lot specified by the user for the renewal."""
+        # Index here is being changed by something somewhere
+        # Unsure if this is working correctly but the current code runs without technical error
+        index = self.lotComboBox.currentIndex()
         for row in range(0, len(self.sterilizerList)):
             if self.lotList[index].id <= self.sterilizerList[row][2]:
                 for col in range(0, NUM_TABLE_COLUMNS):
@@ -250,6 +251,8 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
         
     
     def on_lotComboBox_currentIndexChanged(self, index: int) -> None:
+        # Not sure if current code acheives intended functionality
+        print(index)
         self.selectLot(index)
 
     
@@ -352,7 +355,7 @@ class SendRenewalDlg(QDialog, ui.Ui_sendRenewalDlg):
         renewal.renewal_fee = sterilizer.renew_fee
         renewal.late_fee = 0
         renewal.payment_date = None
-        renewal.payement_amount = None
+        renewal.payment_amount = None
         renewal.check_num = ""
         renewal.comment = ""
         renewal.inactive_date = None
@@ -409,7 +412,8 @@ class SendRenewalDlg(QDialog, ui.Ui_sendRenewalDlg):
             self.parent().printHTML(djprint.getReportForSterilizer(sterilizer.id), spawn=False)
 
     # Functions for defining behavior upon pushing buttons.
-    
+    # Need for find a way to get to bottom of code (add renewal for sterilizer)
+    # Also to test print buttons
     def on_renewalIdLineEdit_returnPressed(self) -> None:
         text = self.renewalIdLineEdit.text()
         status_text = "Error: Could not add renewal #%s." % text
@@ -427,8 +431,11 @@ class SendRenewalDlg(QDialog, ui.Ui_sendRenewalDlg):
                 assert False
             
             try:
+                # print(self.sterilizers)
+                # print(self.lots)
                 lot = self.lots[RenewalToLotID(id)]
-            except:
+            except Exception as e:
+                # print(e)
                 status_text = "Can't use lot number %d." % lot_id
                 assert False
             

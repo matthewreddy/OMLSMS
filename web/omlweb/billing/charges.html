@@ -73,7 +73,7 @@
 
         <td class="charges_currency">
             {% for balance in payment.balances %}
-            {% if renewal.id = balance.renewal_id %}
+            {% if renewal.id == balance.renewal_id %}
             {{ balance.amount|default:0|currency }}
             {% endif %}
             {% endfor %}

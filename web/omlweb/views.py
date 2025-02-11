@@ -150,7 +150,7 @@ def getBillingData(sterilizer_id):
     balances = []
     q = getRecentRenewals(sterilizer_id).order_by('renewal_date')
     amount, due_date = getSterilizerPaymentSummary(sterilizer_id)
-    if due_date and today() > due_date:
+    if due_date and today() > due_date.date():
         overdue = True
     else:
         overdue = False
