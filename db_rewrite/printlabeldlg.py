@@ -59,7 +59,7 @@ class PrintLabelDlg(QDialog, ui.Ui_printLabelDlg):
                    dentist.lname)
             item = QTreeWidgetItem(None, [text])
             if not printLabel:
-                item.setTextColor(0, Qt.gray)
+                item.setForeground(0, QBrush(QColor("gray")))
             self.treeWidget.addTopLevelItem(item)
             self.treeWidget.expandItem(item)
             self.dentists[dentist_id] = (dentist, printLabel, item)

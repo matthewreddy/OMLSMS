@@ -35,7 +35,6 @@ def printHTML(HTML_string, useLabelPrinter=False):
                              startupinfo=startupinfo, 
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = p.communicate()
-        print(htmltopdf_filename)
         if testPrinting:
             print_command = [pdfview_filename, pdffilename]
         elif useLabelPrinter:
