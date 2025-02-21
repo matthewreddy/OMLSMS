@@ -102,7 +102,7 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
         before it is saved in the database.
         """
         if self.idLineEdit.text() != "" and \
-                not re.match("^\d{%s}$" % STERILIZER_ID_WIDTH, self.idLineEdit.text()):
+                not re.match(r"^\d{%s}$" % STERILIZER_ID_WIDTH, self.idLineEdit.text()):
             return self.idLineEdit, "Sterilizer ID has improper format."
         enroll_date = self.enrollDateEdit.date().toPyDate()
         if enroll_date.year < 1980:
@@ -113,7 +113,7 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
             return self.methodComboBox, "Can't access Sterilizer Method from database."
         if self.dateInactiveLineEdit.text() != "":
             try:
-                if not re.match("$\(", self.dateInactiveLineEdit.text()):
+                if not re.match(r"$\(", self.dateInactiveLineEdit.text()):
                     inactive = FormDateToRecord(self.dateInactiveLineEdit.text())
                     assert inactive >= enroll_date
             except:
@@ -132,7 +132,7 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
         record.serial_num = self.serialNumLineEdit.text()
         record.model = self.modelLineEdit.text()
         record.method = SterilizerMethod.objects.get(id=self.methodComboBox.currentIndex() + 1)
-        if not re.match("$\(", self.dateInactiveLineEdit.text()):
+        if not re.match(r"$\(", self.dateInactiveLineEdit.text()):
             record.inactive_date = \
                 FormDateToRecord(self.dateInactiveLineEdit.text())
         record.comment = self.commentLineEdit.text()
@@ -149,6 +149,7 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
             return None
         dentist_factor = 10 ** (STERILIZER_ID_WIDTH - DENTIST_ID_WIDTH)
         target_id = self.getTargetInsertId(None)
+        print(target_id)
         return Sterilizer(
         id = target_id,
         dentist = dentist,
@@ -175,14 +176,19 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
                 value = id_lower + 1
             # Limited to 99 sterilizers per dentist by convention!!
             # if we overflow, at least don't corrupt the database
-            assert value / dentist_factor == self.dentistForInsert
-        except:
+            # print(value, "- value")
+            # print(dentist_factor, "-  dfactor")
+            # print(self.dentistForInsert," dinsert")
+            # print(value // dentist_factor)
+            # Changed from / to //
+            assert value // dentist_factor == self.dentistForInsert
+        except Exception as e:
             return None
         return value
 
     def makeBookmark(self):
         """Create a bookmark for the sterilizer."""
-        if re.match("^\d{%s}$" % STERILIZER_ID_WIDTH, self.idLineEdit.text()):
+        if re.match(r"^\d{%s}$" % STERILIZER_ID_WIDTH, self.idLineEdit.text()):
             return {
             'dentist': self.idLineEdit.text()[0:DENTIST_ID_WIDTH],
             'sterilizer': self.idLineEdit.text()
