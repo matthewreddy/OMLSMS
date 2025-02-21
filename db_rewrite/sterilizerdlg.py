@@ -176,10 +176,7 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
                 value = id_lower + 1
             # Limited to 99 sterilizers per dentist by convention!!
             # if we overflow, at least don't corrupt the database
-            # print(value, "- value")
-            # print(dentist_factor, "-  dfactor")
-            # print(self.dentistForInsert," dinsert")
-            # print(value // dentist_factor)
+   
             # Changed from / to //
             assert value // dentist_factor == self.dentistForInsert
         except Exception as e:
