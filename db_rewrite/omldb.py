@@ -62,7 +62,7 @@ def main(isTestEnviron, *argv):
                     'NAME': 'omlsms',
                     'USER': '', # value is altered in logindlg
                     'PASSWORD': '', # value is altered in logindlg
-                    'HOST': 'UNC-CTUCB7BC3RK', # UNC-CTUCB7BC3RK on Grayson's PC
+                    'HOST': 'SODOMLSQL\SQLEXPRESS', # UNC-CTUCB7BC3RK on Grayson's PC
                     'OPTIONS' : {
                                 'driver' : 'ODBC Driver 17 for SQL Server',
                                 },                     
