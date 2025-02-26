@@ -222,7 +222,7 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
         return (findDlg.exec_())
 
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_dateInactivePushButton_clicked(self) -> None:
         #msgBox = QMessageBox()
         id = self.idLineEdit.text()
@@ -233,26 +233,26 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
             "renewals that were not individually disabled.  Proceed?"
         self.toggleActive(id, type, disableMsg, enableMsg)
     
-    
+    @pyqtSlot()
     def on_timeToRenewCheckBox_clicked(self) -> None:
         success, widget = self.saveRecord(self.getCurrentRecord())
         self.loadForm(self.getCurrentRecord())
 
-    
+    @pyqtSlot()
     def on_suspendRenewalsCheckBox_clicked(self) -> None:
         success, widget = self.saveRecord(self.getCurrentRecord())
         self.loadForm(self.getCurrentRecord())
     
-
+    @pyqtSlot()
     def on_labelPushButton_clicked(self) -> None:
         labelDlg = PrintLabelDlg(self)
         labelDlg.exec_()
 
-    
+    @pyqtSlot()
     def on_billPushButton_clicked(self) -> None:
         self.printHTML(djprint.getBillForSterilizer(self.getCurrentRecord().id))
         
-    
+    @pyqtSlot()
     def on_reportPushButton_clicked(self) -> None:
         id = self.idLineEdit.text()
         dlg = ResultDlg(False, id, self)

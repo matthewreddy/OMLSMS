@@ -146,7 +146,7 @@ class LotDlg(FormViewDlg, ui.Ui_lotDlg):
             self.findRecord(self.records[len(self.records) - 1].id)
 
     # Functions for defining behavior upon pushing buttons.
-
+    @pyqtSlot()
     def on_dateInactivePushButton_clicked(self) -> None:
         msgBox = QMessageBox()
         id = self.idLineEdit.text()

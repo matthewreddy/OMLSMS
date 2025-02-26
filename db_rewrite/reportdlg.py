@@ -77,56 +77,56 @@ class ReportDlg(MainDlg, ui.Ui_reportDlg):
         super(ReportDlg, self).show()
 
     # Functions for defining behavior upon pushing buttons.
-
+    @pyqtSlot()
     def on_testCountPushButton_clicked(self) -> None:
         if self.dlg:
             self.dlg.close()
         self.dlg = TestCountDlg(self.dlgPos(self.testCountPushButton), self)
         self.dlg.show()
 
-    
+    @pyqtSlot()
     def on_activityReportPushButton_clicked(self) -> None:
         if self.dlg:
             self.dlg.close()
         self.dlg = ActivityReportDlg(self.dlgPos(self.activityReportPushButton), self)
         self.dlg.show()
         
-    
+    @pyqtSlot()
     def on_anomalyReportPushButton_clicked(self) -> None:
         if self.dlg:
             self.dlg.close()
         self.dlg = AnomalyReportDlg(self.dlgPos(self.anomalyReportPushButton), self)
         self.dlg.show()
     
-   
+    @pyqtSlot()
     def on_overdueAccountsPushButton_clicked(self) -> None:
         if self.dlg:
             self.dlg.close()
         self.dlg = OverdueReportDlg(self.dlgPos(self.overdueAccountsPushButton), self)
         self.dlg.show()
 
-    
+    @pyqtSlot()
     def on_dailyPaymentReportPushButton_clicked(self) -> None:
         if self.dlg:
             self.dlg.close()
         self.dlg = PaymentReportDlg(self.dlgPos(self.dailyPaymentReportPushButton), self)
         self.dlg.show()
 
-    
+    @pyqtSlot()
     def on_quarterlyPaymentSummaryPushButton_clicked(self) -> None:
         if self.dlg:
             self.dlg.close()
         self.dlg = PaymentSummaryDlg(self.dlgPos(None), self)
         self.dlg.show()
 
-    
+    @pyqtSlot()
     def on_yearlyCompliancePushButton_clicked(self) -> None:
         if self.dlg:
             self.dlg.close()
         self.dlg = YearlyComplianceDlg(self.dlgPos(self.yearlyCompliancePushButton), self)
         self.dlg.show()
 
-    
+    @pyqtSlot()
     def on_lotRecallPushButton_clicked(self) -> None:
         if self.dlg:
             self.dlg.close()
@@ -154,7 +154,7 @@ class TestCountDlg(QDialog, ui.Ui_testCountDlg):
         button.setEnabled(count)
 
     # Functions for defining behavior upon pushing buttons.
-
+    @pyqtSlot(QDate)
     def on_dateEdit_dateChanged(self, q_date : QDate) -> None:
         date = q_date.toPyDate()
         count = Test.objects.filter(start_date=date).count()
@@ -168,62 +168,62 @@ class TestCountDlg(QDialog, ui.Ui_testCountDlg):
         count = Test.objects.filter(start_date=date).filter(result_date__isnull=True).count()
         self.setButtonCount(self.noResultsPushButton, count)
 
-    
+    @pyqtSlot()
     def on_prevPushButton_clicked(self) -> None:
         date = self.dateEdit.date().toPyDate() - datetime.timedelta(days=1)
         self.dateEdit.setDate(date)
 
-    
+    @pyqtSlot()
     def on_nextPushButton_clicked(self) -> None:
         date = self.dateEdit.date().toPyDate() + datetime.timedelta(days=1)
         self.dateEdit.setDate(date)
         
-    
+    @pyqtSlot()
     def on_todayPushButton_clicked(self) -> None:
         self.dateEdit.setDate(datetime.date.today())
         
-    
+    @pyqtSlot()
     def on_inPushButton_clicked(self) -> None:
         date = self.dateEdit.date().toPyDate()
         title = "Tests logged in on %s" % RecordDateToText(date)
         tests = Test.objects.filter(start_date=date)
         self.parent().viewText(djprint.testCountReport(title, tests))
 
-    
+    @pyqtSlot()
     def on_outPushButton_clicked(self) -> None:
         date = self.dateEdit.date().toPyDate()
         title = "Tests logged out on %s" % RecordDateToText(date)
         tests = Test.objects.filter(result_date=date)
         self.parent().viewText(djprint.testCountReport(title, tests))
 
-    
+    @pyqtSlot()
     def on_positivesPushButton_clicked(self) -> None:
         date = self.dateEdit.date().toPyDate()
         title = "Positives logged out on %s" % RecordDateToText(date)
         tests = Test.objects.filter(result_date=date).filter(result='+')
         self.parent().viewText(djprint.testCountReport(title, tests))
 
-    
+    @pyqtSlot()
     def on_resultsPushButton_clicked(self) -> None:
         date = self.dateEdit.date().toPyDate()
         title = "Tests logged in on %s that have results" % RecordDateToText(date)
         tests = Test.objects.filter(start_date=date).filter(result_date__isnull=False)
         self.parent().viewText(djprint.testCountReport(title, tests))
 
-    
+    @pyqtSlot()
     def on_noResultsPushButton_clicked(self) -> None:
         date = self.dateEdit.date().toPyDate()
         title = "Tests logged in on %s that do not have results" % RecordDateToText(date)
         tests = Test.objects.filter(start_date=date).filter(result_date__isnull=True)
         self.parent().viewText(djprint.testCountReport(title, tests))
 
-   
+    @pyqtSlot()
     def on_overduePushButton_clicked(self) -> None:
         tests = self.needResults
         title = "Tests that require results at this time"
         self.parent().viewText(djprint.testCountReport(title, tests))
 
-    
+    @pyqtSlot()
     def on_closePushButton_clicked(self) -> None:
         self.close()
 
@@ -286,7 +286,7 @@ class ActivityReportDlg(QDialog, ui.Ui_activityReportDlg):
         return (djprint.inactivityReport(list, names, weeks, records))
 
     # Functions for defining behavior upon pushing buttons.
-
+    @pyqtSlot()
     def on_viewReportPushButton_clicked(self) -> None:
         self.statusLabel.setText("Working...")
         QCoreApplication.instance().processEvents()
@@ -294,11 +294,11 @@ class ActivityReportDlg(QDialog, ui.Ui_activityReportDlg):
         self.statusLabel.setText("")
         QCoreApplication.instance().processEvents()
 
-    
+    @pyqtSlot()
     def on_printReportPushButton_clicked(self)-> None:
         self.parent().printText(self.getReport())
 
-    
+    @pyqtSlot()
     def on_exitPushButton_clicked(self)-> None:
         self.close()
 
@@ -385,7 +385,7 @@ class AnomalyReportDlg(QDialog, ui.Ui_anomalyReportDlg):
         return (djprint.getAnomalyReport(activateCandidates, a_names, renewCandidates, r_names))
         
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_viewReportPushButton_clicked(self) -> None:
         self.statusLabel.setText("Working...")
         QCoreApplication.instance().processEvents()
@@ -393,11 +393,11 @@ class AnomalyReportDlg(QDialog, ui.Ui_anomalyReportDlg):
         self.statusLabel.setText("")
         QCoreApplication.instance().processEvents()
 
-    
+    @pyqtSlot()
     def on_printReportPushButton_clicked(self) -> None:
         self.parent().printText(self.getReport())
 
-    
+    @pyqtSlot()
     def on_exitPushButton_clicked(self) -> None:
         self.close()
 
@@ -486,15 +486,15 @@ class OverdueReportDlg(QDialog, ui.Ui_overdueReportDlg):
         return(djprint.printOverdueAccountList(renewalList, dentistNameList))
         
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_viewReportPushButton_clicked(self) -> None:
         self.parent().viewText(self.getReport())
 
-   
+    @pyqtSlot()
     def on_printReportPushButton_clicked(self) -> None:
         self.parent().printText(self.getReport())
 
-    
+    @pyqtSlot()
     def on_exitPushButton_clicked(self) -> None:
         self.close()
 
@@ -526,15 +526,15 @@ class PaymentReportDlg(QDialog, ui.Ui_paymentReportDlg):
         return(djprint.printDailyPaymentReport(renewalList, dentistNameList))
 
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_viewReportPushButton_clicked(self) -> None:
         self.parent().viewText(self.getReport())
 
-    
+    @pyqtSlot()
     def on_printReportPushButton_clicked(self) -> None:
         self.parent().printText(self.getReport())
 
-    
+    @pyqtSlot()
     def on_exitPushButton_clicked(self) -> None:
         self.close()
 
@@ -634,7 +634,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
             widget.setDisabled(True)
 
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_prevMonthPushButton_clicked(self) -> None:
         month = int(self.monthLineEdit.text())
         year = int(self.yearLineEdit.text())
@@ -645,7 +645,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         self.monthLineEdit.setText(str(month))
         self.yearLineEdit.setText(str(year))
 
-    
+    @pyqtSlot()
     def on_nextMonthPushButton_clicked(self) -> None:
         month = int(self.monthLineEdit.text())
         year = int(self.yearLineEdit.text())
@@ -656,19 +656,19 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         self.monthLineEdit.setText(str(month))
         self.yearLineEdit.setText(str(year))
 
-    
+    @pyqtSlot()
     def on_prevYearPushButton_clicked(self) -> None:
         year = int(self.yearLineEdit.text())
         year -= 1
         self.yearLineEdit.setText(str(year))
 
-    
+    @pyqtSlot()
     def on_nextYearPushButton_clicked(self) -> None:
         year = int(self.yearLineEdit.text())
         year += 1
         self.yearLineEdit.setText(str(year))
 
-   
+    @pyqtSlot(bool)
     def on_yearRadioButton_toggled(self, checked:bool) -> None:
         if checked:
             self.disablePeriodSelection()
@@ -676,7 +676,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
                 widget.setEnabled(True)
         self.updateDates()
     
-    
+    @pyqtSlot(bool)
     def on_monthRadioButton_toggled(self, checked:bool) -> None:
         if checked:
             self.disablePeriodSelection()
@@ -686,19 +686,19 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
                 widget.setEnabled(True)
         self.updateDates()
     
-
+    @pyqtSlot(bool)
     def on_freeformRadioButton_toggled(self, checked:bool) -> None:
         if checked:
             self.disablePeriodSelection()
             for widget in self.freeformSelectWidgets:
                 widget.setEnabled(True)
 
-    
+    @pyqtSlot(str)
     def on_yearLineEdit_textChanged(self, text: str)-> None :
         if self.yearRadioButton.isChecked() or self.monthRadioButton.isChecked():
             self.updateDates()
 
-    
+    @pyqtSlot(str)
     def on_monthLineEdit_textChanged(self, text: str) -> None:
         if self.monthRadioButton.isChecked():
             self.updateDates()
@@ -878,7 +878,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         return renewals
 
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_renewalFeesPushButton_clicked(self) -> None:
         title = "Renewals with Fees"
         filter = self.getRenewalFees
@@ -889,7 +889,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         renewals = renewals.filter(payment_amount__gt=0)
         return renewals
 
-   
+    @pyqtSlot()
     def on_renewalFeePaymentsPushButton_clicked(self) -> None:
         title = "Payments"
         filter = self.getRenewalFeePayments
@@ -902,7 +902,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         return renewals
 
     # Functions for defining behavior upon pushing buttons.
-   
+    @pyqtSlot()
     def on_lateFeesPushButton_clicked(self) -> None:
         title = "Renewals with Late Fees"
         filter = self.getLateFees
@@ -916,7 +916,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         return renewals
 
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_lateFeePaymentsPushButton_clicked(self) -> None:
         title = "Renewals with Late Fee Payments"
         filter = self.getLateFeePayments
@@ -929,13 +929,13 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         return renewals
     
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_unassignedPaymentsPushButton_clicked(self) -> None:
         title = "Renewals with Unassigned Payments"
         filter = self.getUnassignedPayments
         self.showRenewals(title, filter)
         
-    
+    @pyqtSlot()
     def on_testsCompletedPushButton_clicked(self)-> None:
         start = self.beginDateEdit.date().toPyDate()
         stop = self.endDateEdit.date().toPyDate()
@@ -943,7 +943,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         tests = Test.objects.filter(result_date__range=(start, stop))
         self.parent().viewText(djprint.viewTests(tests, title, start, stop))
 
-    
+    @pyqtSlot()
     def on_renewalsIssuedPushButton_clicked(self)-> None:
         title = "Renewals Issued during Period"
         filter = self.getRenewals
@@ -957,7 +957,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         return renewals
         
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_partialPaymentsPushButton_clicked(self) -> None:
         title = "Partial Payments"
         filter = self.getPartialPayments
@@ -968,7 +968,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         renewals = renewals.filter(renewal_fee=0)
         return renewals
         
-    
+    @pyqtSlot()
     def on_paidNoChargePushButton_clicked(self) -> None:
         title = "Renewals with No Charges"
         filter = self.getPaidNoCharge
@@ -992,27 +992,27 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         self.parent().viewText(djprint.viewRenewals(renewals, names, title, startDate, stopDate))
 
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_paidPushButton1_clicked(self) -> None:
         title = "Paid 0-29 days."
         self.showPaidRenewals(title, 1)
 
-   
+    @pyqtSlot()
     def on_paidPushButton2_clicked(self)-> None:
         title = "Paid 30-59 days."
         self.showPaidRenewals(title, 2)
 
-    
+    @pyqtSlot()
     def on_paidPushButton3_clicked(self) -> None:
         title = "Paid 60-89 days."
         self.showPaidRenewals(title, 3)
 
-    
+    @pyqtSlot()
     def on_paidPushButton4_clicked(self) -> None:
         title = "Paid 90-119 days."
         self.showPaidRenewals(title, 4)
 
-    
+    @pyqtSlot()
     def on_paidPushButton5_clicked(self) -> None:
         title = "Paid 120+ days."
         self.showPaidRenewals(title, 5)
@@ -1024,7 +1024,7 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         return renewals
 
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_totalPaidPushButton_clicked(self) -> None:
         title = "All Fully Paid Renewals."
         filter = self.getTotalPaid
@@ -1052,27 +1052,27 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         self.parent().viewText(djprint.viewRenewals(renewals, names, title, startDate, stopDate))
 
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_unpaidPushButton1_clicked(self) -> None:
         title = "Unpaid 0-29 days."
         self.showUnpaidRenewals(title, 1)
 
-    
+    @pyqtSlot()
     def on_unpaidPushButton2_clicked(self) -> None:
         title = "Unpaid 30-59 days."
         self.showUnpaidRenewals(title, 2)
 
-    
+    @pyqtSlot()
     def on_unpaidPushButton3_clicked(self) -> None:
         title = "Unpaid 60-89 days."
         self.showUnpaidRenewals(title, 3)
 
-    
+    @pyqtSlot()
     def on_unpaidPushButton4_clicked(self) -> None:
         title = "Unpaid 90-119 days."
         self.showUnpaidRenewals(title, 4)
 
-    
+    @pyqtSlot()
     def on_unpaidPushButton5_clicked(self) -> None:
         title = "Unpaid 120+ days."
         self.showUnpaidRenewals(title, 5)
@@ -1085,21 +1085,21 @@ class PaymentSummaryDlg(QDialog, ui.Ui_paymentSummaryDlg):
         return renewals
 
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_totalUnpaidPushButton_clicked(self) -> None:
         title = "All Unpaid Renewals."
         filter = self.getTotalUnpaid
         self.showRenewals(title, filter)
 
-    
+    @pyqtSlot()
     def on_viewReportPushButton_clicked(self) -> None:
         self.parent().viewText(self.getReport())
 
-    
+    @pyqtSlot()
     def on_previewReportPushButton_clicked(self) -> None:
         self.previewReport()
 
-    
+    @pyqtSlot()
     def on_exitPushButton_clicked(self) -> None:
         self.close()
 
@@ -1146,7 +1146,7 @@ class YearlyComplianceDlg(QDialog, ui.Ui_yearlyComplianceDlg):
         return (dentists, lookup)
 
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_printLettersPushButton_clicked(self) -> None:
         (dentists, sterilizerDict) = self.getData()
         year = self.beginDateEdit.date().year()
@@ -1171,14 +1171,14 @@ class YearlyComplianceDlg(QDialog, ui.Ui_yearlyComplianceDlg):
         self.printing = False
         self.statusLabel.setText("Queuing reports completed.")
 
-    
+    @pyqtSlot()
     def on_printLabelsPushButton_clicked(self) -> None:
         (dentists, sterilizerDict) = self.getData()
         labelDlg = PrintLabelDlg(self.parent(), dentists)
         labelDlg.exec_()
         #labelDlg.on_printDentistsPushButton_clicked()
 
-    
+    @pyqtSlot()
     def on_exitPushButton_clicked(self) -> None:
         if not self.printing:
             self.close()
@@ -1219,14 +1219,14 @@ class LotRecallDlg(QDialog, ui.Ui_lotRecallDlg):
         return(djprint.printLotRecall(renewalList, dentistNameList))
 
     # Functions for defining behavior upon pushing buttons.
-   
+    @pyqtSlot()
     def on_viewReportPushButton_clicked(self) -> None:
         self.parent().viewText(self.getReport())
 
-   
+    @pyqtSlot()
     def on_printReportPushButton_clicked(self) -> None:
         self.parent().printText(self.getReport())
 
-    
+    @pyqtSlot()
     def on_exitPushButton_clicked(self) -> None:
         self.close()

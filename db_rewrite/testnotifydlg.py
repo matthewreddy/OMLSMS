@@ -43,20 +43,20 @@ class TestNotifyDlg(QDialog, ui.Ui_testNotifyDlg):
         self.comment = None
 
     # Functions for defining behavior upon pushing buttons.
-   
+    @pyqtSlot()
     def on_printNotifiedPushButton_clicked(self) -> None:
         self.parent().printHTML(djprint.printNotifyLetter(self.dentist, self.test, self.user, True))
         self.comment = "Contacted on %s by %s\n" % \
             (RecordDateToText(datetime.date.today()), self.parent().parent().user.initials)
         self.close()
 
-    
+    @pyqtSlot()
     def on_printAttemptedPushButton_clicked(self) -> None:
         self.parent().printHTML(djprint.printNotifyLetter(self.dentist, self.test, self.user, False))
         self.comment = "Contact attempted on %s by %s\n" % \
             (RecordDateToText(datetime.date.today()), self.parent().parent().user.initials)
         self.close()
 
-    
+    @pyqtSlot()
     def on_exitPushButton_clicked(self) -> None:
         self.close()

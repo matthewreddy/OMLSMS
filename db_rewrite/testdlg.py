@@ -674,7 +674,7 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         self.commentTextEdit.setText(comment)
 
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot(QTableWidgetItem)
     def on_historyTableWidget_itemClicked(self, item : QTableWidgetItem) -> None:
         if not self.editing and not self.notifying:
             row = self.historyTableWidget.currentRow()
@@ -688,15 +688,15 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
             #print id, date, testnum
             self.findDatedRecord(id, date, testnum)
 
-   
+    @pyqtSlot()
     def on_startPushButton_clicked(self) -> None:
         self.startTests()
 
-    
+    @pyqtSlot()
     def on_resultPushButton_clicked(self) -> None:
         self.enterResults()
 
-    
+    @pyqtSlot()
     def on_renewalIdLineEdit_returnPressed(self) -> None:
         self.renewalIdLineEdit.releaseKeyboard()
         try:
@@ -739,34 +739,34 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         elif self.enteringResults:
             self.enterResult(id, strip, renewal, tests)
 
-    
+    @pyqtSlot(QDate)
     def on_sterilizeDateEdit_dateChanged(self, q_date: QDate) -> None:
         if self.startingTests and q_date.toPyDate() != datetime.date.today():
             self.omittedPushButton.setEnabled(False)
         elif self.startingTests:
             self.omittedPushButton.setEnabled(True)
             
-    
+    @pyqtSlot()
     def on_prevDayPushButton_clicked(self) -> None:
         date = self.sterilizeDateEdit.date().toPyDate() - datetime.timedelta(days=1)
         self.sterilizeDateEdit.setDate(date)
 
-    
+    @pyqtSlot()
     def on_nextDayPushButton_clicked(self) -> None:
         date = self.sterilizeDateEdit.date().toPyDate() + datetime.timedelta(days=1)
         self.sterilizeDateEdit.setDate(date)
 
-    
+    @pyqtSlot()
     def on_notifyPushButton_clicked(self) -> None:
         self.makeNotifyWindow(self.records[self.recordNum], self.parent().user)
 
-    
+    @pyqtSlot()
     def on_reportPushButton_clicked(self) -> None:
         id = self.renewalIdLineEdit.text()
         dlg = ResultDlg(False, RenewalToSterilizerID(id), self)
         dlg.exec_()
 
-    
+    @pyqtSlot()
     def on_testResultPushButton_clicked(self) -> None:
         if self.testResultPushButton.text() == "":
             self.testResultPushButton.setText("-")
@@ -775,7 +775,7 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         else:
             self.testResultPushButton.setText("")
 
-    
+    @pyqtSlot()
     def on_controlResultPushButton_clicked(self) -> None:
         if self.controlResultPushButton.text() == "":
             self.controlResultPushButton.setText("-")
@@ -784,15 +784,15 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         else:
             self.controlResultPushButton.setText("")
 
-    
+    @pyqtSlot()
     def on_suppliedPushButton_clicked(self) -> None:
         self.insertTest(True)
 
-    
+    @pyqtSlot()
     def on_omittedPushButton_clicked(self) -> None:
         self.insertTest(False)
 
-    
+    @pyqtSlot()
     def on_savePushButton_clicked(self) -> None:
         self.disableEditing()
         if self.enteringResults:
@@ -811,7 +811,7 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
                 self.makeNotifyWindow(self.records[self.recordNum], self.parent().user)
             self.enterResults()
 
-    
+    @pyqtSlot()
     def on_cancelPushButton_clicked(self) -> None:
         self.disableEditing()
         if not self.inserting and (self.startingTests or self.enteringResults):
@@ -832,7 +832,7 @@ class TestDlg(FormViewPartialLoadDlg, ui.Ui_testDlg):
         else:
             self.loadForm(self.records[self.recordNum])
 
-    
+    @pyqtSlot()
     def on_findPushButton_clicked(self) -> None:
         records = Renewal.objects.all()
         findDlg = FindDlg(self.windowTitle(), records, self.findValues, self.findSizes, self)
