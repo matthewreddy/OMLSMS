@@ -178,11 +178,8 @@ class MainWindow(QMainWindow, ui.Ui_mainWindow):
         In other words, you should not leave the active dialog if
         you are currently editing.
         """
-        # Error where executing twice bug happens
-        #print(self.dialogs, "dialogs")
 
         for dialog in [x for x in self.dialogs if (x.isVisible() and x.editing)]:
-            print("uhoh")
             QApplication.beep()
             dialog.activateWindow()
             return
@@ -192,9 +189,6 @@ class MainWindow(QMainWindow, ui.Ui_mainWindow):
                 self.bookmark.update(dialog.makeBookmark())
                 dialog.hide()
         # Show the desired dialog, initialized as appropriate for the bookmark
-        #print(self.bookmark, " bookmark")
-        #print(show, " show")
-        #print(type(show))
         if show.isHidden():
             show.move(self.pos() + QPoint(5, self.height() + 50))
             show.show(self.bookmark)
@@ -205,8 +199,6 @@ class MainWindow(QMainWindow, ui.Ui_mainWindow):
     @pyqtSlot()
     def on_dentistsPushButton_clicked(self) -> None:
         self.showMainDialog(self.dentistDlg)
-        print("dentist")
-        #self.dentistsPushButton.dumpObjectInfo()
         
     @pyqtSlot()
     def on_sterilizersPushButton_clicked(self) -> None:

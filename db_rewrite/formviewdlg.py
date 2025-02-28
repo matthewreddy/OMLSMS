@@ -200,8 +200,6 @@ class FormViewDlg(MainDlg):
     def incrementRecordNum(self):
         """Increase record number by one."""
         if self.recordNum is not None:
-            print("one")
-            print("two")
             self.setRecordNum(self.recordNum + 1)
 
     def disableEditing(self):
