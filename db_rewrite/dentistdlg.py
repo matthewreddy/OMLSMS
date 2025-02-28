@@ -55,7 +55,7 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         self.disableEditing()
         self.lastPhoneNumber = ""
         self.lastFaxNumber = ""
-
+        
     def loadRecords(self, record_id=None):
         """Set records for the dentist."""
         self.records = Dentist.objects.all()
@@ -193,7 +193,7 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         self.setRecordNum(0)
 
     # Functions for defining behavior upon pushing buttons.
-
+    @pyqtSlot()
     def on_dateInactivePushButton_clicked(self) -> None:
         msgBox = QMessageBox()
         id = self.idLineEdit.text()
@@ -204,12 +204,12 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
             " and renewals that were not individually disabled.  Proceed?"
         toggled = self.toggleActive(id, type, disableMsg, enableMsg)
 
-    
+    @pyqtSlot()
     def on_labelPushButton_clicked(self) -> None:
         labelDlg = PrintLabelDlg(self)
         labelDlg.exec_()
 
-    
+    @pyqtSlot()
     def on_billPushButton_clicked(self) -> None:
         html = djprint.getBillsForDentist(self.getCurrentRecord())
         if not html:
@@ -217,23 +217,25 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         else:
             self.printHTML(html)
 
-    
+    @pyqtSlot(str)
     def on_phoneLineEdit_textChanged(self, newText: str) -> None:
         self.lastPhoneNumber = self.phoneLineEdit.text()
 
-    
+    @pyqtSlot(str)
     def on_phoneLineEdit_textEdited(self, newText: str) -> None:
         self.numberEdited(self.phoneLineEdit, newText, self.lastPhoneNumber)
 
+    @pyqtSlot()
     def on_reportPushButton_clicked(self) -> None:
         id = self.idLineEdit.text()
         dlg = ResultDlg(True, id, self)
         dlg.exec_()
 
+    @pyqtSlot(str)
     def on_faxLineEdit_textChanged(self, newText:str) -> None:
         self.lastFaxNumber = self.faxLineEdit.text()
 
-
+    @pyqtSlot(str)
     def on_faxLineEdit_textEdited(self, newText:str) -> None:
         self.numberEdited(self.faxLineEdit, newText, self.lastFaxNumber)
 

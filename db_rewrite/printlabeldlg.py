@@ -90,19 +90,19 @@ class PrintLabelDlg(QDialog, ui.Ui_printLabelDlg):
         self.printSterilizersPushButton.setEnabled(True)
         
     # Functions for defining behavior upon pushing buttons.
-
+    @pyqtSlot()
     def on_addDentistPushButton_clicked(self) -> None:
         dentist_id = self.selectDentist()
         if dentist_id:
             self.addDentist(dentist_id)
 
-   
+    @pyqtSlot()
     def on_addSterilizerPushButton_clicked(self) -> None:
         sterilizer_id = self.selectSterilizer()
         if sterilizer_id:
             self.addSterilizer(sterilizer_id)
 
-    
+    @pyqtSlot()
     def on_addByDentistPushButton_clicked(self) -> None:
         dentist_id = self.selectDentist()
         if dentist_id:
@@ -113,7 +113,7 @@ class PrintLabelDlg(QDialog, ui.Ui_printLabelDlg):
             for sterilizer in sterilizers:
                         self.addSterilizer(sterilizer.id)
 
-    
+    @pyqtSlot()
     def on_addOfficePushButton_clicked(self) -> None:
         dentist_id = self.selectDentist()
         if dentist_id:
@@ -124,6 +124,7 @@ class PrintLabelDlg(QDialog, ui.Ui_printLabelDlg):
             for sterilizer in sterilizers:
                 self.addSterilizer(sterilizer.id)
 
+    @pyqtSlot()
     def on_printDentistsPushButton_clicked(self) -> None:
         skip = 10*(self.columnSpinBox.value()-1) + (self.rowSpinBox.value()-1)
         labelList = []
@@ -132,7 +133,7 @@ class PrintLabelDlg(QDialog, ui.Ui_printLabelDlg):
                 labelList.append(entry[1][0])
         self.parent().printHTML(djprint.printDentistLabelSheet(labelList, skip))
 
-    
+    @pyqtSlot()
     def on_printSterilizersPushButton_clicked(self) -> None:
         skip = 10*(self.columnSpinBox.value()-1) + (self.rowSpinBox.value()-1)
         sterilizers = []
@@ -142,7 +143,7 @@ class PrintLabelDlg(QDialog, ui.Ui_printLabelDlg):
             dentists.append(self.dentists[SterilizerToDentistID(entry[1].id)][0])
         self.parent().printHTML(djprint.printSterilizerLabelSheet(sterilizers, dentists, skip))
     
-
+    @pyqtSlot()
     def on_cancelPushButton_clicked(self) -> None:
         self.close()
 

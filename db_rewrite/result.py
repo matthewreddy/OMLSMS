@@ -39,19 +39,21 @@ class ResultDlg(QDialog, ui.Ui_resultDlg):
         self.endDateEdit.setCalendarPopup(True)
 
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_defaultPeriodRadioButton_clicked(self) -> None:
             if self.specificPeriodRadioButton.isChecked():
                 self.specificPeriodRadioButton.setChecked(False)
             self.startDateEdit.setDisabled(True)
             self.endDateEdit.setDisabled(True)
-            
+
+    @pyqtSlot()
     def on_specificPeriodRadioButton_clicked(self) -> None:
             if self.defaultPeriodRadioButton.isChecked():
                 self.defaultPeriodRadioButton.setChecked(False)
             self.startDateEdit.setEnabled(True)
             self.endDateEdit.setEnabled(True)
 
+    @pyqtSlot()
     def on_printPushButton_clicked(self) -> None:
         if self.specificPeriodRadioButton.isChecked():
             period = (self.startDateEdit.date().toPyDate(),
@@ -68,7 +70,7 @@ class ResultDlg(QDialog, ui.Ui_resultDlg):
             self.parent().printHTML(djprint.getReportForSterilizer(self.id, period))
         self.close()
 
-    
+    @pyqtSlot()
     def on_cancelPushButton_clicked(self) -> None:
         self.close()
 

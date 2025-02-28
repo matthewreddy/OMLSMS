@@ -230,7 +230,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
                 self.parent().printHTML(djprint.getRenewalLabelsForSterilizers([sterilizer], [dentist], lot), spawn=False, useLabelPrinter=True)
 
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_sendPushButton_clicked(self) -> None:
         self.statusLabel.setText("Printing Renewals")
         # Process events so user sees status update
@@ -241,21 +241,21 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
                 sterilizers.append(data[0])
         self.startRenewal(sterilizers)
 
-    
+    @pyqtSlot()
     def on_tableWidget_itemSelectionChanged(self) -> None:
         self.updateCounts()
 
-    
+    @pyqtSlot()
     def on_cancelPushButton_clicked(self) -> None:
         self.close()
         
-    
+    @pyqtSlot(int)
     def on_lotComboBox_currentIndexChanged(self, index: int) -> None:
         # Not sure if current code acheives intended functionality
-        print(index)
+        #print(index)
         self.selectLot(index)
 
-    
+    @pyqtSlot()
     def on_renewalsSelectedLineEdit_editingFinished(self) -> None:
         try:
             num = int(self.renewalsSelectedLineEdit.text())
@@ -269,7 +269,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
             self.tableWidget.setFocus()
             self.updateCounts()
 
-    
+    @pyqtSlot()
     def on_stripsRequiredLineEdit_editingFinished(self) -> None:
         try:
             num = int(self.stripsRequiredLineEdit.text())
@@ -414,6 +414,7 @@ class SendRenewalDlg(QDialog, ui.Ui_sendRenewalDlg):
     # Functions for defining behavior upon pushing buttons.
     # Need for find a way to get to bottom of code (add renewal for sterilizer)
     # Also to test print buttons
+    @pyqtSlot()
     def on_renewalIdLineEdit_returnPressed(self) -> None:
         text = self.renewalIdLineEdit.text()
         status_text = "Error: Could not add renewal #%s." % text
@@ -474,7 +475,7 @@ class SendRenewalDlg(QDialog, ui.Ui_sendRenewalDlg):
             self.renewalIdLineEdit.setText("")
             self.renewalIdLineEdit.setFocus()
 
-    
+    @pyqtSlot()
     def on_printMailingLabelsPushButton_clicked(self) -> None:
         self.renewalIdLineEdit.releaseKeyboard()
         self.renewalIdLineEdit.setText("")
@@ -493,7 +494,7 @@ class SendRenewalDlg(QDialog, ui.Ui_sendRenewalDlg):
         self.printMailingLabels()
         self.mailingLabelsPrinted = True
 
-    
+    @pyqtSlot()
     def on_printReportsPushButton_clicked(self) -> None:
         self.renewalIdLineEdit.releaseKeyboard()
         self.renewalIdLineEdit.setText("")
@@ -512,7 +513,7 @@ class SendRenewalDlg(QDialog, ui.Ui_sendRenewalDlg):
         self.printReports()
         self.reportsPrinted = True
 
-    
+    @pyqtSlot()
     def on_exitPushButton_clicked(self) -> None:
         self.close()
 

@@ -175,6 +175,7 @@ class FormViewDlg(MainDlg):
             self.recordNum = None
         elif self.records and value >= 0 and value < len(self.records):
             self.recordNum = value
+            #print(self.recordNum)
             self.loadForm(self.getCurrentRecord())
 
     def findRecord(self, id):
@@ -278,41 +279,41 @@ class FormViewDlg(MainDlg):
         super(FormViewDlg, self).show()
 
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_findPushButton_clicked(self) -> None:
         findDlg = FindDlg(self.windowTitle(), self.records, self.findValues, self.findSizes, self)
         if findDlg:
             self.findRecord(findDlg.exec_())
        
-    
+    @pyqtSlot()
     def on_seekFirstPushButton_clicked(self) -> None:
         self.setRecordNum(0)
 
-    
+    @pyqtSlot()
     def on_seekPreviousPushButton_clicked(self) -> None:
         self.decrementRecordNum()
 
-    
+    @pyqtSlot()
     def on_seekNextPushButton_clicked(self) -> None:
         self.incrementRecordNum()
 
-   
+    @pyqtSlot()
     def on_seekLastPushButton_clicked(self) -> None:
         if self.records:
             self.setRecordNum(len(self.records) - 1)
 
-    
+    @pyqtSlot()
     def on_insertPushButton_clicked(self) -> None:
         self.inserting = self.prepareNewRecord()
         if self.inserting:
             self.loadForm(self.inserting)
             self.enableEditing()
 
-    
+    @pyqtSlot()
     def on_modifyPushButton_clicked(self) -> None:
         self.enableEditing()
 
-    
+    @pyqtSlot()
     def on_savePushButton_clicked(self) -> None:
         self.disableEditing()
         if self.inserting:
@@ -328,7 +329,7 @@ class FormViewDlg(MainDlg):
             self.inserting = None
             self.loadRecords(id)
 
-   
+    @pyqtSlot()
     def on_cancelPushButton_clicked(self) -> None:
         self.disableEditing()
         self.inserting = None
@@ -356,7 +357,7 @@ class FormViewPartialLoadDlg(FormViewDlg):
             self.setRecordNum(len(self.records) - 1)
 
     # Redefine seek buttons to handle partial loading by month.
-    
+    @pyqtSlot()
     def on_seekFirstPushButton_clicked(self) -> None:
         if self.recordNum > 0:
             self.setRecordNum(0)
@@ -366,7 +367,7 @@ class FormViewPartialLoadDlg(FormViewDlg):
             else:
                 self.incrementDateRange()
 
-    
+    @pyqtSlot()
     def on_seekPreviousPushButton_clicked(self) -> None:
         if self.recordNum > 0:
             self.decrementRecordNum()
@@ -376,7 +377,7 @@ class FormViewPartialLoadDlg(FormViewDlg):
             else:
                 self.incrementDateRange()
 
-    
+    @pyqtSlot()
     def on_seekNextPushButton_clicked(self) -> None:
         if self.records and self.recordNum < len(self.records) - 1:
             self.incrementRecordNum()
@@ -386,7 +387,7 @@ class FormViewPartialLoadDlg(FormViewDlg):
             else:
                 self.decrementDateRange()
 
-    
+    @pyqtSlot()
     def on_seekLastPushButton_clicked(self) -> None:
         if self.incrementDateRange():
             self.setRecordNum(0)
@@ -439,7 +440,7 @@ class FormViewPartialLoadDlg(FormViewDlg):
             return self.findDatedRecord(id, record_date)
 
     # Functions for defining behavior upon pushing buttons.
-
+    @pyqtSlot()
     def on_findPushButton_clicked(self) -> None:
         findDlg = FindDlg(self.windowTitle(), self.allRecords, self.findValues, self.findSizes, self)
         if findDlg:

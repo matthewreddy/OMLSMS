@@ -102,7 +102,7 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
         before it is saved in the database.
         """
         if self.idLineEdit.text() != "" and \
-                not re.match("^\d{%s}$" % STERILIZER_ID_WIDTH, self.idLineEdit.text()):
+                not re.match(r"^\d{%s}$" % STERILIZER_ID_WIDTH, self.idLineEdit.text()):
             return self.idLineEdit, "Sterilizer ID has improper format."
         enroll_date = self.enrollDateEdit.date().toPyDate()
         if enroll_date.year < 1980:
@@ -113,7 +113,7 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
             return self.methodComboBox, "Can't access Sterilizer Method from database."
         if self.dateInactiveLineEdit.text() != "":
             try:
-                if not re.match("$\(", self.dateInactiveLineEdit.text()):
+                if not re.match(r"$\(", self.dateInactiveLineEdit.text()):
                     inactive = FormDateToRecord(self.dateInactiveLineEdit.text())
                     assert inactive >= enroll_date
             except:
@@ -132,7 +132,7 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
         record.serial_num = self.serialNumLineEdit.text()
         record.model = self.modelLineEdit.text()
         record.method = SterilizerMethod.objects.get(id=self.methodComboBox.currentIndex() + 1)
-        if not re.match("$\(", self.dateInactiveLineEdit.text()):
+        if not re.match(r"$\(", self.dateInactiveLineEdit.text()):
             record.inactive_date = \
                 FormDateToRecord(self.dateInactiveLineEdit.text())
         record.comment = self.commentLineEdit.text()
@@ -149,6 +149,7 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
             return None
         dentist_factor = 10 ** (STERILIZER_ID_WIDTH - DENTIST_ID_WIDTH)
         target_id = self.getTargetInsertId(None)
+        print(target_id)
         return Sterilizer(
         id = target_id,
         dentist = dentist,
@@ -175,14 +176,16 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
                 value = id_lower + 1
             # Limited to 99 sterilizers per dentist by convention!!
             # if we overflow, at least don't corrupt the database
-            assert value / dentist_factor == self.dentistForInsert
-        except:
+   
+            # Changed from / to //
+            assert value // dentist_factor == self.dentistForInsert
+        except Exception as e:
             return None
         return value
 
     def makeBookmark(self):
         """Create a bookmark for the sterilizer."""
-        if re.match("^\d{%s}$" % STERILIZER_ID_WIDTH, self.idLineEdit.text()):
+        if re.match(r"^\d{%s}$" % STERILIZER_ID_WIDTH, self.idLineEdit.text()):
             return {
             'dentist': self.idLineEdit.text()[0:DENTIST_ID_WIDTH],
             'sterilizer': self.idLineEdit.text()
@@ -219,7 +222,7 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
         return (findDlg.exec_())
 
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_dateInactivePushButton_clicked(self) -> None:
         #msgBox = QMessageBox()
         id = self.idLineEdit.text()
@@ -230,26 +233,26 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
             "renewals that were not individually disabled.  Proceed?"
         self.toggleActive(id, type, disableMsg, enableMsg)
     
-    
+    @pyqtSlot()
     def on_timeToRenewCheckBox_clicked(self) -> None:
         success, widget = self.saveRecord(self.getCurrentRecord())
         self.loadForm(self.getCurrentRecord())
 
-    
+    @pyqtSlot()
     def on_suspendRenewalsCheckBox_clicked(self) -> None:
         success, widget = self.saveRecord(self.getCurrentRecord())
         self.loadForm(self.getCurrentRecord())
     
-
+    @pyqtSlot()
     def on_labelPushButton_clicked(self) -> None:
         labelDlg = PrintLabelDlg(self)
         labelDlg.exec_()
 
-    
+    @pyqtSlot()
     def on_billPushButton_clicked(self) -> None:
         self.printHTML(djprint.getBillForSterilizer(self.getCurrentRecord().id))
         
-    
+    @pyqtSlot()
     def on_reportPushButton_clicked(self) -> None:
         id = self.idLineEdit.text()
         dlg = ResultDlg(False, id, self)

@@ -35,7 +35,7 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
         if userName:
             self.loginLineEdit.setText(userName)
 
-    
+    @pyqtSlot()
     def exec_(self) -> None:
         self.passwordLineEdit.setText('test') # todo: change to ''
         self.loginLineEdit.selectAll()
@@ -43,19 +43,19 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
         return super(LoginDlg, self).exec_()
 
     # Functions for defining behavior upon pushing buttons.
-
+    @pyqtSlot(str)
     def on_loginLineEdit_textEdited(self, text: str) -> None:
         self.updateUi()
 
-   
+    @pyqtSlot()
     def on_loginLineEdit_returnPressed(self) -> None:
         self.passwordLineEdit.setFocus()
 
-    
+    @pyqtSlot(str)
     def on_passwordLineEdit_textEdited(self, text: str) -> None:
         self.updateUi()
 
-    
+    @pyqtSlot()
     def on_passwordLineEdit_returnPressed(self) -> None:
         self.passwordLineEdit.clearFocus()
         if self.loginPushButton.isEnabled:
@@ -73,7 +73,7 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
 
         self.loginPushButton.setEnabled(enable)
 
-    
+    @pyqtSlot()
     def on_loginPushButton_clicked(self) -> None:
         self.attemptLogin()
 
@@ -87,10 +87,10 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
         try:
             assert settings.configured
             # Editing the password line must be done
-            settings.DATABASES['default']['USER'] = self.loginLineEdit.text()
-            settings.DATABASES['default']['PASSWORD'] = "sinJ4juMper#123"
-            # settings.DATABASES['default']['USER'] = 'gray' #'DESKTOP-AC4D5C6\gray1'self.loginLineEdit.text()
-            # settings.DATABASES['default']['PASSWORD'] = "12345" #self.passwordLineEdit.text()
+            #settings.DATABASES['default']['USER'] = self.loginLineEdit.text()
+            #settings.DATABASES['default']['PASSWORD'] = "sinJ4juMper#123"
+            settings.DATABASES['default']['USER'] = 'gray' #'DESKTOP-AC4D5C6\gray1'self.loginLineEdit.text()
+            settings.DATABASES['default']['PASSWORD'] = "12345" #self.passwordLineEdit.text()
             # this import must be done here to avoid django error
             from updatedatabase import updateDatabase
             # This method can cause trouble when connecting
@@ -104,6 +104,6 @@ class LoginDlg(MainDlg, ui.Ui_loginDlg):
         QCoreApplication.instance().processEvents()
         self.done(True)
 
-    
+    @pyqtSlot()
     def on_exitPushButton_clicked(self) -> None:
         self.done(False)

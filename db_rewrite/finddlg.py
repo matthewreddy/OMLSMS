@@ -156,31 +156,31 @@ class FindDlg(QDialog):
             return None
 
     # Functions for defining behavior upon pushing buttons.
-
+    @pyqtSlot()
     def on_selectPushButton_clicked(self) -> None:
         id = self.getSelectedId()
         if id:
             self.done(id)
 
-    
+    @pyqtSlot(QTableWidgetItem)
     def on_tableWidget_itemClicked(self, item : QTableWidgetItem):
         if self.getSelectedId():
             self.selectPushButton.setEnabled(True)
         else:
             self.selectPushButton.setEnabled(False)
 
-
+    @pyqtSlot(QTableWidgetItem)
     def on_tableWidget_itemDoubleClicked(self, item: QTableWidgetItem):
         self.done(self.getSelectedId())
 
-    
+    @pyqtSlot()
     def on_filterLineEdit_returnPressed(self) -> None:
         self.filterData()
 
-
+    @pyqtSlot()
     def on_filterPushButton_clicked(self) -> None:
         self.filterData()
 
-   
+    @pyqtSlot()
     def on_cancelPushButton_clicked(self) -> None:
         self.close()

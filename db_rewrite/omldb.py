@@ -2,6 +2,7 @@ import sys, os
 from constants import *
 import constants
 import django
+import threading
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -45,12 +46,11 @@ def main(isTestEnviron, *argv):
 
     cwd = os.getcwd()
     webdir = OMLWEB_PATH.replace('\\','/') + "/omlweb"
-    
     # Go to config.txt to see what these values are
     configValues = []
     try:
         #configValues = readConfigValues(cwd + "\\config.txt")
-        configValues = readConfigValues(cwd + "\config.txt")
+        configValues = readConfigValues(cwd + "\\config.txt")
     except Exception as e:
         QMessageBox.critical(None, "Error Reading Configuration File", str(e))
     else:
@@ -162,6 +162,15 @@ class MainWindow(QMainWindow, ui.Ui_mainWindow):
             if number == 0 or user.initials == defaultInitials:
                 self.user = self.userList[number]
                 self.userComboBox.setCurrentIndex(number)
+
+        # self.dentistsPushButton.clicked.connect(self.on_dentistsPushButton_clicked)
+        # self.sterilizersPushButton.clicked.connect(self.on_sterilizersPushButton_clicked)
+        # self.lotsPushButton.clicked.connect(self.on_lotsPushButton_clicked)
+        # self.renewalsPushButton.clicked.connect(self.on_renewalsPushButton_clicked)
+        # self.testsPushButton.clicked.connect(self.on_testsPushButton_clicked)
+        # self.reportsPushButton.clicked.connect(self.on_reportsPushButton_clicked)
+        # self.userComboBox.activated.connect(self.on_userComboBox_activated)
+
     
     def showMainDialog(self, show=None):
         """Defines behavior for displaying the main dialog.
@@ -169,6 +178,7 @@ class MainWindow(QMainWindow, ui.Ui_mainWindow):
         In other words, you should not leave the active dialog if
         you are currently editing.
         """
+
         for dialog in [x for x in self.dialogs if (x.isVisible() and x.editing)]:
             QApplication.beep()
             dialog.activateWindow()
@@ -186,33 +196,33 @@ class MainWindow(QMainWindow, ui.Ui_mainWindow):
     
     # Functions for defining behavior upon pushing buttons.
 
+    @pyqtSlot()
     def on_dentistsPushButton_clicked(self) -> None:
         self.showMainDialog(self.dentistDlg)
         
-    
+    @pyqtSlot()
     def on_sterilizersPushButton_clicked(self) -> None:
         self.showMainDialog(self.sterilizerDlg)
 
-    
+    @pyqtSlot()
     def on_lotsPushButton_clicked(self) -> None:
         self.showMainDialog(self.lotDlg)
 
-    
+    @pyqtSlot()
     def on_renewalsPushButton_clicked(self) -> None:
-        print("going to renewals")
         self.showMainDialog(self.renewalDlg)
 
-    
+    @pyqtSlot()
     def on_testsPushButton_clicked(self) -> None:
         self.showMainDialog(self.testDlg)
 
-   
+    @pyqtSlot()
     def on_reportsPushButton_clicked(self) -> None:
         self.showMainDialog(self.reportDlg)
     
-   
-    def on_userComboBox_activated(self, int: int) -> None:
-        self.user = self.userList[int]
+    @pyqtSlot(int)
+    def on_userComboBox_activated(self, ind: int) -> None:
+        self.user = self.userList[ind]
         if self.currentChild:
             # activate editing window again
             self.currentChild.activateWindow()

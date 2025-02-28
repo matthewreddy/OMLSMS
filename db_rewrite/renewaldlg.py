@@ -285,7 +285,7 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
         )
     
     # Functions for defining behavior upon pushing buttons.
-    
+    @pyqtSlot()
     def on_dateInactivePushButton_clicked(self) -> None:
         msgBox = QMessageBox()
         id = self.idLineEdit.text()
@@ -296,7 +296,7 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
             "tests.  Proceed?"
         self.toggleActive(id, type, disableMsg, enableMsg)
 
-    
+    @pyqtSlot(QTableWidgetItem)
     def on_historyTableWidget_itemClicked(self, item: QTableWidgetItem) -> None:
         if not self.editing:
             row = self.historyTableWidget.currentRow()
@@ -307,7 +307,7 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
                 shortened=True)
             self.findDatedRecord(id, date)
 
-    
+    @pyqtSlot()
     def on_payPushButton_clicked(self) -> None:
         if not self.datePaidLineEdit.text():
             date = datetime.date.today().strftime(DATETIME_FORMAT)
@@ -317,11 +317,11 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
         self.on_modifyPushButton_clicked()
         self.checkNumLineEdit.setFocus()
 
-    
+    @pyqtSlot()
     def on_waivePushButton_clicked(self) -> None:
         self.lateFeeSpinBox.setValue(0)
 
-    
+    @pyqtSlot()
     def on_startPushButton_clicked(self) -> None:
         startDlg = StartRenewalDlg(self)
         try:
@@ -330,20 +330,20 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
             print(e)
         
 
-   
+    @pyqtSlot()
     def on_sendPushButton_clicked(self) -> None:
         sendDlg = SendRenewalDlg(self)
         sendDlg.exec_()
 
-    
+    @pyqtSlot(str)
     def on_renewalFeeSpinBox_valueChanged(self, newText:str) -> None:
         self.updateAmountDue()
 
-    
+    @pyqtSlot(str)
     def on_lateFeeSpinBox_valueChanged(self, newText:str) -> None:
         self.updateAmountDue()
 
-    
+    @pyqtSlot()
     def on_labelPushButton_clicked(self) -> None:
 
         renewal = self.getCurrentRecord()
@@ -354,12 +354,12 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
         
         self.printHTML(djprint.getRenewalLabelsForSterilizers([sterilizer], [dentist], lot), spawn=False, useLabelPrinter=True)
     
-    
+    @pyqtSlot()
     def on_billPushButton_clicked(self) -> None:
         id = self.idLineEdit.text()[0:STERILIZER_ID_WIDTH]
         self.printHTML(djprint.getBillForSterilizer(id))
 
-    
+    @pyqtSlot()
     def on_reportPushButton_clicked(self) -> None:
         id = self.idLineEdit.text()
         dlg = ResultDlg(False, RenewalToSterilizerID(id), self)
