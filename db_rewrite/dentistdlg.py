@@ -4,6 +4,7 @@ their records, bookmarks, and forms associated with them."""
 import sys, datetime, re
 from constants import *
 
+from PyQt5 import QtGui
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtSql import *
@@ -41,7 +42,7 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         self.seekNextPushButton, self.seekPreviousPushButton, self.seekLastPushButton,
         self.insertPushButton, self.modifyPushButton, self.savePushButton,
         self.cancelPushButton, self.labelPushButton, self.billPushButton, self.reportPushButton,
-        self.dateInactivePushButton]
+        self.dateInactivePushButton,self.actualStatusButton]
         
         self.editFinalizeWidgets = [self.savePushButton, self.cancelPushButton]
         self.findValues = ["id", "practice_name", "lname", "fname"]
@@ -85,7 +86,18 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         self.faxLineEdit.setText(record.fax)
         self.emailLineEdit.setText(record.email)
         self.enrollDateEdit.setDate(QDate(record.enroll_date))
-        self.dateInactiveLineEdit.setText(RecordDateToText(record.inactive_date))
+        if record.inactive_date:
+            self.dateInactiveLineEdit.setText(RecordDateToText(record.inactive_date))
+            self.actualStatusButton.setText("Inactive")
+            palette = self.actualStatusButton.palette()
+            palette.setColor(QtGui.QPalette.WindowText, QtGui.QColor("red"))
+            self.actualStatusButton.setPalette(palette)
+        else:
+            self.dateInactiveLineEdit.setText("")
+            self.actualStatusButton.setText("Active")
+            palette = self.actualStatusButton.palette()
+            palette.setColor(QtGui.QPalette.WindowText, QtGui.QColor("green"))
+            self.actualStatusButton.setPalette(palette)
         self.commentTextEdit.setText(record.comment)
     
     def verifyFormData(self):
