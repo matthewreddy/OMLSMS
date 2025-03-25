@@ -18,9 +18,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_dentistDlg(object):
     def setupUi(self, dentistDlg):
         dentistDlg.setObjectName("dentistDlg")
+        
         dentistDlg.resize(464, 545)
+        #dentistDlg.resize(500,700)
         self.layoutWidget = QtWidgets.QWidget(dentistDlg)
         self.layoutWidget.setGeometry(QtCore.QRect(10, 10, 443, 527))
+        #self.layoutWidget.setGeometry(QtCore.QRect(10, 10, 450, 600))
         self.layoutWidget.setObjectName("layoutWidget")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
@@ -38,6 +41,10 @@ class Ui_dentistDlg(object):
         self.idLineEdit.setAlignment(QtCore.Qt.AlignCenter)
         self.idLineEdit.setObjectName("idLineEdit")
         self.horizontalLayout.addWidget(self.idLineEdit)
+        self.active_label = QtWidgets.QCheckBox("Active Dentists", self.layoutWidget)
+        self.active_label.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.active_label.setObjectName("activeDentists")
+        self.horizontalLayout.addWidget(self.active_label)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.verticalLayout_5.addLayout(self.horizontalLayout)
@@ -343,7 +350,7 @@ class Ui_dentistDlg(object):
     def retranslateUi(self, dentistDlg):
         _translate = QtCore.QCoreApplication.translate
         dentistDlg.setWindowTitle(_translate("dentistDlg", "Dialog"))
-        self.label.setText(_translate("dentistDlg", "Denstist ID"))
+        self.label.setText(_translate("dentistDlg", "Dentist ID"))
         self.label_18.setText(_translate("dentistDlg", "Practice\n"
 "Name"))
         self.label_2.setText(_translate("dentistDlg", "Person In\n"

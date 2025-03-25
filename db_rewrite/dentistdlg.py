@@ -59,6 +59,7 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         
     def loadRecords(self, record_id=None):
         """Set records for the dentist."""
+        print("hello")
         self.records = Dentist.objects.all()
         self.records = self.records.order_by("id")
         if record_id:
@@ -250,6 +251,16 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
     @pyqtSlot(str)
     def on_faxLineEdit_textEdited(self, newText:str) -> None:
         self.numberEdited(self.faxLineEdit, newText, self.lastFaxNumber)
+    
+    @pyqtSlot(int)
+    def on_activeDentists_stateChanged(self, state: int) -> None:
+        # State = 2 = checked
+        # State = 0 = not checked
+        if state != 0:
+            self.records = self.records.filter(isActive = 1)
+        else:
+            self.records = Dentist.objects.all()  
+        self.records = self.records.order_by("id")
 
     def numberEdited(self, sender, text, oldText):
         # in most positions, undo last entry unless it is a digit
