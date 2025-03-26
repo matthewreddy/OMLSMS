@@ -45,20 +45,15 @@ class Dentist(models.Model):
     enroll_date = models.DateField()
     inactive_date = models.DateField(blank=True, null=True)
     # Creates field to determine if dentist is currently active
-    isActive = models.BooleanField(default=False)
+    #isActive = models.BooleanField(default=False)
     comment = models.TextField()
-
-    def save(self, *args, **kwargs):
-        # Update the status of dentist
-        if self.inactive_date:
-            self.isActive = False
-        else:
-            self.isActive = True
-        super().save(*args, **kwargs)
 
 
     class Meta:
         db_table = 'sms_dentist'
+    
+    def getIsActive(self):
+        return self.inactive_date == None
 
     def getFullName(self):
         if self.lname:

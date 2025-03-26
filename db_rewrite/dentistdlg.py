@@ -57,13 +57,21 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         self.lastPhoneNumber = ""
         self.lastFaxNumber = ""
         
-    def loadRecords(self, record_id=None):
+    def loadRecords(self, record_id=None, activeRecords=False):
         """Set records for the dentist."""
-        print("hello")
         self.records = Dentist.objects.all()
         self.records = self.records.order_by("id")
+        # Gets list of all active records
+        if activeRecords:
+            only_actives = []
+            for i in range(len(self.records)):
+                if self.records[i].getIsActive():
+                    only_actives.append(self.records[i])
+            self.records = only_actives
         if record_id:
             self.findRecord(record_id)
+        # Sets starting index to be 0 
+        self.setRecordNum(0)
 
     def loadForm(self, record):
         """Fill in forms corresponding to the dentist."""
@@ -257,10 +265,9 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         # State = 2 = checked
         # State = 0 = not checked
         if state != 0:
-            self.records = self.records.filter(isActive = 1)
+            self.loadRecords(None, True)
         else:
-            self.records = Dentist.objects.all()  
-        self.records = self.records.order_by("id")
+            self.loadRecords(None, False)
 
     def numberEdited(self, sender, text, oldText):
         # in most positions, undo last entry unless it is a digit
