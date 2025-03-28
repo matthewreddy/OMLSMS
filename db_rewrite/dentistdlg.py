@@ -20,6 +20,9 @@ from django.db.models import Max
 import djprint as djprint
 from result import ResultDlg
 
+# Add this to list of libraries required
+import pandas as pd
+
 
 class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
 
@@ -42,7 +45,7 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         self.seekNextPushButton, self.seekPreviousPushButton, self.seekLastPushButton,
         self.insertPushButton, self.modifyPushButton, self.savePushButton,
         self.cancelPushButton, self.labelPushButton, self.billPushButton, self.reportPushButton,
-        self.dateInactivePushButton,self.actualStatusButton]
+        self.dateInactivePushButton,self.actualStatusButton, self.exportPushButton]
         
         self.editFinalizeWidgets = [self.savePushButton, self.cancelPushButton]
         self.findValues = ["id", "practice_name", "lname", "fname"]
@@ -61,13 +64,9 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         """Set records for the dentist."""
         self.records = Dentist.objects.all()
         self.records = self.records.order_by("id")
-        # Gets list of all active records
+        # Gets list of all active records (assuming a null inactive date means that the dentist is active)
         if activeRecords:
-            only_actives = []
-            for i in range(len(self.records)):
-                if self.records[i].getIsActive():
-                    only_actives.append(self.records[i])
-            self.records = only_actives
+            self.records = self.records.filter(inactive_date__isnull = True)
         if record_id:
             self.findRecord(record_id)
         # Sets starting index to be 0 
@@ -264,10 +263,41 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
     def on_activeDentists_stateChanged(self, state: int) -> None:
         # State = 2 = checked
         # State = 0 = not checked
+        # Reload active records and set global flag for export
         if state != 0:
+            self.active = True
             self.loadRecords(None, True)
         else:
+            self.active = False
             self.loadRecords(None, False)
+
+    @pyqtSlot()
+    def on_exportPushButton_clicked(self) -> None:
+        df = pd.DataFrame()
+        for record in self.records:
+            data = {'Practice Name' : record.practice_name,
+                    'Title' : record.title,
+                    'First Name' : record.fname,
+                    'Last Name': record.lname,
+                    'Contact Title': record.contact_title,
+                    'Contact First Name' : record.contact_fname,
+                    'Contact Last Name' : record.contact_lname,
+                    'Address1': record.address1,
+                    'Address2': record.address2,
+                    'City' : record.city,
+                    'State': record.state,
+                    'Zip' : record.zip,
+                    'Phone' : record.phone,
+                    'Fax' : record.fax,
+                    'Email' : record.email,
+                    'Enroll Date' : record.enroll_date,
+                    'Inactive Date' : record.inactive_date}
+            new_row = pd.DataFrame([data])
+            df = pd.concat([df,new_row])
+        today = datetime.datetime.today().date().isoformat()
+        path = today + " Dentist List.xlsx"
+        df.to_excel(path)
+        
 
     def numberEdited(self, sender, text, oldText):
         # in most positions, undo last entry unless it is a digit
