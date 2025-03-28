@@ -4,6 +4,7 @@ their records, bookmarks, and forms associated with them."""
 import sys, datetime, re
 from constants import *
 
+from PyQt5 import QtGui
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtSql import *
@@ -18,6 +19,9 @@ from omlweb.models import Dentist, State
 from django.db.models import Max
 import djprint as djprint
 from result import ResultDlg
+
+# Add this to list of libraries required
+import pandas as pd
 
 
 class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
@@ -41,7 +45,7 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         self.seekNextPushButton, self.seekPreviousPushButton, self.seekLastPushButton,
         self.insertPushButton, self.modifyPushButton, self.savePushButton,
         self.cancelPushButton, self.labelPushButton, self.billPushButton, self.reportPushButton,
-        self.dateInactivePushButton]
+        self.dateInactivePushButton,self.actualStatusButton, self.exportPushButton]
         
         self.editFinalizeWidgets = [self.savePushButton, self.cancelPushButton]
         self.findValues = ["id", "practice_name", "lname", "fname"]
@@ -56,12 +60,17 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         self.lastPhoneNumber = ""
         self.lastFaxNumber = ""
         
-    def loadRecords(self, record_id=None):
+    def loadRecords(self, record_id=None, activeRecords=False):
         """Set records for the dentist."""
         self.records = Dentist.objects.all()
         self.records = self.records.order_by("id")
+        # Gets list of all active records (assuming a null inactive date means that the dentist is active)
+        if activeRecords:
+            self.records = self.records.filter(inactive_date__isnull = True)
         if record_id:
             self.findRecord(record_id)
+        # Sets starting index to be 0 
+        self.setRecordNum(0)
 
     def loadForm(self, record):
         """Fill in forms corresponding to the dentist."""
@@ -85,7 +94,18 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         self.faxLineEdit.setText(record.fax)
         self.emailLineEdit.setText(record.email)
         self.enrollDateEdit.setDate(QDate(record.enroll_date))
-        self.dateInactiveLineEdit.setText(RecordDateToText(record.inactive_date))
+        if record.inactive_date:
+            self.dateInactiveLineEdit.setText(RecordDateToText(record.inactive_date))
+            self.actualStatusButton.setText("Inactive")
+            palette = self.actualStatusButton.palette()
+            palette.setColor(QtGui.QPalette.WindowText, QtGui.QColor("red"))
+            self.actualStatusButton.setPalette(palette)
+        else:
+            self.dateInactiveLineEdit.setText("")
+            self.actualStatusButton.setText("Active")
+            palette = self.actualStatusButton.palette()
+            palette.setColor(QtGui.QPalette.WindowText, QtGui.QColor("green"))
+            self.actualStatusButton.setPalette(palette)
         self.commentTextEdit.setText(record.comment)
     
     def verifyFormData(self):
@@ -238,6 +258,46 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
     @pyqtSlot(str)
     def on_faxLineEdit_textEdited(self, newText:str) -> None:
         self.numberEdited(self.faxLineEdit, newText, self.lastFaxNumber)
+    
+    @pyqtSlot(int)
+    def on_activeDentists_stateChanged(self, state: int) -> None:
+        # State = 2 = checked
+        # State = 0 = not checked
+        # Reload active records and set global flag for export
+        if state != 0:
+            self.active = True
+            self.loadRecords(None, True)
+        else:
+            self.active = False
+            self.loadRecords(None, False)
+
+    @pyqtSlot()
+    def on_exportPushButton_clicked(self) -> None:
+        df = pd.DataFrame()
+        for record in self.records:
+            data = {'Practice Name' : record.practice_name,
+                    'Title' : record.title,
+                    'First Name' : record.fname,
+                    'Last Name': record.lname,
+                    'Contact Title': record.contact_title,
+                    'Contact First Name' : record.contact_fname,
+                    'Contact Last Name' : record.contact_lname,
+                    'Address1': record.address1,
+                    'Address2': record.address2,
+                    'City' : record.city,
+                    'State': record.state,
+                    'Zip' : record.zip,
+                    'Phone' : record.phone,
+                    'Fax' : record.fax,
+                    'Email' : record.email,
+                    'Enroll Date' : record.enroll_date,
+                    'Inactive Date' : record.inactive_date}
+            new_row = pd.DataFrame([data])
+            df = pd.concat([df,new_row])
+        today = datetime.datetime.today().date().isoformat()
+        path = today + " Dentist List.xlsx"
+        df.to_excel(path)
+        
 
     def numberEdited(self, sender, text, oldText):
         # in most positions, undo last entry unless it is a digit

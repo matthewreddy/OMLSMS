@@ -18,9 +18,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_dentistDlg(object):
     def setupUi(self, dentistDlg):
         dentistDlg.setObjectName("dentistDlg")
+        
         dentistDlg.resize(464, 545)
+        #dentistDlg.resize(500,700)
         self.layoutWidget = QtWidgets.QWidget(dentistDlg)
         self.layoutWidget.setGeometry(QtCore.QRect(10, 10, 443, 527))
+        #self.layoutWidget.setGeometry(QtCore.QRect(10, 10, 450, 600))
         self.layoutWidget.setObjectName("layoutWidget")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
@@ -38,6 +41,14 @@ class Ui_dentistDlg(object):
         self.idLineEdit.setAlignment(QtCore.Qt.AlignCenter)
         self.idLineEdit.setObjectName("idLineEdit")
         self.horizontalLayout.addWidget(self.idLineEdit)
+        self.active_label = QtWidgets.QCheckBox("Active Dentists", self.layoutWidget)
+        self.active_label.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.active_label.setObjectName("activeDentists")
+        self.horizontalLayout.addWidget(self.active_label)
+        self.exportPushButton = QtWidgets.QPushButton("Export", self.layoutWidget)
+        self.exportPushButton.setObjectName("exportPushButton")
+        self.exportPushButton.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.horizontalLayout.addWidget(self.exportPushButton)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.verticalLayout_5.addLayout(self.horizontalLayout)
@@ -215,6 +226,14 @@ class Ui_dentistDlg(object):
         self.dateInactiveLineEdit.setMaxLength(12)
         self.dateInactiveLineEdit.setObjectName("dateInactiveLineEdit")
         self.gridLayout_4.addWidget(self.dateInactiveLineEdit, 1, 1, 1, 1)
+        self.statusButton = QtWidgets.QLabel(self.layoutWidget)
+        self.statusButton.setAlignment(QtCore.Qt.AlignBottom | QtCore.Qt.AlignHCenter)
+        self.statusButton.setObjectName("statusButton")
+        self.gridLayout_4.addWidget(self.statusButton,2,0,1,1)
+        self.actualStatusButton = QtWidgets.QLabel(self.layoutWidget)
+        self.actualStatusButton.setAlignment(QtCore.Qt.AlignBottom | QtCore.Qt.AlignHCenter)
+        self.actualStatusButton.setObjectName("actualStatusButton")
+        self.gridLayout_4.addWidget(self.actualStatusButton,2,1,1,1)
         self.horizontalLayout_2.addLayout(self.gridLayout_4)
         spacerItem3 = QtWidgets.QSpacerItem(18, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem3)
@@ -335,7 +354,7 @@ class Ui_dentistDlg(object):
     def retranslateUi(self, dentistDlg):
         _translate = QtCore.QCoreApplication.translate
         dentistDlg.setWindowTitle(_translate("dentistDlg", "Dialog"))
-        self.label.setText(_translate("dentistDlg", "Denstist ID"))
+        self.label.setText(_translate("dentistDlg", "Dentist ID"))
         self.label_18.setText(_translate("dentistDlg", "Practice\n"
 "Name"))
         self.label_2.setText(_translate("dentistDlg", "Person In\n"
@@ -357,6 +376,7 @@ class Ui_dentistDlg(object):
         self.label_15.setText(_translate("dentistDlg", "FAX"))
         self.label_16.setText(_translate("dentistDlg", "Email"))
         self.label_17.setText(_translate("dentistDlg", "Enroll Date"))
+        self.statusButton.setText(_translate("dentistDlg", "Status: "))
         self.dateInactivePushButton.setText(_translate("dentistDlg", "Date Inactive"))
         self.label_19.setText(_translate("dentistDlg", "Comment"))
         self.findPushButton.setText(_translate("dentistDlg", "&Find"))
