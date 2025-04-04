@@ -9,6 +9,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtSql import *
 from PyQt5.QtWidgets import *
+# sys.path.append(OMLWEB_PATH)
+# from omlweb.models import State
 
 class FindDlg(QDialog):
  
@@ -31,6 +33,7 @@ class FindDlg(QDialog):
         self.selectPushButton.setDisabled(True)
         
         # connect signals to slots
+        self.filterLineEdit.textChanged.connect(self.on_filterLineEdit_textChanged)
         self.filterLineEdit.returnPressed.connect(self.on_filterLineEdit_returnPressed)
         self.filterPushButton.clicked.connect(self.on_filterPushButton_clicked)
         self.tableWidget.itemClicked.connect(self.on_tableWidget_itemClicked)
@@ -53,6 +56,7 @@ class FindDlg(QDialog):
         for column in range(1, len(self.fields)):
             filter = self.fields[column].replace(".", "__") + '__startswith'
             self.records = self.records | self.unfiltered_records.filter(**{ filter: self.filterLineEdit.text() })
+        # if records is only one record switch to that recod
         if len(self.records) == 1:
             self.done(getattr(self.records[0], "id", None))
         self.populateBrowser(self.fields, self.records)
@@ -87,8 +91,14 @@ class FindDlg(QDialog):
             for column in range(columns):
                 for row in range(rows):
                     if "." in fields[column]:
+                        # Unsure of purpose of temp and rec
                         temp = fields[column].split(".")
                         rec = getattr(records[row], temp[0], "")
+                        # For advanced search, if rec is a State object
+                        # , set value to be abbreviation
+                        # if isinstance(rec, State):
+                        #     value = rec.abbreviation
+                        
                         value = getattr(records[row], temp[1], "")
                     else:
                         value = getattr(records[row], fields[column], "")
@@ -184,3 +194,7 @@ class FindDlg(QDialog):
     @pyqtSlot()
     def on_cancelPushButton_clicked(self) -> None:
         self.close()
+
+    @pyqtSlot(str)
+    def on_filterLineEdit_textChanged(self, text:str) -> None:
+        self.filterData()

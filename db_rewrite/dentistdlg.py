@@ -1,7 +1,7 @@
 """This file renders the dialog box for dentists, including
 their records, bookmarks, and forms associated with them."""
 
-import sys, datetime, re
+import sys, datetime, re, os
 from constants import *
 
 from PyQt5 import QtGui
@@ -17,6 +17,7 @@ from printlabeldlg import PrintLabelDlg
 sys.path.append(OMLWEB_PATH)
 from omlweb.models import Dentist, State
 from django.db.models import Max
+from django.utils import dateformat
 import djprint as djprint
 from result import ResultDlg
 
@@ -48,17 +49,25 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         self.dateInactivePushButton,self.actualStatusButton, self.exportPushButton]
         
         self.editFinalizeWidgets = [self.savePushButton, self.cancelPushButton]
-        self.findValues = ["id", "practice_name", "lname", "fname"]
+        #self.findValues = ["id", "practice_name", "lname", "fname"]
+        self.findValues = ["id", "practice_name", "lname", "fname", "city","state.abbreviation","zip","phone","fax","email"]
+        #self.findSizes = {
+        # 'field_widths': [50, 250, 160, 90],
+        # 'window_height': 400,
+        # 'window_width': 600,
+        # 'zfill': [DENTIST_ID_WIDTH, None, None, None],
+        # }
         self.findSizes = {
-        'field_widths': [50, 250, 160, 90],
+        'field_widths': [50, 250, 160, 90,90,90,90,90,90,160],
         'window_height': 400,
         'window_width': 600,
-        'zfill': [DENTIST_ID_WIDTH, None, None, None],
+        'zfill': [DENTIST_ID_WIDTH, None, None, None,None,None, None, None,None, None],
         }
 
         self.disableEditing()
         self.lastPhoneNumber = ""
         self.lastFaxNumber = ""
+        self.active = False
         
     def loadRecords(self, record_id=None, activeRecords=False):
         """Set records for the dentist."""
@@ -274,6 +283,7 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
     @pyqtSlot()
     def on_exportPushButton_clicked(self) -> None:
         df = pd.DataFrame()
+        # Loop through records and append to df such that each record is a row
         for record in self.records:
             data = {'Practice Name' : record.practice_name,
                     'Title' : record.title,
@@ -285,19 +295,34 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
                     'Address1': record.address1,
                     'Address2': record.address2,
                     'City' : record.city,
-                    'State': record.state,
+                    'State': record.state.abbreviation,
                     'Zip' : record.zip,
                     'Phone' : record.phone,
                     'Fax' : record.fax,
                     'Email' : record.email,
-                    'Enroll Date' : record.enroll_date,
-                    'Inactive Date' : record.inactive_date}
+                    'Enroll Date' : dateformat.format(record.enroll_date, 'Y-m-d'),
+                    'Inactive Date' : dateformat.format(record.inactive_date, 'Y-m-d') if record.inactive_date else "N/A"}
             new_row = pd.DataFrame([data])
             df = pd.concat([df,new_row])
         today = datetime.datetime.today().date().isoformat()
-        path = today + " Dentist List.xlsx"
-        df.to_excel(path)
+        if self.active:
+            path = today + "Active Dentist List.xlsx"
+        else:
+            path = today + " Dentist List.xlsx"
+
+        # Changes directory to documents, saves current before changing
+        #cwd = os.getcwd()
+
+        # Will have to change for Dr. Residorf/Lab
+        #os.chdir(os.path.expanduser("~\\OneDrive - University of North Carolina at Chapel Hill\\Desktop"))
         
+        # Creates excel file
+        df.to_excel(path, index=False)
+
+        # Open file on computer
+        #os.startfile(path)
+
+        #os.chdir(cwd)
 
     def numberEdited(self, sender, text, oldText):
         # in most positions, undo last entry unless it is a digit
