@@ -281,6 +281,11 @@ class FormViewDlg(MainDlg):
     # Functions for defining behavior upon pushing buttons.
     @pyqtSlot()
     def on_findPushButton_clicked(self) -> None:
+        # Ask user what criteria they would want to search with (only for DentistDlg)
+        if self.__class__.__name__ == "DentistDlg":
+            msg = AdvancedSearchDialog()
+            msg.exec_()
+
         findDlg = FindDlg(self.windowTitle(), self.records, self.findValues, self.findSizes, self)
         if findDlg:
             self.findRecord(findDlg.exec_())
@@ -445,3 +450,31 @@ class FormViewPartialLoadDlg(FormViewDlg):
         findDlg = FindDlg(self.windowTitle(), self.allRecords, self.findValues, self.findSizes, self)
         if findDlg:
             self.findRecord(findDlg.exec_())
+
+class AdvancedSearchDialog(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Select Additional Feature(s) to search by")
+        print(self.windowTitle())
+        self.move(200,200)
+
+        layout = QVBoxLayout()
+
+        
+        self.cb1 = QCheckBox("Address")
+        self.cb2 = QCheckBox("Zip")
+        self.cb3 = QCheckBox("State")
+        self.cb4 = QCheckBox("Fax")
+        self.cb5 = QCheckBox("Phone Number")
+        self.cb6 = QCheckBox("Email")
+        self.cb7 = QCheckBox("All")
+
+        layout.addWidget(self.cb1)
+        layout.addWidget(self.cb2)
+        layout.addWidget(self.cb3)
+
+        ok_btn = QPushButton("OK")
+        ok_btn.clicked.connect(self.accept)
+        layout.addWidget(ok_btn)
+
+        self.setLayout(layout)

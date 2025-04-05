@@ -21,7 +21,7 @@ from django.utils import dateformat
 import djprint as djprint
 from result import ResultDlg
 
-# Add this to list of libraries required
+# Add this to list of libraries required along with openpyxl
 import pandas as pd
 
 

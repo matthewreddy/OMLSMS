@@ -9,8 +9,6 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtSql import *
 from PyQt5.QtWidgets import *
-# sys.path.append(OMLWEB_PATH)
-# from omlweb.models import State
 
 class FindDlg(QDialog):
  
@@ -88,6 +86,8 @@ class FindDlg(QDialog):
             rows = len(records)
             self.tableWidget.setColumnCount(columns)
             self.tableWidget.setRowCount(rows)
+
+            # This could potentially be improved for performance in the future
             for column in range(columns):
                 for row in range(rows):
                     if "." in fields[column]:
@@ -96,10 +96,14 @@ class FindDlg(QDialog):
                         rec = getattr(records[row], temp[0], "")
                         # For advanced search, if rec is a State object
                         # , set value to be abbreviation
-                        # if isinstance(rec, State):
-                        #     value = rec.abbreviation
-                        
-                        value = getattr(records[row], temp[1], "")
+
+                        # import must be done here to avoid django error
+                        sys.path.append(OMLWEB_PATH)
+                        from omlweb.models import State
+                        if isinstance(rec, State):
+                            value = rec.abbreviation
+                        else:
+                            value = getattr(records[row], temp[1], "")
                     else:
                         value = getattr(records[row], fields[column], "")
                     if isinstance(value, int):
