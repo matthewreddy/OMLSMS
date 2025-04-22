@@ -47,7 +47,8 @@ class FindDlg(QDialog):
             return
         if self.sizes['zfill'][0]:
             idtext = text[0:self.sizes['zfill'][0]]
-            while idtext[0] == '0':
+            # Changed to idtext and idtext[0] with changes to filter on every keystroke
+            while idtext and idtext[0] == '0':
                 idtext = idtext[1:]
         filter = self.fields[0].replace(".", "__") + '__startswith'
         self.records = self.unfiltered_records.filter(**{ filter: idtext })
@@ -63,7 +64,6 @@ class FindDlg(QDialog):
         """Populate the browser with results from find."""
         self.tableWidget.setDisabled(True)
         self.tableWidget.verticalHeader().hide()
-        self.tableWidget.horizontalHeader().hide()
 
         if records.count() > MAX_FIND_DISPLAY_ROWS:
             self.tableWidget.setColumnCount(1)
@@ -87,6 +87,36 @@ class FindDlg(QDialog):
             self.tableWidget.setColumnCount(columns)
             self.tableWidget.setRowCount(rows)
 
+            # Check which parent is calling FindDlg and set headers appropriately
+            if self.parent().__class__.__name__ == "DentistDlg":
+                self.tableWidget.setHorizontalHeaderLabels(["ID", "Practice Name", "Last Name", 
+                                                       "First Name", "City", "State", "Zipcode", "Phone", "Fax", "Email"])
+            elif self.parent().__class__.__name__ == "SterilizerDlg":
+                self.tableWidget.setHorizontalHeaderLabels(["ID", "Enroll Date", "Comment"])
+            elif self.parent().__class__.__name__ == "LotDlg":
+                self.tableWidget.setHorizontalHeaderLabels(["ID", "Name", "Receive Date", "Expiration Date", "Comment"])
+            elif self.parent().__class__.__name__ == "RenewalDlg" or self.parent().__class__.__name__ == "TestDlg":
+                self.tableWidget.setHorizontalHeaderLabels(["ID", "Lot", "Renewal Date"])
+            
+            # Header styling
+
+            # Makes font bold
+            header = self.tableWidget.horizontalHeader()
+            font = header.font()
+            font.setBold(True)
+            header.setFont(font)
+            
+            # Make bottom border 
+            self.tableWidget.setStyleSheet("""
+                QHeaderView::section {
+                    background-color: white;
+                    color: black;
+                    border: none;
+                    border-bottom: 1px solid #444;  
+                    padding: 4px;
+                }
+                """)
+            
             # This could potentially be improved for performance in the future
             for column in range(columns):
                 for row in range(rows):

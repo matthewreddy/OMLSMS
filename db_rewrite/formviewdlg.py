@@ -281,11 +281,6 @@ class FormViewDlg(MainDlg):
     # Functions for defining behavior upon pushing buttons.
     @pyqtSlot()
     def on_findPushButton_clicked(self) -> None:
-        # Ask user what criteria they would want to search with (only for DentistDlg)
-        if self.__class__.__name__ == "DentistDlg":
-            msg = AdvancedSearchDialog()
-            msg.exec_()
-
         findDlg = FindDlg(self.windowTitle(), self.records, self.findValues, self.findSizes, self)
         if findDlg:
             self.findRecord(findDlg.exec_())

@@ -49,14 +49,10 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         self.dateInactivePushButton,self.actualStatusButton, self.exportPushButton]
         
         self.editFinalizeWidgets = [self.savePushButton, self.cancelPushButton]
-        #self.findValues = ["id", "practice_name", "lname", "fname"]
+        # This determines the fields used in the FindDlg
         self.findValues = ["id", "practice_name", "lname", "fname", "city","state.abbreviation","zip","phone","fax","email"]
-        #self.findSizes = {
-        # 'field_widths': [50, 250, 160, 90],
-        # 'window_height': 400,
-        # 'window_width': 600,
-        # 'zfill': [DENTIST_ID_WIDTH, None, None, None],
-        # }
+        # This determines the sizes allowcated for each find in the FindDlg
+        # Must have a list that is as long as the list in findValues for field_widths and zfill
         self.findSizes = {
         'field_widths': [50, 250, 160, 90,90,90,90,90,90,160],
         'window_height': 400,
@@ -104,12 +100,14 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         self.emailLineEdit.setText(record.email)
         self.enrollDateEdit.setDate(QDate(record.enroll_date))
         if record.inactive_date:
+            # Sets status to inactive and colors the text red
             self.dateInactiveLineEdit.setText(RecordDateToText(record.inactive_date))
             self.actualStatusButton.setText("Inactive")
             palette = self.actualStatusButton.palette()
             palette.setColor(QtGui.QPalette.WindowText, QtGui.QColor("red"))
             self.actualStatusButton.setPalette(palette)
         else:
+            # Sets status field to active and colors the text green
             self.dateInactiveLineEdit.setText("")
             self.actualStatusButton.setText("Active")
             palette = self.actualStatusButton.palette()
@@ -309,20 +307,12 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
             path = today + "Active Dentist List.xlsx"
         else:
             path = today + " Dentist List.xlsx"
-
-        # Changes directory to documents, saves current before changing
-        #cwd = os.getcwd()
-
-        # Will have to change for Dr. Residorf/Lab
-        #os.chdir(os.path.expanduser("~\\OneDrive - University of North Carolina at Chapel Hill\\Desktop"))
-        
+    
         # Creates excel file
         df.to_excel(path, index=False)
 
         # Open file on computer
-        #os.startfile(path)
-
-        #os.chdir(cwd)
+        os.startfile(path)
 
     def numberEdited(self, sender, text, oldText):
         # in most positions, undo last entry unless it is a digit
