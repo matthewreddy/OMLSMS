@@ -31,6 +31,7 @@ class FindDlg(QDialog):
         self.selectPushButton.setDisabled(True)
         
         # connect signals to slots
+        self.filterLineEdit.textChanged.connect(self.on_filterLineEdit_textChanged)
         self.filterLineEdit.returnPressed.connect(self.on_filterLineEdit_returnPressed)
         self.filterPushButton.clicked.connect(self.on_filterPushButton_clicked)
         self.tableWidget.itemClicked.connect(self.on_tableWidget_itemClicked)
@@ -46,13 +47,15 @@ class FindDlg(QDialog):
             return
         if self.sizes['zfill'][0]:
             idtext = text[0:self.sizes['zfill'][0]]
-            while idtext[0] == '0':
+            # Changed to idtext and idtext[0] with changes to filter on every keystroke
+            while idtext and idtext[0] == '0':
                 idtext = idtext[1:]
         filter = self.fields[0].replace(".", "__") + '__startswith'
         self.records = self.unfiltered_records.filter(**{ filter: idtext })
         for column in range(1, len(self.fields)):
             filter = self.fields[column].replace(".", "__") + '__startswith'
             self.records = self.records | self.unfiltered_records.filter(**{ filter: self.filterLineEdit.text() })
+        # if records is only one record switch to that recod
         if len(self.records) == 1:
             self.done(getattr(self.records[0], "id", None))
         self.populateBrowser(self.fields, self.records)
@@ -61,7 +64,6 @@ class FindDlg(QDialog):
         """Populate the browser with results from find."""
         self.tableWidget.setDisabled(True)
         self.tableWidget.verticalHeader().hide()
-        self.tableWidget.horizontalHeader().hide()
 
         if records.count() > MAX_FIND_DISPLAY_ROWS:
             self.tableWidget.setColumnCount(1)
@@ -84,12 +86,54 @@ class FindDlg(QDialog):
             rows = len(records)
             self.tableWidget.setColumnCount(columns)
             self.tableWidget.setRowCount(rows)
+
+            # Check which parent is calling FindDlg and set headers appropriately
+            if self.parent().__class__.__name__ == "DentistDlg":
+                self.tableWidget.setHorizontalHeaderLabels(["ID", "Practice Name", "Last Name", 
+                                                       "First Name", "City", "State", "Zipcode", "Phone", "Fax", "Email"])
+            elif self.parent().__class__.__name__ == "SterilizerDlg":
+                self.tableWidget.setHorizontalHeaderLabels(["ID", "Enroll Date", "Comment"])
+            elif self.parent().__class__.__name__ == "LotDlg":
+                self.tableWidget.setHorizontalHeaderLabels(["ID", "Name", "Receive Date", "Expiration Date", "Comment"])
+            elif self.parent().__class__.__name__ == "RenewalDlg" or self.parent().__class__.__name__ == "TestDlg":
+                self.tableWidget.setHorizontalHeaderLabels(["ID", "Lot", "Renewal Date"])
+            
+            # Header styling
+
+            # Makes font bold
+            header = self.tableWidget.horizontalHeader()
+            font = header.font()
+            font.setBold(True)
+            header.setFont(font)
+            
+            # Make bottom border 
+            self.tableWidget.setStyleSheet("""
+                QHeaderView::section {
+                    background-color: white;
+                    color: black;
+                    border: none;
+                    border-bottom: 1px solid #444;  
+                    padding: 4px;
+                }
+                """)
+            
+            # This could potentially be improved for performance in the future
             for column in range(columns):
                 for row in range(rows):
                     if "." in fields[column]:
+                        # Unsure of purpose of temp and rec
                         temp = fields[column].split(".")
                         rec = getattr(records[row], temp[0], "")
-                        value = getattr(records[row], temp[1], "")
+                        # For advanced search, if rec is a State object
+                        # , set value to be abbreviation
+
+                        # import must be done here to avoid django error
+                        sys.path.append(OMLWEB_PATH)
+                        from omlweb.models import State
+                        if isinstance(rec, State):
+                            value = rec.abbreviation
+                        else:
+                            value = getattr(records[row], temp[1], "")
                     else:
                         value = getattr(records[row], fields[column], "")
                     if isinstance(value, int):
@@ -184,3 +228,7 @@ class FindDlg(QDialog):
     @pyqtSlot()
     def on_cancelPushButton_clicked(self) -> None:
         self.close()
+
+    @pyqtSlot(str)
+    def on_filterLineEdit_textChanged(self, text:str) -> None:
+        self.filterData()
