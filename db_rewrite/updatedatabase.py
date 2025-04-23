@@ -44,7 +44,9 @@ def updateLateFees():
 #
 # How to calculate late fees
 #
-# $5 for every 30 days, no charge until 45 days
+# no charge until 90 days. $20 fee after that
+# if still overdue after another 90 days, add $20
+# Reflected by #7 on word document
 # No late fee to exceed MAX_LATE_FEE (to prevent accidental excessive bills)
 #
 def calculateLateFee(Renewal: Renewal):
@@ -52,7 +54,9 @@ def calculateLateFee(Renewal: Renewal):
         return 0
     
     daysOverdue = (datetime.datetime.combine(datetime.date.today(), datetime.datetime.min.time()) - Renewal.renewal_date).days
-    if daysOverdue < 45:
+    # Changed to 90 to reflect Dr.Reisdorf's request
+    if daysOverdue < 90:
         return 0
     else:
-        return min((daysOverdue/30) * 5, MAX_LATE_FEE)
+        # Integer division so we get an integer back
+        return min((daysOverdue//90) * 20, MAX_LATE_FEE)
