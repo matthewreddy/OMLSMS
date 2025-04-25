@@ -3,7 +3,7 @@
 
 {% block content %}
 <div id="content">
-    <p class="standard">The spore strip test ran in your sterilizer <b>#{{ test.renewal|renewal_id}}</b> on <b>{{ test.sample_date|date:"m/d/Y" }}</b> 
+    <p class="standard">The spore strip test ran in your sterilizer <b>#{{ test.renewal.id|renewal_id}}</b> on <b>{{ test.sample_date|date:"m/d/Y" }}</b> 
     and received on <b>{{ test.start_date|date:"m/d/Y" }}</b> was positive, indicating that the strip was not sterilized.</p>
 
     <p class="standard">
