@@ -90,7 +90,8 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
                     sterilizer.method,
                     sterilizer.num_tests,
                     latest_lot[sterilizer.id] if renewal else 0,
-                    numTests))
+                    numTests,
+                    sterilizer.dentist.id))
             self.sterilizerList.sort(key=lambda tup: tup[3])
         except Exception as e:
             print(e)
@@ -101,9 +102,9 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
     def initializeSterilizerTable(self):
         """Create the table that holds and formats the sterilizers on the renewal."""
         # Edited 4/22/25 to reflect 8c on document
-        self.tableWidget.setColumnCount(5)
-        labels = ["Sterlizer", "Sterilizer Type","Last Renewal", "Strips", "Tests Remaining"]
-        widths = [80,60,40,40,40]
+        self.tableWidget.setColumnCount(6)
+        labels = ["Sterlizer", "Sterilizer Type","Last Renewal", "Strips", "Tests Remaining","Dentist ID"]
+        widths = [80,60,40,40,40,40]
         self.tableWidget.setHorizontalHeaderLabels(labels)
         self.tableWidget.verticalHeader().hide()
         self.tableWidget.setSelectionBehavior(QTableView.SelectRows)
@@ -113,13 +114,14 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
             self.tableWidget.setColumnWidth(column, width)
         self.tableWidget.setRowCount(len(self.sterilizerList))
         row = 0
-        for sterilizer, method, num, lot, left in self.sterilizerList:
+        for sterilizer, method, num, lot, left,dentist in self.sterilizerList:
             text = [
                 str(sterilizer.id).zfill(STERILIZER_ID_WIDTH),
                 str(method.name),
                 str(lot),
                 str(num),
                 str(left),
+                str(dentist)
             ]
             for column in range(0, len(text)):
                     item = QTableWidgetItem(text[column])
@@ -216,6 +218,8 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
         lot = self.lotList[self.lotComboBox.currentIndex()]
         
         sortList = [(SterilizerToDentistID(x.id), x) for x in sterilizers]
+        print(sortList)
+        #TODO fix this later
         sortList.sort()
         list = []
         last_id = SterilizerToDentistID(sortList[0][0])
@@ -317,11 +321,10 @@ class SendRenewalDlg(QDialog, ui.Ui_sendRenewalDlg):
         self.setWindowTitle("Send Renewal")
         
         self.statusLabel.setText("Enter or Scan Renewal Number")
-        self.numRenewalsLineEdit.setText("0")
+        self.numRenewalsLineEdit.setFocus()
         self.printMailingLabelsPushButton.setAutoDefault(False)
         self.printReportsPushButton.setAutoDefault(False)
         self.exitPushButton.setAutoDefault(False)
-        self.renewalIdLineEdit.grabKeyboard()
         self.renewals = []
 
         self.printMailingLabelsPushButton.setDisabled(True)

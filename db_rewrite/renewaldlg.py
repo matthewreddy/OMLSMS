@@ -256,8 +256,7 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
             text[3] = NumToCurrency(renewal.renewal_fee)
             text[4] = NumToCurrency(renewal.late_fee)
             text[5] = NumToCurrency(
-                           renewal.renewal_fee if renewal.renewal_fee else 0 + \
-                           renewal.late_fee if renewal.late_fee else 0
+                           (renewal.renewal_fee or 0) + (renewal.late_fee or 0)
                        )
             text[6] = NumToCurrency(renewal.payment_amount)
             text[7] = str(renewal.num_tests)

@@ -21,11 +21,15 @@ def updateDatabase():
     #    update.save()
 
 def updateLateFees():
+    # Gets todays date
     today = datetime.date.today()
+    # date is two years in the past from today
     date = datetime.datetime.combine(today, datetime.datetime.min.time()) - datetime.timedelta(days=MAX_DAYS_FOR_COLLECTIONS)
+    # Gets list of renewals that are greater than 2 years ago today
     list = Renewal.objects.filter(renewal_date__gte=date)
     list = list.exclude(payment_amount__gte=F('renewal_fee')) #if they pay the principal, don't add to late fees
     list = list.exclude(renewal_fee=0)
+    # Not sure about all of this
     #list = list.exclude(late_fee=MAX_LATE_FEE)
     
     #list = list.filter(inactive_date__isnull=True)
@@ -59,4 +63,6 @@ def calculateLateFee(Renewal: Renewal):
         return 0
     else:
         # Integer division so we get an integer back
+        # Aka, 91 // 90 = 1, 1*20 = 20
+        # MAX_LATE_FEE set to 100
         return min((daysOverdue//90) * 20, MAX_LATE_FEE)

@@ -43,8 +43,6 @@ def printHTML(HTML_string, useLabelPrinter=False):
             print_command = [gsprint_filename, pdffilename, '-printer', '%s' % defaultPrinterName]
         else:
             print_command = [gsprint_filename, pdffilename]
-            
-        # This line is the problem
        
         p = subprocess.Popen(print_command, 
                              startupinfo=startupinfo, 
