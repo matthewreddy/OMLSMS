@@ -11,7 +11,8 @@ CONFIG_FILENAME = "\OMLSMS\config.txt"
 #must be set here for imports
 #OMLWEB_PATH = "C:\\Users\\gray1\\comp523\\web" #test directory, change to whatever your path is
 #OMLWEB_PATH = "C:\\Users\\Grayson\\omlsms\\web" #installation directory
-OMLWEB_PATH = "J:\Share\D R C\OML\OMLSMSv2\web"
+#OMLWEB_PATH = "C:\\Users\\Connor\\Desktop\\School Stuff\\Grad School\\Work\\OMLSMS\\web"
+OMLWEB_PATH = "J:\\Share\\D R C\\OML\\new-omlsms-db\\web"
 IMAGES_PATH = "" #set by configuration file
 
 # Defines a range of dates that should be in the database
@@ -42,9 +43,9 @@ MAX_DAYS_FOR_TEST_ENTRY = 60
 MAX_FIND_DISPLAY_ROWS = 10000
 
 # Default values for new records
-DEFAULT_NUM_TESTS = 13
-DEFAULT_RENEWAL_TEST = 9
-DEFAULT_RENEWAL_FEE = 75.00
+DEFAULT_NUM_TESTS = 26
+DEFAULT_RENEWAL_TEST = 22
+DEFAULT_RENEWAL_FEE = 155.00
 DEFAULT_STERILIZER_METHOD = 1   # 1 = Steam
 DEFAULT_LOT_COUNT = 10000
 DEFAULT_CHEMICAL_VAPOR = 3   # 3 = Ignore

@@ -177,11 +177,19 @@ def getReportForDentist(dentist_id, date_range = None):
 
 def printNotifyLetter(dentist, test, user, contacted):
     """Helper function to render a notify letter."""
+    user_override = {
+        'name_title': '',
+        'first_name': '',
+        'last_name': '',
+        'title': '',
+        'signature_file': '',
+    }
+
     return render_to_string('notify_letter.html', {
         'today': date.today(),
         'dentist': dentist,
         'test': test,
-        'user': user,
+        'user': user_override,
         'contacted': contacted,
         'image_directory': IMAGES_PATH,
     })
@@ -277,12 +285,20 @@ def viewTests(testList, header, start, stop):
 
 def printYearlyComplianceLetter(dentist, sterilizer, compliance, year, numTests, user):
     """Helper function to render compliance letter."""
+    user_override = {
+        'name_title': 'Dr.',
+        'first_name': 'Apoena',
+        'last_name': 'de Aguiar Ribeiro, DDS, MSc, PhD',
+        'title': 'Director',
+        'signature_file': 'AAR_sig.bmp',
+    }
+
     return render_to_string('complianceletter.html', {
         'today': date.today(),
         'dentist': dentist,
         'sterilizer': sterilizer,
         'number_of_tests': numTests,
-        'user': user,
+        'user': user_override,
         'report_year': year,
         'compliance': compliance,
         'image_directory': IMAGES_PATH,
