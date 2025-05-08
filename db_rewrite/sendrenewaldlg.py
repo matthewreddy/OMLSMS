@@ -2,6 +2,7 @@
 renewals, defining their unique types of behaviors."""
 import threading
 import datetime
+from dateutil.relativedelta import relativedelta
 from constants import *
 
 from PyQt5.QtCore import *
@@ -86,6 +87,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
                     numTests = 0
                 self.sterilizerList.append((
                     sterilizer,
+                    sterilizer.method,
                     sterilizer.num_tests,
                     latest_lot[sterilizer.id] if renewal else 0,
                     numTests))
@@ -98,24 +100,31 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
     
     def initializeSterilizerTable(self):
         """Create the table that holds and formats the sterilizers on the renewal."""
-        self.tableWidget.setColumnCount(NUM_TABLE_COLUMNS)
-        labels = ["sterlizer", "last renewal", "strips", "tests remaining"]
-        widths = [         80,             80,               80,                80]
+        # Edited 4/22/25 to reflect 8c on document
+        self.tableWidget.setColumnCount(5)
+        labels = ["Sterlizer", "Sterilizer Type","Last Renewal", "Strips", "Tests Remaining"]
+        widths = [80,60,40,40,40]
+
+        # Set up behavior to sort table by column header
+        header = self.tableWidget.horizontalHeader()
+        header.sectionClicked.connect(self.on_header_clicked)
         self.tableWidget.setHorizontalHeaderLabels(labels)
         self.tableWidget.verticalHeader().hide()
         self.tableWidget.setSelectionBehavior(QTableView.SelectRows)
         self.tableWidget.setSelectionMode(QTableView.ExtendedSelection)
+
         
         for column, width in enumerate(widths):
             self.tableWidget.setColumnWidth(column, width)
         self.tableWidget.setRowCount(len(self.sterilizerList))
         row = 0
-        for sterilizer, num, lot, left in self.sterilizerList:
+        for sterilizer, method, num, lot, left in self.sterilizerList:
             text = [
                 str(sterilizer.id).zfill(STERILIZER_ID_WIDTH),
+                str(method.name),
                 str(lot),
                 str(num),
-                str(left),
+                str(left)
             ]
             for column in range(0, len(text)):
                     item = QTableWidgetItem(text[column])
@@ -129,17 +138,19 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
     def initializeLots(self):
         """Create lots to be used in the renewal."""
         today = datetime.date.today()
+        # I think this change accomplishes 8b on the document
+        six_months_ago = today - relativedelta(months=6)
         try:
             self.lotList = Lot.objects.filter(inactive_date__isnull=True)
-            self.lotList = self.lotList.filter(expiration_date__gte=today)
+            self.lotList = self.lotList.filter(expiration_date__gte=six_months_ago)
             self.lotList = self.lotList.order_by('-id')
             self.lot = self.lotList[0]
-        except:
+        except Exception as e:
             QMessageBox.information(self, "Database Error", "Error reading database.")
             self.error_initializing = True
         try:
             assert len(self.lotList) != 0
-        except:
+        except Exception as e:
             QMessageBox.warning(self, "No Lots", "No valid lots found for renewal.")
             self.error_initializing = True
             return False
@@ -155,7 +166,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
         for row in range(0, len(self.sterilizerList)):
             if self.tableWidget.item(row, 0).isSelected():
                 count += 1
-                strips += self.sterilizerList[row][1]
+                strips += self.sterilizerList[row][2]
         self.renewalsSelectedLineEdit.setText(str(count))
         self.stripsRequiredLineEdit.setText(str(int(strips/DEFAULT_NUM_TESTS)))
     
@@ -206,7 +217,7 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
                 break
         
     def startRenewal(self, sterilizers):
-        """Instantiate the renewal."""
+        """Instantiate the renewal. Method executes upon double click on row in table. """
         lot = self.lotList[self.lotComboBox.currentIndex()]
         
         sortList = [(SterilizerToDentistID(x.id), x) for x in sterilizers]
@@ -283,6 +294,12 @@ class StartRenewalDlg(QDialog, ui.Ui_startRenewalDlg):
         finally:
             self.tableWidget.setFocus()
             self.updateCounts()
+
+    @pyqtSlot(int)
+    def on_header_clicked(self, index) -> None:
+        """Sorts table based on clicking column header. """
+        self.tableWidget.sortItems(index)
+    
     
     def selectSterilizer(self):
         """Select which sterilizer to be included in the 
@@ -311,11 +328,10 @@ class SendRenewalDlg(QDialog, ui.Ui_sendRenewalDlg):
         self.setWindowTitle("Send Renewal")
         
         self.statusLabel.setText("Enter or Scan Renewal Number")
-        self.numRenewalsLineEdit.setText("0")
+        self.numRenewalsLineEdit.setFocus()
         self.printMailingLabelsPushButton.setAutoDefault(False)
         self.printReportsPushButton.setAutoDefault(False)
         self.exitPushButton.setAutoDefault(False)
-        self.renewalIdLineEdit.grabKeyboard()
         self.renewals = []
 
         self.printMailingLabelsPushButton.setDisabled(True)

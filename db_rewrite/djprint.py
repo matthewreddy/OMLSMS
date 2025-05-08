@@ -39,7 +39,7 @@ def getBillForSterilizer(sterilizer_id, dentist=None, renewal=None):
         }
         payment['balances'].append(dict)
         payment['amount'] = payment['amount'] + amount
-        payment['due_date'] = renewal.renewal_date + datetime.timedelta(days=30)
+        payment['due_date'] = renewal.renewal_date + datetime.timedelta(days=90)
 
     return render_to_string('bill.html', {
         'dentist': dentist,

@@ -64,7 +64,6 @@ class FindDlg(QDialog):
         """Populate the browser with results from find."""
         self.tableWidget.setDisabled(True)
         self.tableWidget.verticalHeader().hide()
-
         if records.count() > MAX_FIND_DISPLAY_ROWS:
             self.tableWidget.setColumnCount(1)
             self.tableWidget.setRowCount(1)
@@ -94,9 +93,10 @@ class FindDlg(QDialog):
             elif self.parent().__class__.__name__ == "SterilizerDlg":
                 self.tableWidget.setHorizontalHeaderLabels(["ID", "Enroll Date", "Comment"])
             elif self.parent().__class__.__name__ == "LotDlg":
-                self.tableWidget.setHorizontalHeaderLabels(["ID", "Name", "Receive Date", "Expiration Date", "Comment"])
+                self.tableWidget.setHorizontalHeaderLabels(["ID", "Name", "Receive Date", "Expiration Date", "Comment"])  
+            # Searching Renewal Objcts in both RenewalDlg and TestDlg
             elif self.parent().__class__.__name__ == "RenewalDlg" or self.parent().__class__.__name__ == "TestDlg":
-                self.tableWidget.setHorizontalHeaderLabels(["ID", "Lot", "Renewal Date"])
+                self.tableWidget.setHorizontalHeaderLabels(["Renewal ID", "Lot", "Renewal Date"])
             
             # Header styling
 

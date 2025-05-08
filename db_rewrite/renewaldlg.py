@@ -17,6 +17,7 @@ from omlweb.models import Dentist, Renewal, Test, Lot
 from django.db.models import Max
 import djprint
 from result import ResultDlg
+from billdlg import BillDlg
 
 
 NUM_HISTORY_COLUMNS = 10
@@ -260,8 +261,7 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
             text[3] = NumToCurrency(renewal.renewal_fee)
             text[4] = NumToCurrency(renewal.late_fee)
             text[5] = NumToCurrency(
-                           renewal.renewal_fee if renewal.renewal_fee else 0 + \
-                           renewal.late_fee if renewal.late_fee else 0
+                           (renewal.renewal_fee or 0) + (renewal.late_fee or 0)
                        )
             text[6] = NumToCurrency(renewal.payment_amount)
             text[7] = str(renewal.num_tests)
@@ -361,7 +361,8 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
     @pyqtSlot()
     def on_billPushButton_clicked(self) -> None:
         id = self.idLineEdit.text()[0:STERILIZER_ID_WIDTH]
-        self.printHTML(djprint.getBillForSterilizer(id))
+        dlg = BillDlg(id,self)
+        dlg.exec_()
 
     @pyqtSlot()
     def on_reportPushButton_clicked(self) -> None:
