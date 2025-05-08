@@ -71,6 +71,10 @@ class LotDlg(FormViewDlg, ui.Ui_lotDlg):
         self.chemicalVaporComboBox.setCurrentIndex(record.vapor.id - 1)
         self.dateInactiveLineEdit.setText(RecordDateToText(record.inactive_date))
         self.commentLineEdit.setText(record.comment)
+        if record.inactive_date:
+            self.dateInactivePushButton.setStyleSheet("background-color: red; color: white;")
+        else:
+            self.dateInactivePushButton.setStyleSheet("background-color: green; color: white;")
 
     def verifyFormData(self):
         """Helps verify form data, and displays errors if something is wrong."""

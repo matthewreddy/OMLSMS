@@ -102,6 +102,7 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         if record.inactive_date:
             # Sets status to inactive and colors the text red
             self.dateInactiveLineEdit.setText(RecordDateToText(record.inactive_date))
+            self.dateInactivePushButton.setStyleSheet("background-color: red; color: white;")
             self.actualStatusButton.setText("Inactive")
             palette = self.actualStatusButton.palette()
             palette.setColor(QtGui.QPalette.WindowText, QtGui.QColor("red"))
@@ -109,6 +110,7 @@ class DentistDlg(FormViewDlg, ui.Ui_dentistDlg):
         else:
             # Sets status field to active and colors the text green
             self.dateInactiveLineEdit.setText("")
+            self.dateInactivePushButton.setStyleSheet("background-color: green; color: white;")
             self.actualStatusButton.setText("Active")
             palette = self.actualStatusButton.palette()
             palette.setColor(QtGui.QPalette.WindowText, QtGui.QColor("green"))

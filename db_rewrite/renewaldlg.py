@@ -120,6 +120,10 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
         self.checkNumLineEdit.setText(record.check_num)
         self.commentTextEdit.setText(record.comment)
         self.dateInactiveLineEdit.setText(RecordDateToText(record.inactive_date))
+        if record.inactive_date:
+            self.dateInactivePushButton.setStyleSheet("background-color: red; color: white;")
+        else:
+            self.dateInactivePushButton.setStyleSheet("background-color: green; color: white;")
         #if not self.historyIsLoaded():
         self.loadHistory(record)
 
