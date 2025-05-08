@@ -17,6 +17,7 @@ from omlweb.models import Dentist, Renewal, Test, Lot
 from django.db.models import Max
 import djprint
 from result import ResultDlg
+from billdlg import BillDlg
 
 
 NUM_HISTORY_COLUMNS = 10
@@ -356,7 +357,8 @@ class RenewalDlg(FormViewPartialLoadDlg, ui.Ui_renewalDlg):
     @pyqtSlot()
     def on_billPushButton_clicked(self) -> None:
         id = self.idLineEdit.text()[0:STERILIZER_ID_WIDTH]
-        self.printHTML(djprint.getBillForSterilizer(id))
+        dlg = BillDlg(id,self)
+        dlg.exec_()
 
     @pyqtSlot()
     def on_reportPushButton_clicked(self) -> None:
