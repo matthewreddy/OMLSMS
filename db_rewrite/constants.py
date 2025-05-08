@@ -11,8 +11,8 @@ CONFIG_FILENAME = "\OMLSMS\config.txt"
 #must be set here for imports
 #OMLWEB_PATH = "C:\\Users\\gray1\\comp523\\web" #test directory, change to whatever your path is
 #OMLWEB_PATH = "C:\\Users\\Grayson\\omlsms\\web" #installation directory
-#OMLWEB_PATH = "C:\\Users\\Connor\\Desktop\\School Stuff\\Grad School\\Work\\OMLSMS\\web"
-OMLWEB_PATH = "J:\\Share\\D R C\\OML\\new-omlsms-db\\web"
+OMLWEB_PATH = "C:\\Users\\Connor\\Desktop\\School Stuff\\Grad School\\Work\\OMLSMS\\web"
+#OMLWEB_PATH = "J:\\Share\\D R C\\OML\\new-omlsms-db\\web"
 IMAGES_PATH = "" #set by configuration file
 
 # Defines a range of dates that should be in the database

@@ -52,7 +52,7 @@ def calculateLateFee(Renewal: Renewal):
         return 0
     
     daysOverdue = (datetime.datetime.combine(datetime.date.today(), datetime.datetime.min.time()) - Renewal.renewal_date).days
-    if daysOverdue < 45:
+    if daysOverdue < 90:
         return 0
     else:
-        return min((daysOverdue//30) * 5, MAX_LATE_FEE)
+        return min((daysOverdue//90) * 20, MAX_LATE_FEE)
