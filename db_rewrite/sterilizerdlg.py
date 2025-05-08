@@ -84,7 +84,9 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
         self.methodComboBox.setCurrentIndex(record.method.id - 1)
         if record.inactive_date:
             self.dateInactiveLineEdit.setText(RecordDateToText(record.inactive_date))
+            self.dateInactivePushButton.setStyleSheet("background-color: red; color: white;")
         else:
+            self.dateInactivePushButton.setStyleSheet("background-color: green; color: white;")
             try:
                 value = RecordDateToText(dentist.inactive_date)
                 if value:
@@ -94,6 +96,7 @@ class SterilizerDlg(FormViewDlg, ui.Ui_sterilizerDlg):
             except:
                 self.dateInactiveLineEdit.setText("(Data Error)")
         self.commentLineEdit.setText(record.comment)
+
         self.timeToRenewCheckBox.setChecked(record.renew)
         self.suspendRenewalsCheckBox.setChecked(record.suspend)
     

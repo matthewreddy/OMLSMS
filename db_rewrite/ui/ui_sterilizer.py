@@ -122,6 +122,17 @@ class Ui_sterilizerDlg(object):
         self.commentLineEdit.setMaxLength(120)
         self.commentLineEdit.setObjectName("commentLineEdit")
         self.verticalLayout.addWidget(self.commentLineEdit)
+
+        self.label_10 = QtWidgets.QLabel(self.widget)
+        self.label_10.setAlignment(QtCore.Qt.AlignBottom | QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft)
+        self.label_10.setObjectName("label_10")
+        self.label_10.setText("History")
+        self.verticalLayout.addWidget(self.label_10)
+
+        self.historyTextEdit = QtWidgets.QTextEdit(self.widget)
+        self.historyTextEdit.setObjectName("historyTextEdit")
+        self.historyTextEdit.setMinimumHeight(15)
+        self.verticalLayout.addWidget(self.historyTextEdit)
         self.verticalLayout_2.addLayout(self.verticalLayout)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
