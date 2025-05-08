@@ -55,4 +55,4 @@ def calculateLateFee(Renewal: Renewal):
     if daysOverdue < 45:
         return 0
     else:
-        return min((daysOverdue/30) * 5, MAX_LATE_FEE)
+        return min((daysOverdue//30) * 5, MAX_LATE_FEE)
