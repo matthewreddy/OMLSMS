@@ -65,4 +65,7 @@ def calculateLateFee(Renewal: Renewal):
         # Integer division so we get an integer back
         # Aka, 91 // 90 = 1, 1*20 = 20
         # MAX_LATE_FEE set to 100
+    if daysOverdue < 90:
+        return 0
+    else:
         return min((daysOverdue//90) * 20, MAX_LATE_FEE)
